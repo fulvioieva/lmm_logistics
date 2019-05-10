@@ -5,6 +5,7 @@ import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:lmm_logistics/screens/home/home_screen.dart';
 
 class DetailPage extends StatefulWidget {
   final Workers workers;
@@ -44,27 +45,32 @@ class _DetailPage extends State<DetailPage> {
     super.initState();
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
-      SchedulerBinding.instance.addPostFrameCallback((_){
-        setPause(context);
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        setPause();
       });
     }
   }
 
-  void setPause(BuildContext context) async {
-      List<Pause> lp = await api.fetchPause(widget.workers.work_day,widget.workers.id);
-      if (lp!=null) {
-        _pause = lp;
-        setState(() {});
-      }
+  void _deletePause(int id) async {
+    api.removePause(id);
+    _pause = await api.fetchPause(widget.workers.work_day, widget.workers.id);
+    setState(() {});
   }
 
-  void _addPause(String description, int durata) {
-    setState(() {
-      Pause p = new Pause();
-      p.durata = durata;
-      p.descrizione = description;
-      _pause.add(p);
-    });
+  void setPause() async {
+    List<Pause> lp =
+        await api.fetchPause(widget.workers.work_day, widget.workers.id);
+    if (lp != null) {
+      _pause = lp;
+      setState(() {});
+    }
+  }
+
+  void _addPause(String description, int durata) async {
+    api.setPause(
+        widget.workers.work_day, description, durata, widget.workers.id);
+    _pause = await api.fetchPause(widget.workers.work_day, widget.workers.id);
+    setState(() {});
   }
 
   Future<String> _asyncInputDialog(BuildContext context) async {
@@ -156,7 +162,7 @@ class _DetailPage extends State<DetailPage> {
                     labelText: 'Ora entrata', hasFloatingPlaceholder: false),
                 onChanged: (dt) => setState(() {
                       date_entrata = dt;
-                      api.setDataIn(widget.workers.work_day, date_entrata);
+                      api.setDataIn(widget.workers.work_id, date_entrata);
                     }),
               ),
               Text('ora inizio turno'),
@@ -169,14 +175,16 @@ class _DetailPage extends State<DetailPage> {
                     labelText: 'Ora entrata', hasFloatingPlaceholder: false),
                 onChanged: (dt) => setState(() {
                       date_uscita = dt;
-                      api.setDataOut(widget.workers.work_day, date_uscita);
+                      api.setDataOut(widget.workers.work_id, date_uscita);
                     }),
               ),
               Text('ora fine turno'),
-              Container(
+              Row(children: <Widget>[
+                Container(
                   margin: EdgeInsets.all(20.0),
+
                   child: RaisedButton(
-                    child: Text("inserisci pausa"),
+                    child: Text("Inserisci Pausa"),
                     onPressed: () {
                       _asyncInputDialog(context);
                     },
@@ -184,7 +192,29 @@ class _DetailPage extends State<DetailPage> {
                     textColor: Colors.white,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
-                  )),
+
+                  ),
+
+                ),
+                Expanded(
+                  child: RaisedButton(
+                    child: Text("Ritorna"),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    },
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    splashColor: Colors.grey,
+
+                  ),
+                ),
+              ]),
+
+
               Column(
                 children: _pause
                     .map((element) => Card(
@@ -225,7 +255,9 @@ class _DetailPage extends State<DetailPage> {
                                               size: 30.0)
                                         ],
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        _deletePause(element.id);
+                                      },
                                     ),
                                   ])),
                         ))

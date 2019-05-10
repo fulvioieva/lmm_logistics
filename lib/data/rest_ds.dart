@@ -43,6 +43,7 @@ class RestDatasource {
               first_name: h['first_name'],
               last_name: h['last_name'],
               work_day: int.tryParse(h['work_day']),
+              work_id: int.tryParse(h['work_id']),
               id_sito: int.tryParse(h['id_sito']),
               date_start: h['date_start'],
               date_end: h['date_end']);
@@ -77,7 +78,7 @@ class RestDatasource {
 
   Future<bool> setPause(int id_daily_job, String break_description, int break_lenght, int id_user) async {
     var body = json.encode(
-        {"method": "setPause", "id_daily_job": id_daily_job, "break_description": break_description, "break_description": break_description, "break_lenght": break_lenght, "id_user": id_user});
+        {"method": "setPause", "id": id_daily_job, "descrizione": break_description, "lunghezza": break_lenght, "id_user": id_user});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -110,6 +111,7 @@ class RestDatasource {
         {"method": "setDataOut", "dataout": data.toString(), "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       print("JSON ->" + res.toString());
+      print("ID ->" + record.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });

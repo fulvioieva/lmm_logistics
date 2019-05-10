@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lmm_logistics/auth.dart';
 import 'package:lmm_logistics/routes.dart';
 
 void main() => runApp(new LoginApp());

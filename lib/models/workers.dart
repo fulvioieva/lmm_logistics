@@ -4,6 +4,7 @@ class Workers {
   String last_name;
   int work_day;
   int id_sito;
+  int work_id;
   String date_start;
   String date_end;
 
@@ -12,6 +13,7 @@ class Workers {
             this.last_name,
             this.work_day,
             this.id_sito,
+            this.work_id,
             this.date_start,
             this.date_end
   });
@@ -23,6 +25,7 @@ class Workers {
     this.last_name = obj["last_name"];
     this.work_day = obj["work_day"];
     this.id_sito = obj["id_sito"];
+    this.work_id = obj["work_id"];
     this.date_start = obj["date_start"];
     this.date_end = obj["date_end"];
   }
@@ -34,6 +37,7 @@ class Workers {
     map["last_name"] = last_name;
     map["work_day"] = work_day;
     map["id_sito"] = id_sito;
+    map["work_id"] = work_id;
     map["date_start"] = date_start;
     map["date_end"] = date_end;
 
@@ -46,6 +50,7 @@ class Workers {
       first_name: json['first_name'] as String,
       last_name: json['last_name'] as String,
       work_day: json['work_day'] as int,
+      work_id: json['work_id'] as int,
       id_sito: json['id_sito'] as int,
       date_start: json['date_start'] as String,
       date_end: json['date_end'] as String,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/screens/home/pages/detail_page.dart';
@@ -13,6 +15,10 @@ class ListUsers extends StatefulWidget {
 }
 
 class _ListUsers extends State<ListUsers> {
+  void title() {
+    print('ciao');
+  }
+
   @override
   Widget build(BuildContext context) {
     ListTile makeListTile(Workers workers) => ListTile(
@@ -59,10 +65,11 @@ class _ListUsers extends State<ListUsers> {
           trailing:
               Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DetailPage(workers: workers)));
+            Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailPage(workers: workers)))
+                .whenComplete(title);
           },
         );
 
@@ -86,12 +93,10 @@ class _ListUsers extends State<ListUsers> {
                   return makeCard(widget.workers[index]);
                 },
               )
-            : Center(child: Text(
-            'Nessun utente nella tua squadra',
-            style: new TextStyle(
-              fontSize: 22.0,color: Colors.white
-            ))
-        ));
+            : Center(
+                child: Text('Nessun utente nella tua squadra',
+                    style:
+                        new TextStyle(fontSize: 22.0, color: Colors.white))));
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
