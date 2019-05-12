@@ -20,10 +20,10 @@ class AuthStateProvider {
 
   void initState() async {
     var db = new DatabaseHelper();
-    db.deleteUsers();
+    if (globals.resetDB) db.deleteUsers();
     var isLoggedIn = await db.isLoggedIn();
     int idUser = await db.idUser();
-    print("IdUser " + idUser.toString());
+    if (globals.logger) print("IdUser " + idUser.toString());
     globals.userId = idUser;
     if(isLoggedIn)
       notify(AuthState.LOGGED_IN);

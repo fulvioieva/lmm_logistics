@@ -32,12 +32,23 @@ class _BoxScreen extends State<BoxScreen> {
   @override
   void initState()  {
     super.initState();
-    setColli();
+    getColli();
     calculus();
   }
 
   void setColli() async {
-    print ("ID DAILY JOB " + globals.id_daily_job.toString());
+    await api.setColli(globals.id_daily_job,
+        int.parse(_seccoController.text),
+        int.parse(_muraleController.text),
+        int.parse(_geloController.text),
+        int.parse(_avanzi_seccoController.text),
+        int.parse(_avanzi_muraleController.text),
+        int.parse(_avanzi_geloController.text),
+        _noteController.text
+                      );
+  }
+
+  void getColli() async {
     Colli cl =
     await api.getColli(globals.id_daily_job);
     if (cl != null) {
@@ -258,7 +269,10 @@ class _BoxScreen extends State<BoxScreen> {
                 margin: EdgeInsets.all(20.0),
                 child: RaisedButton(
                   child: Text("Invia Dati"),
-                  onPressed: () {calculus();},
+                  onPressed: () {
+                    calculus();
+                    setColli();
+                  },
                   color: Colors.blue,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),

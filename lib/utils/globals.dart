@@ -1,5 +1,7 @@
 library my_prj.globals;
 
+bool logger = false;
+bool resetDB = true;
 bool isLoggedIn = false;
 int userId = 0;
 int id_daily_job = 0;

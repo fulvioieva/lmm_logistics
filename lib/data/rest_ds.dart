@@ -15,7 +15,7 @@ class RestDatasource {
     var body =
         json.encode({"method": "login", "user": username, "pass": password});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       User us;
       if(res["error_msg"]!='Invalid credentitals') {
@@ -35,11 +35,11 @@ class RestDatasource {
     String utente = globals.userId.toString();
     var x = globals.dataLavori.split('/');
     String data = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
-    print("Data Lavori " + data);
+    if (globals.logger)  print("Data Lavori " + data);
     var body =
     json.encode({"method": "getUtenti", "data": data, "utente": utente});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       List<Workers> c = new List<Workers>();
       if (res["error_msg"] != "No user") {
@@ -67,7 +67,7 @@ class RestDatasource {
     var body =
         json.encode({"method": "getColli", "id_daily_job": id_daily_job});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       if (res["error_msg"] != "No colli") {
         for (var h in res["colli"]) {
@@ -90,9 +90,9 @@ class RestDatasource {
 
   Future<bool> setColli(int daily_job, int secco, int murale, int gelo, int a_secco, int a_murale, int a_gelo, String note) async {
     var body = json.encode(
-        {"method": "setColli", "daily_job": daily_job, "secco": secco, "murale": murale, "gelo": gelo, "a_secco": a_secco, "a_murale": a_murale, "a_gelo": a_gelo, "note": note});
+        {"method": "setColli", "daily_job": daily_job, "secco":  secco.toString(), "murale": murale.toString(), "gelo": gelo.toString(), "a_secco": a_secco.toString(), "a_murale": a_murale.toString(), "a_gelo": a_gelo.toString(), "note": note});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
@@ -102,7 +102,7 @@ class RestDatasource {
     var body =
     json.encode({"method": "fetchPause", "id_user": id_user, "id_daily_job": id_daily_job});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger)  print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       List<Pause> c = new List<Pause>();
       if (res["error_msg"] != "No Breaks") {
@@ -123,7 +123,7 @@ class RestDatasource {
     var body = json.encode(
         {"method": "setPause", "id": id_daily_job, "descrizione": break_description, "lunghezza": break_lenght, "id_user": id_user});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger)  print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
@@ -133,7 +133,7 @@ class RestDatasource {
     var body = json.encode(
         {"method": "removePause", "id": id});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
@@ -147,7 +147,7 @@ class RestDatasource {
     var body = json.encode(
         {"method": "setDataIn", "datain": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger)  print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
@@ -160,7 +160,7 @@ class RestDatasource {
     var body = json.encode(
         {"method": "setDataOut", "dataout": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
