@@ -19,8 +19,8 @@ class HomeScreen extends StatelessWidget {
             bottom: TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.access_time)),
-                Tab(icon: Icon(Icons.transfer_within_a_station)),
                 Tab(icon: Icon(Icons.border_color)),
+                Tab(icon: Icon(Icons.transfer_within_a_station)),
               ],
             ),
             title: Text(formatted),
@@ -28,8 +28,8 @@ class HomeScreen extends StatelessWidget {
           body: TabBarView(
             children: [
               TimeScreen(title: "Risorse presenti"),
-              AddUserScreen(),
               BoxScreen(),
+              AddUserScreen(),
             ],
           ),
         ),

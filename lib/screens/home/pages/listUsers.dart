@@ -64,7 +64,7 @@ class _ListUsers extends State<ListUsers> {
           ),
           trailing:
               Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
-          onTap: () {
+          onTap: () async {
             Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

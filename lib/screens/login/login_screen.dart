@@ -43,13 +43,14 @@ class LoginScreenState extends State<LoginScreen>
 
   void _showSnackBar(String text) {
     scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(text)));
+        .showSnackBar(new SnackBar(content: new Text('Invalid credentials'),backgroundColor: Colors.red,
+    duration: Duration(seconds: 5),));
   }
 
   @override
   onAuthStateChanged(AuthState state) {
     if (state == AuthState.LOGGED_IN)
-      Navigator.of(_ctx).pushReplacementNamed("/home");
+      Navigator.of(_ctx).pushReplacementNamed("/insertdate");
   }
 
   @override
@@ -137,7 +138,7 @@ class LoginScreenState extends State<LoginScreen>
     setState(() => _isLoading = false);
     var db = new DatabaseHelper();
     await db.saveUser(user);
-    globals.userId = user.id;
+    globals.userId = int.parse(user.id);
     var authStateProvider = new AuthStateProvider();
     authStateProvider.notify(AuthState.LOGGED_IN);
   }

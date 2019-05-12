@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lmm_logistics/screens/home/home_screen.dart';
+import 'package:lmm_logistics/models/colli.dart';
 
 class BoxScreen extends StatefulWidget {
+
   @override
   _BoxScreen createState() {
     return new _BoxScreen();
@@ -8,12 +11,55 @@ class BoxScreen extends StatefulWidget {
 }
 
 class _BoxScreen extends State<BoxScreen> {
-  TextEditingController _textFieldController = TextEditingController();
+  static final TextEditingController _seccoController = TextEditingController();
+  static final TextEditingController _muraleController = TextEditingController();
+  static final TextEditingController _geloController = TextEditingController();
+  static final TextEditingController _avanzi_seccoController = TextEditingController();
+  static final TextEditingController _avanzi_muraleController = TextEditingController();
+  static final TextEditingController _avanzi_geloController = TextEditingController();
 
-  String secco;
-  String murale;
-  String gelo;
-  String totale;
+
+  int totale = 0;
+  int totale_a = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
+  void calculus(){
+    setState(() {
+      if (_seccoController.text=='')_seccoController.text='0';
+      if (_muraleController.text=='')_muraleController.text='0';
+      if (_geloController.text=='')_geloController.text='0';
+      if (_avanzi_seccoController.text=='')_avanzi_seccoController.text='0';
+      if (_avanzi_muraleController.text=='')_avanzi_muraleController.text='0';
+      if (_avanzi_geloController.text=='')_avanzi_geloController.text='0';
+
+      totale_a = int.parse(_avanzi_seccoController.text)  +
+          int.parse(_avanzi_muraleController.text) +
+          int.parse(_avanzi_geloController.text);
+
+      totale =  int.parse(_seccoController.text) +
+          int.parse(_muraleController.text) +
+          int.parse(_geloController.text) ;
+
+      totale = totale - totale_a;
+
+      _seccoController.text = int.parse(_seccoController.text).toString();
+      _avanzi_seccoController.text = int.parse(_avanzi_seccoController.text).toString();
+      _muraleController.text = int.parse(_muraleController.text).toString() ;
+      _avanzi_muraleController.text = int.parse(_avanzi_muraleController.text).toString();
+      _geloController.text = int.parse(_geloController.text).toString();
+      _avanzi_geloController.text = int.parse(_avanzi_geloController.text).toString();
+
+
+    });
+
+
+
+  }
 
   Widget _boxText() {
     new Flexible(
@@ -21,9 +67,9 @@ class _BoxScreen extends State<BoxScreen> {
         padding: const EdgeInsets.all(8.0),
         child: TextFormField(
           onSaved: (val) {
-            secco = val;
+            totale = int.parse(val);
           },
-          decoration: InputDecoration(labelText: 'secco'),
+          decoration: InputDecoration(labelText: 'xxxx'),
         ),
       ),
     );
@@ -48,44 +94,25 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          onSaved: (val) => secco = val,
-                          decoration: InputDecoration(labelText: 'secco'),
-                        ),
+                          controller: _seccoController,
+                            onEditingComplete: calculus,
+                            decoration: InputDecoration(labelText: 'secco'),
+                            keyboardType: TextInputType.number,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                     Flexible(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          onSaved: (val) => murale = val,
-                          decoration:
-                              InputDecoration(labelText: 'avanzi secco'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ), // row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    SizedBox(height: 0.0),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          onSaved: (val) => secco = val,
-                          decoration: InputDecoration(labelText: 'murale'),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          onSaved: (val) => murale = val,
-                          decoration:
-                              InputDecoration(labelText: 'avanzi murale'),
-                        ),
+                            controller: _avanzi_seccoController,
+                            onEditingComplete: calculus,
+                            decoration:
+                                InputDecoration(labelText: 'avanzi secco'),
+                            keyboardType: TextInputType.number,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                   ],
@@ -98,18 +125,25 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          onSaved: (val) => secco = val,
-                          decoration: InputDecoration(labelText: 'gelo'),
-                        ),
+                            controller: _muraleController,
+                            onEditingComplete: calculus,
+                            decoration: InputDecoration(labelText: 'murale'),
+                            keyboardType: TextInputType.number,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                     Flexible(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          onSaved: (val) => murale = val,
-                          decoration: InputDecoration(labelText: 'avanzi gelo'),
-                        ),
+                            controller: _avanzi_muraleController,
+                            onEditingComplete: calculus,
+                            decoration:
+                                InputDecoration(labelText: 'avanzi murale'),
+                            keyboardType: TextInputType.number,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                   ],
@@ -122,26 +156,76 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          onSaved: (val) => secco = val,
-                          decoration:
-                              InputDecoration(labelText: 'Totale colli'),
-                        ),
+                            controller: _geloController,
+                            onEditingComplete: calculus,
+                            decoration: InputDecoration(labelText: 'gelo'),
+                            keyboardType: TextInputType.number,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                     Flexible(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
-                          onSaved: (val) => murale = val,
-                          decoration:
-                              InputDecoration(labelText: 'Totale avanzi'),
-                        ),
+                            controller: _avanzi_geloController,
+                            onEditingComplete: calculus,
+                            decoration:
+                                InputDecoration(labelText: 'avanzi gelo'),
+                            keyboardType: TextInputType.number,
+                            style:
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
+                      ),
+                    ),
+                  ],
+                ), // row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    SizedBox(height: 0.0),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Tot. ' + totale.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),),
+
+                      ),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Tot. ' + totale_a.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0))
                       ),
                     ),
                   ],
                 ), // row
               ],
             ), // column
+            Row(children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(20.0),
+                child: RaisedButton(
+                  child: Text("Invia Dati"),
+                  onPressed: () {calculus();},
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  splashColor: Colors.grey,
+                ),
+              ),
+              Expanded(
+                child: RaisedButton(
+                  child: Text("Ritorna"),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  splashColor: Colors.grey,
+                ),
+              ),
+            ]),
           ],
         ), // ListView
       ),

@@ -44,20 +44,4 @@ class Workers {
     return map;
   }
 
-  factory Workers.fromJson(Map<String, dynamic> json) {
-    return Workers(
-      id: json['id'] as int,
-      first_name: json['first_name'] as String,
-      last_name: json['last_name'] as String,
-      work_day: json['work_day'] as int,
-      work_id: json['work_id'] as int,
-      id_sito: json['id_sito'] as int,
-      date_start: json['date_start'] as String,
-      date_end: json['date_end'] as String,
-
-    );
-  }
-
-
-
 }

@@ -5,6 +5,7 @@ import 'package:lmm_logistics/models/user.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
+import 'package:lmm_logistics/models/colli.dart';
 
 class RestDatasource {
   NetworkUtil _netUtil = new NetworkUtil();
@@ -17,21 +18,26 @@ class RestDatasource {
       print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       User us;
-      for (var h in res["user"]) {
-        us = new User(
-            username: h['username'],
-            password: h['password'],
-            id: int.tryParse(h['id']));
+      if(res["error_msg"]!='Invalid credentitals') {
+        for (var h in res["user"]) {
+          us = new User(
+              username: h['username'],
+              password: h['password'],
+              id: h['id']);
+        }
       }
       return us;
     });
   }
 
+
   Future<List<Workers>> fetchUsers() async {
     String utente = globals.userId.toString();
-    String data = '2019-04-23';
+    var x = globals.dataLavori.split('/');
+    String data = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
+    print("Data Lavori " + data);
     var body =
-        json.encode({"method": "getUtenti", "data": data, "utente": utente});
+    json.encode({"method": "getUtenti", "data": data, "utente": utente});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -52,6 +58,42 @@ class RestDatasource {
         }
       }
       return c;
+    });
+  }
+
+  Future<Colli> getColli(int id_daily_work) async {
+    Colli colli = null;
+    var body =
+        json.encode({"method": "getColli", "id_daily_work": id_daily_work});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No colli") {
+        for (var h in res["users"]) {
+      colli = new Colli(
+              id: int.tryParse(h['id']),
+              secco: int.tryParse(h['secco']),
+              murale: int.tryParse(h['murale']),
+              gelo: int.tryParse(h['gelo']),
+              a_secco: int.tryParse(h['a_secco']),
+              a_murale: int.tryParse(h['a_murale']),
+              a_gelo: int.tryParse(h['a_gelo']),
+              note: h['note']
+      );
+
+        }
+      }
+      return colli;
+    });
+  }
+
+  Future<bool> setColli(int daily_job, int secco, int murale, int gelo, int a_secco, int a_murale, int a_gelo, String note) async {
+    var body = json.encode(
+        {"method": "setColli", "daily_job": daily_job, "secco": secco, "murale": murale, "gelo": gelo, "a_secco": a_secco, "a_murale": a_murale, "a_gelo": a_gelo, "note": note});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
     });
   }
 
