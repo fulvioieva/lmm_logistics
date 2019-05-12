@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/models/colli.dart';
+import 'package:lmm_logistics/data/rest_ds.dart';
+import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 class BoxScreen extends StatefulWidget {
 
@@ -11,21 +13,56 @@ class BoxScreen extends StatefulWidget {
 }
 
 class _BoxScreen extends State<BoxScreen> {
+
+  RestDatasource api = new RestDatasource();
+
   static final TextEditingController _seccoController = TextEditingController();
   static final TextEditingController _muraleController = TextEditingController();
   static final TextEditingController _geloController = TextEditingController();
   static final TextEditingController _avanzi_seccoController = TextEditingController();
   static final TextEditingController _avanzi_muraleController = TextEditingController();
   static final TextEditingController _avanzi_geloController = TextEditingController();
+  static final TextEditingController _noteController = TextEditingController();
 
 
   int totale = 0;
   int totale_a = 0;
+  Colli colli;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
+    setColli();
+    calculus();
+  }
 
+  void setColli() async {
+    print ("ID DAILY JOB " + globals.id_daily_job.toString());
+    Colli cl =
+    await api.getColli(globals.id_daily_job);
+    if (cl != null) {
+      colli = cl;
+      setState(() {
+        _seccoController.text=colli.secco.toString();
+        _muraleController.text=colli.murale.toString();
+        _geloController.text=colli.gelo.toString();
+        _avanzi_seccoController.text=colli.a_secco.toString();
+        _avanzi_muraleController.text=colli.a_murale.toString();
+        _avanzi_geloController.text=colli.a_gelo.toString();
+        _noteController.text=colli.note.toString();
+
+      });
+    }else{
+      _seccoController.text='0';
+      _muraleController.text='0';
+      _geloController.text='0';
+      _avanzi_seccoController.text='0';
+      _avanzi_muraleController.text='0';
+      _avanzi_geloController.text='0';
+      _noteController.text = '';
+      totale=0;
+      totale_a=0;
+    }
   }
 
   void calculus(){
@@ -53,7 +90,6 @@ class _BoxScreen extends State<BoxScreen> {
       _avanzi_muraleController.text = int.parse(_avanzi_muraleController.text).toString();
       _geloController.text = int.parse(_geloController.text).toString();
       _avanzi_geloController.text = int.parse(_avanzi_geloController.text).toString();
-
 
     });
 
@@ -194,6 +230,23 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text('Tot. ' + totale_a.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0))
+                      ),
+                    ),
+                  ],
+                ), // row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    SizedBox(height: 0.0),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                            controller: _noteController,
+                            onEditingComplete: calculus,
+                            decoration: InputDecoration(labelText: 'note'),
+                            style:
+                            TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                   ],

@@ -53,13 +53,13 @@ class _DetailPage extends State<DetailPage> {
 
   void _deletePause(int id) async {
     api.removePause(id);
-    _pause = await api.fetchPause(widget.workers.work_day, widget.workers.id);
+    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id);
     setState(() {});
   }
 
   void setPause() async {
     List<Pause> lp =
-        await api.fetchPause(widget.workers.work_day, widget.workers.id);
+        await api.fetchPause(widget.workers.id_daily_job, widget.workers.id);
     if (lp != null) {
       _pause = lp;
       setState(() {});
@@ -68,8 +68,8 @@ class _DetailPage extends State<DetailPage> {
 
   void _addPause(String description, int durata) async {
     api.setPause(
-        widget.workers.work_day, description, durata, widget.workers.id);
-    _pause = await api.fetchPause(widget.workers.work_day, widget.workers.id);
+        widget.workers.id_daily_job, description, durata, widget.workers.id);
+    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id);
     setState(() {});
   }
 

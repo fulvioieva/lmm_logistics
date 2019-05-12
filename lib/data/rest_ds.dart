@@ -48,28 +48,29 @@ class RestDatasource {
               id: int.tryParse(h['id']),
               first_name: h['first_name'],
               last_name: h['last_name'],
-              work_day: int.tryParse(h['work_day']),
+              id_daily_job: int.tryParse(h['id_daily_job']),
               work_id: int.tryParse(h['work_id']),
               id_sito: int.tryParse(h['id_sito']),
               date_start: h['date_start'],
               date_end: h['date_end']);
-
+              globals.id_daily_job = int.tryParse(h['id_daily_job']);
           c.add(work);
         }
       }
+
       return c;
     });
   }
 
-  Future<Colli> getColli(int id_daily_work) async {
+  Future<Colli> getColli(int id_daily_job) async {
     Colli colli = null;
     var body =
-        json.encode({"method": "getColli", "id_daily_work": id_daily_work});
+        json.encode({"method": "getColli", "id_daily_job": id_daily_job});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       if (res["error_msg"] != "No colli") {
-        for (var h in res["users"]) {
+        for (var h in res["colli"]) {
       colli = new Colli(
               id: int.tryParse(h['id']),
               secco: int.tryParse(h['secco']),
@@ -139,8 +140,12 @@ class RestDatasource {
   }
 
   Future<bool> setDataIn(int record, DateTime data) async {
+    var x = globals.dataLavori.split('/');
+    String data2 = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
+    String data3 = data2 + data.toString().substring(10,data.toString().length);
+
     var body = json.encode(
-        {"method": "setDataIn", "datain": data.toString(), "id": record});
+        {"method": "setDataIn", "datain": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -149,11 +154,13 @@ class RestDatasource {
   }
 
   Future<bool> setDataOut(int record, DateTime data) async {
+    var x = globals.dataLavori.split('/');
+    String data2 = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
+    String data3 = data2 + data.toString().substring(10,data.toString().length);
     var body = json.encode(
-        {"method": "setDataOut", "dataout": data.toString(), "id": record});
+        {"method": "setDataOut", "dataout": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       print("JSON ->" + res.toString());
-      print("ID ->" + record.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
