@@ -33,7 +33,7 @@ class _BoxScreen extends State<BoxScreen> {
   void initState()  {
     super.initState();
     getColli();
-    calculus();
+
   }
 
   void setColli() async {
@@ -44,13 +44,11 @@ class _BoxScreen extends State<BoxScreen> {
         int.parse(_avanzi_seccoController.text),
         int.parse(_avanzi_muraleController.text),
         int.parse(_avanzi_geloController.text),
-        _noteController.text
-                      );
+        _noteController.text).whenComplete(calculus);
   }
 
   void getColli() async {
-    Colli cl =
-    await api.getColli(globals.id_daily_job);
+    Colli cl = await api.getColli(globals.id_daily_job).whenComplete(calculus);
     if (cl != null) {
       colli = cl;
       setState(() {
@@ -62,17 +60,27 @@ class _BoxScreen extends State<BoxScreen> {
         _avanzi_geloController.text=colli.a_gelo.toString();
         _noteController.text=colli.note.toString();
 
+        totale_a = int.parse(_avanzi_seccoController.text)  +
+            int.parse(_avanzi_muraleController.text) +
+            int.parse(_avanzi_geloController.text);
+
+        totale =  int.parse(_seccoController.text) +
+            int.parse(_muraleController.text) +
+            int.parse(_geloController.text) - totale_a;
+
       });
     }else{
-      _seccoController.text='0';
-      _muraleController.text='0';
-      _geloController.text='0';
-      _avanzi_seccoController.text='0';
-      _avanzi_muraleController.text='0';
-      _avanzi_geloController.text='0';
-      _noteController.text = '';
-      totale=0;
-      totale_a=0;
+      setState(() {
+        _seccoController.text = '0';
+        _muraleController.text = '0';
+        _geloController.text = '0';
+        _avanzi_seccoController.text = '0';
+        _avanzi_muraleController.text = '0';
+        _avanzi_geloController.text = '0';
+        _noteController.text = '';
+        totale = 0;
+        totale_a = 0;
+      });
     }
   }
 
@@ -91,9 +99,8 @@ class _BoxScreen extends State<BoxScreen> {
 
       totale =  int.parse(_seccoController.text) +
           int.parse(_muraleController.text) +
-          int.parse(_geloController.text) ;
+          int.parse(_geloController.text) - totale_a;
 
-      totale = totale - totale_a;
 
       _seccoController.text = int.parse(_seccoController.text).toString();
       _avanzi_seccoController.text = int.parse(_avanzi_seccoController.text).toString();

@@ -46,31 +46,27 @@ class _DetailPage extends State<DetailPage> {
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        setPause();
+        fetchPause();
       });
     }
   }
 
-  void _deletePause(int id) async {
-    api.removePause(id);
-    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id);
+  void refresh(){
     setState(() {});
   }
+  
+  void _deletePause(int id) async {
+    api.removePause(id);
+    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
+  }
 
-  void setPause() async {
-    List<Pause> lp =
-        await api.fetchPause(widget.workers.id_daily_job, widget.workers.id);
-    if (lp != null) {
-      _pause = lp;
-      setState(() {});
-    }
+  void fetchPause() async {
+    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
   }
 
   void _addPause(String description, int durata) async {
-    api.setPause(
-        widget.workers.id_daily_job, description, durata, widget.workers.id);
-    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id);
-    setState(() {});
+    api.setPause(widget.workers.id_daily_job, description, durata, widget.workers.id);
+    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
   }
 
   Future<String> _asyncInputDialog(BuildContext context) async {

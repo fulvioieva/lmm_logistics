@@ -18,26 +18,24 @@ class RestDatasource {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       User us;
-      if(res["error_msg"]!='Invalid credentitals') {
+      if (res["error_msg"] != 'Invalid credentitals') {
         for (var h in res["user"]) {
           us = new User(
-              username: h['username'],
-              password: h['password'],
-              id: h['id']);
+              username: h['username'], password: h['password'], id: h['id']);
         }
       }
       return us;
     });
   }
 
-
   Future<List<Workers>> fetchUsers() async {
     String utente = globals.userId.toString();
+    int dj;
     var x = globals.dataLavori.split('/');
-    String data = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
-    if (globals.logger)  print("Data Lavori " + data);
+    String data = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+    if (globals.logger) print("Data Lavori " + data);
     var body =
-    json.encode({"method": "getUtenti", "data": data, "utente": utente});
+        json.encode({"method": "getUtenti", "data": data, "utente": utente});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -53,25 +51,25 @@ class RestDatasource {
               id_sito: int.tryParse(h['id_sito']),
               date_start: h['date_start'],
               date_end: h['date_end']);
-              globals.id_daily_job = int.tryParse(h['id_daily_job']);
+          dj = int.tryParse(h['id_daily_job']);
           c.add(work);
         }
       }
-
+      globals.id_daily_job = dj == null ? 0 : dj;
       return c;
     });
   }
 
   Future<Colli> getColli(int id_daily_job) async {
     Colli colli = null;
-    var body =
-        json.encode({"method": "getColli", "id_daily_job": id_daily_job});
+    var body = json.encode(
+        {"method": "getColli", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       if (res["error_msg"] != "No colli") {
         for (var h in res["colli"]) {
-      colli = new Colli(
+          colli = new Colli(
               id: int.tryParse(h['id']),
               secco: int.tryParse(h['secco']),
               murale: int.tryParse(h['murale']),
@@ -79,18 +77,26 @@ class RestDatasource {
               a_secco: int.tryParse(h['a_secco']),
               a_murale: int.tryParse(h['a_murale']),
               a_gelo: int.tryParse(h['a_gelo']),
-              note: h['note']
-      );
-
+              note: h['note']);
         }
       }
       return colli;
     });
   }
 
-  Future<bool> setColli(int daily_job, int secco, int murale, int gelo, int a_secco, int a_murale, int a_gelo, String note) async {
-    var body = json.encode(
-        {"method": "setColli", "daily_job": daily_job, "secco":  secco.toString(), "murale": murale.toString(), "gelo": gelo.toString(), "a_secco": a_secco.toString(), "a_murale": a_murale.toString(), "a_gelo": a_gelo.toString(), "note": note});
+  Future<bool> setColli(int daily_job, int secco, int murale, int gelo,
+      int a_secco, int a_murale, int a_gelo, String note) async {
+    var body = json.encode({
+      "method": "setColli",
+      "daily_job": daily_job,
+      "secco": secco.toString(),
+      "murale": murale.toString(),
+      "gelo": gelo.toString(),
+      "a_secco": a_secco.toString(),
+      "a_murale": a_murale.toString(),
+      "a_gelo": a_gelo.toString(),
+      "note": note
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -98,19 +104,22 @@ class RestDatasource {
     });
   }
 
-  Future<List<Pause>> fetchPause(int id_daily_job, int id_user ) async {
-    var body =
-    json.encode({"method": "fetchPause", "id_user": id_user, "id_daily_job": id_daily_job});
+  Future<List<Pause>> fetchPause(int id_daily_job, int id_user) async {
+    var body = json.encode({
+      "method": "fetchPause",
+      "id_user": id_user,
+      "id_daily_job": id_daily_job
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      if (globals.logger)  print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       List<Pause> c = new List<Pause>();
       if (res["error_msg"] != "No Breaks") {
         for (var h in res["users"]) {
           Pause pause = new Pause(
-              id: int.tryParse(h['id']),
-              durata: int.tryParse(h['break_lenght']),
-              descrizione: h['break_description'],
+            id: int.tryParse(h['id']),
+            durata: int.tryParse(h['break_lenght']),
+            descrizione: h['break_description'],
           );
           c.add(pause);
         }
@@ -119,19 +128,24 @@ class RestDatasource {
     });
   }
 
-  Future<bool> setPause(int id_daily_job, String break_description, int break_lenght, int id_user) async {
-    var body = json.encode(
-        {"method": "setPause", "id": id_daily_job, "descrizione": break_description, "lunghezza": break_lenght, "id_user": id_user});
+  Future<bool> setPause(int id_daily_job, String break_description,
+      int break_lenght, int id_user) async {
+    var body = json.encode({
+      "method": "setPause",
+      "id": id_daily_job,
+      "descrizione": break_description,
+      "lunghezza": break_lenght,
+      "id_user": id_user
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      if (globals.logger)  print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
   }
 
   Future<bool> removePause(int id) async {
-    var body = json.encode(
-        {"method": "removePause", "id": id});
+    var body = json.encode({"method": "removePause", "id": id});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -141,13 +155,14 @@ class RestDatasource {
 
   Future<bool> setDataIn(int record, DateTime data) async {
     var x = globals.dataLavori.split('/');
-    String data2 = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
-    String data3 = data2 + data.toString().substring(10,data.toString().length);
+    String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+    String data3 =
+        data2 + data.toString().substring(10, data.toString().length);
 
-    var body = json.encode(
-        {"method": "setDataIn", "datain": data3, "id": record});
+    var body =
+        json.encode({"method": "setDataIn", "datain": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
-      if (globals.logger)  print("JSON ->" + res.toString());
+      if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
@@ -155,10 +170,61 @@ class RestDatasource {
 
   Future<bool> setDataOut(int record, DateTime data) async {
     var x = globals.dataLavori.split('/');
-    String data2 = x[2] + '-' + x[0] + '-' + x[1];//'2019-04-23';
-    String data3 = data2 + data.toString().substring(10,data.toString().length);
-    var body = json.encode(
-        {"method": "setDataOut", "dataout": data3, "id": record});
+    String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+    String data3 =
+        data2 + data.toString().substring(10, data.toString().length);
+    var body =
+        json.encode({"method": "setDataOut", "dataout": data3, "id": record});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+
+  Future<bool> removeInterinali(int id) async {
+    var body = json.encode({"method": "removeInterinali", "id": id});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+
+  Future<List<Workers>> fetchInterinali(int id_daily_job) async {
+    var body =
+    json.encode({"method": "fetchInterinali", "id_daily_job": id_daily_job.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      List<Workers> c = new List<Workers>();
+      if (res["error_msg"] != "No users") {
+        for (var h in res["users"]) {
+          Workers work = new Workers(
+              id: int.tryParse(h['id']),
+              first_name: h['first_name'],
+              last_name: h['last_name'],
+              id_daily_job: int.tryParse(h['id_daily_job']),
+              work_id: int.tryParse(h['work_id']),
+              id_sito: int.tryParse(h['id_sito']),
+              date_start: h['date_start'],
+              date_end: h['date_end']);
+          c.add(work);
+        }
+      }
+      return c;
+    });
+
+  }
+
+  Future<bool> setInterinali(
+      String first_name, String last_name, int id_daily_job) async {
+    var body = json.encode({
+      "method": "setInterinali",
+      "id_daily_job": id_daily_job.toString(),
+      "first_name": first_name,
+      "last_name": last_name
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
