@@ -184,7 +184,7 @@ class _DetailPage extends State<DetailPage> {
                     onPressed: () {
                       _asyncInputDialog(context);
                     },
-                    color: Colors.blue,
+                    color: Colors.green,
                     textColor: Colors.white,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
@@ -201,7 +201,7 @@ class _DetailPage extends State<DetailPage> {
                           MaterialPageRoute(
                               builder: (context) => HomeScreen()));
                     },
-                    color: Colors.blue,
+                    color: Colors.green,
                     textColor: Colors.white,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,

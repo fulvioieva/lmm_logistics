@@ -5,6 +5,7 @@ import './pages/adduser_screen.dart';
 import './pages/box_screen.dart';
 import './insertdate.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,10 +13,15 @@ class HomeScreen extends StatelessWidget {
     //var formatter = new DateFormat('EEE dd-MM-yyyy');
     //String formatted = formatter.format(now);
     var x = globals.dataLavori.split('/');
-    String data = x[1] + '-' + x[0] + '-' + x[2];//'2019-04-23';
-
+    String data = x[1] + '-' + x[0] + '-' + x[2]; //'2019-04-23';
 
     return MaterialApp(
+      theme: new ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.green, //Changing this will change the color of the TabBar
+        accentColor: Colors.greenAccent,
+      ),
+
       home: DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -28,18 +34,19 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
-                  child: Text('Configurazione',style: TextStyle(color: Colors.black, fontSize: 30.0)),
+                  child: Text('Configurazione',
+                      style: TextStyle(color: Colors.black, fontSize: 30.0)),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.green ,
                   ),
                 ),
-                ListTile(leading: new Icon(Icons.date_range),
-                  title: Text('Cambia data',style: TextStyle(color: Colors.blue, fontSize: 30.0)),
+                ListTile(
+                  leading: new Icon(Icons.date_range),
+                  title: Text('Cambia data',
+                      style: TextStyle(color: Colors.green, fontSize: 30.0)),
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => InsertDate()));
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => InsertDate()));
                   },
                 ),
                 /*ListTile(
@@ -58,22 +65,21 @@ class HomeScreen extends StatelessWidget {
             bottom: TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.access_time)),
-                Tab(icon: Icon(Icons.border_color)),
                 Tab(icon: Icon(Icons.transfer_within_a_station)),
+                Tab(icon: Icon(Icons.border_color)),
               ],
             ),
+            backgroundColor: (Colors.green),
             title: Text(data),
           ),
-
           body: TabBarView(
             children: [
               TimeScreen(title: "Risorse presenti"),
-              BoxScreen(),
               AddUserScreen(),
+              BoxScreen(),
             ],
           ),
         ),
-
       ),
     );
   }

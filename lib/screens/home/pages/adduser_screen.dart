@@ -59,6 +59,7 @@ class _AddUserScreen extends State<AddUserScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inserimento Utenti'),
+        backgroundColor: (Colors.green),
       ),
       body: Center(
         child: ListView(
@@ -101,7 +102,7 @@ class _AddUserScreen extends State<AddUserScreen> {
                       onPressed: () {
                         _addInterinali();
                       },
-                      color: Colors.blue,
+                      color: Colors.green,
                       textColor: Colors.white,
                       padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       splashColor: Colors.grey,
@@ -117,7 +118,7 @@ class _AddUserScreen extends State<AddUserScreen> {
                             MaterialPageRoute(builder: (context) => HomeScreen()));
 
                       },
-                      color: Colors.blue,
+                      color: Colors.green,
                       textColor: Colors.white,
                       padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       splashColor: Colors.grey,

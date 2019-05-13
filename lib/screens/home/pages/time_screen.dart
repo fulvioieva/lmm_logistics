@@ -13,7 +13,7 @@ class TimeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title),backgroundColor: (Colors.green),
       ),
       body: FutureBuilder<List<Workers>>(
         future: api.fetchUsers(),

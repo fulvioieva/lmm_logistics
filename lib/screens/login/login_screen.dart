@@ -59,7 +59,7 @@ class LoginScreenState extends State<LoginScreen>
     var loginBtn = new RaisedButton(
       onPressed: _submit,
       child: new Text("LOGIN"),
-      color: Colors.primaries[0],
+      color: Colors.green,
     );
     var loginForm = new Column(
       children: <Widget>[

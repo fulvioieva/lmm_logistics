@@ -12,8 +12,11 @@ class LoginApp extends StatelessWidget {
     return new MaterialApp(
       title: 'LMM Logistics',
       theme: new ThemeData(
-        primarySwatch: Colors.red,
+        brightness: Brightness.light,
+        primaryColor: Colors.green, //Changing this will change the color of the TabBar
+        accentColor: Colors.greenAccent,
       ),
+
       routes: routes,
     );
   }

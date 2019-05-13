@@ -134,6 +134,7 @@ class _BoxScreen extends State<BoxScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inserimento colli'),
+        backgroundColor: (Colors.green),
       ),
       body: Center(
         child: ListView(
@@ -280,7 +281,7 @@ class _BoxScreen extends State<BoxScreen> {
                     calculus();
                     setColli();
                   },
-                  color: Colors.blue,
+                  color: Colors.green,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   splashColor: Colors.grey,
@@ -293,7 +294,7 @@ class _BoxScreen extends State<BoxScreen> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
-                  color: Colors.blue,
+                  color: Colors.green,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   splashColor: Colors.grey,

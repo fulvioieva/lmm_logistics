@@ -57,6 +57,7 @@ class _InsertDate extends State<InsertDate> {
           children: <Widget>[
             Column(children: <Widget>[
               new Row(children: <Widget>[
+                SizedBox(height: 50.0),
                 new Expanded(
                     child: new TextFormField(
                   decoration: new InputDecoration(
@@ -74,7 +75,7 @@ class _InsertDate extends State<InsertDate> {
                     _chooseDate(context, _controller.text);
                   }),
                 )
-              ]),
+              ]),SizedBox(height: 50.0),
 
                 RaisedButton(
                   child: Text("Prosegui"),
@@ -84,7 +85,7 @@ class _InsertDate extends State<InsertDate> {
                         MaterialPageRoute(
                             builder: (context) => HomeScreen()));
                   },
-                  color: Colors.blue,
+                  color: Colors.green,
                   textColor: Colors.white,
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   splashColor: Colors.grey,
