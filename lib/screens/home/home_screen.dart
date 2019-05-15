@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import './pages/time_screen.dart';
 import './pages/adduser_screen.dart';
+import './pages/resume_screen.dart';
 import './pages/box_screen.dart';
 import './insertdate.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
@@ -18,12 +19,12 @@ class HomeScreen extends StatelessWidget {
     return MaterialApp(
       theme: new ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.green, //Changing this will change the color of the TabBar
+        primaryColor: Colors.green,
+        //Changing this will change the color of the TabBar
         accentColor: Colors.greenAccent,
       ),
-
       home: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           drawer: Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
@@ -37,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                   child: Text('Configurazione',
                       style: TextStyle(color: Colors.black, fontSize: 30.0)),
                   decoration: BoxDecoration(
-                    color: Colors.green ,
+                    color: Colors.green,
                   ),
                 ),
                 ListTile(
@@ -67,6 +68,7 @@ class HomeScreen extends StatelessWidget {
                 Tab(icon: Icon(Icons.access_time)),
                 Tab(icon: Icon(Icons.transfer_within_a_station)),
                 Tab(icon: Icon(Icons.border_color)),
+                Tab(icon: Icon(Icons.date_range)),
               ],
             ),
             backgroundColor: (Colors.green),
@@ -77,6 +79,7 @@ class HomeScreen extends StatelessWidget {
               TimeScreen(title: "Risorse presenti"),
               AddUserScreen(),
               BoxScreen(),
+              ResumeScreen(),
             ],
           ),
         ),

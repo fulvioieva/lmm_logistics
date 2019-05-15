@@ -7,6 +7,7 @@ class Colli {
   int a_secco;
   int a_murale;
   int a_gelo;
+  int pedane;
   String note;
 
   Colli({ this.id,
@@ -17,6 +18,7 @@ class Colli {
             this.a_secco,
             this.a_murale,
             this.a_gelo,
+            this.pedane,
             this.note
   });
 
@@ -30,6 +32,7 @@ class Colli {
     this.a_secco = obj["a_secco"];
     this.a_gelo = obj["a_gelo"];
     this.a_murale = obj["a_murale"];
+    this.pedane = obj["pedane"];
     this.note = obj["note"];
   }
 
@@ -43,6 +46,7 @@ class Colli {
     map["a_secco"] = a_secco;
     map["a_gelo"] = a_gelo;
     map["a_murale"] = a_murale;
+    map["pedane"] = pedane;
     map["note"] = note;
 
     return map;

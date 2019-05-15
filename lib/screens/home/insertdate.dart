@@ -15,7 +15,7 @@ class InsertDate extends StatefulWidget {
 
 class _InsertDate extends State<InsertDate> {
   final TextEditingController _controller = new TextEditingController();
-
+  final f = new DateFormat('dd MM yyyy');
   DateTime convertToDate(String input) {
     try {
       var d = new DateFormat.yMd().parseStrict(input);
@@ -41,8 +41,8 @@ class _InsertDate extends State<InsertDate> {
     if (result == null) return;
 
     setState(() {
-      _controller.text = new DateFormat.yMd().format(result);
-      globals.dataLavori = _controller.text;
+      _controller.text = f.format(result);
+      globals.dataLavori = new DateFormat.yMd().format(result);
     });
   }
 

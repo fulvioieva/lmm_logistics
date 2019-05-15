@@ -77,6 +77,7 @@ class RestDatasource {
               a_secco: int.tryParse(h['a_secco']),
               a_murale: int.tryParse(h['a_murale']),
               a_gelo: int.tryParse(h['a_gelo']),
+              pedane: int.tryParse(h['pedane']),
               note: h['note']);
         }
       }
@@ -85,7 +86,7 @@ class RestDatasource {
   }
 
   Future<bool> setColli(int daily_job, int secco, int murale, int gelo,
-      int a_secco, int a_murale, int a_gelo, String note) async {
+      int a_secco, int a_murale, int a_gelo, int pedane, String note) async {
     var body = json.encode({
       "method": "setColli",
       "daily_job": daily_job,
@@ -95,6 +96,7 @@ class RestDatasource {
       "a_secco": a_secco.toString(),
       "a_murale": a_murale.toString(),
       "a_gelo": a_gelo.toString(),
+      "pedane": pedane.toString(),
       "note": note
     });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
@@ -153,12 +155,12 @@ class RestDatasource {
     });
   }
 
-  Future<bool> setDataIn(int record, DateTime data) async {
+  Future<bool> setDataIn(int record, String data) async {
     var x = globals.dataLavori.split('/');
     String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
-    String data3 =
-        data2 + data.toString().substring(10, data.toString().length);
-
+    //String data3 = data2 + data.toString().substring(10, data.toString().length);
+    String data3 = data2 + data;
+    if (globals.logger) print("DATA ->" + data3);
     var body =
         json.encode({"method": "setDataIn", "datain": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
@@ -168,11 +170,12 @@ class RestDatasource {
     });
   }
 
-  Future<bool> setDataOut(int record, DateTime data) async {
+  Future<bool> setDataOut(int record, String data) async {
     var x = globals.dataLavori.split('/');
     String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
-    String data3 =
-        data2 + data.toString().substring(10, data.toString().length);
+    //String data3 = data2 + data.toString().substring(10, data.toString().length);
+    String data3 = data2 + data;
+    if (globals.logger) print("DATA ->" + data3);
     var body =
         json.encode({"method": "setDataOut", "dataout": data3, "id": record});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {

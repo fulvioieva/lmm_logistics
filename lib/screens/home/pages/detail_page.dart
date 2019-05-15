@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:lmm_logistics/datetime_picker_formfield/datetime_picker_formfield.dart';
+//import 'package:lmm_logistics/datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
+import 'package:lmm_logistics/screens/home/pages/data/PickerData.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
+import 'package:lmm_logistics/flutter_picker/flutter_picker.dart';
+import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 class DetailPage extends StatefulWidget {
   final Workers workers;
@@ -23,19 +27,22 @@ DateTime convertDateFromString(String strDate) {
 }
 
 class _DetailPage extends State<DetailPage> {
+
   // Show some different formats.
+  /*
   final formats = {
     InputType.both: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
     InputType.date: DateFormat('yyyy-MM-dd'),
     InputType.time: DateFormat("HH:mm"),
   };
+  */
   RestDatasource api = new RestDatasource();
 
   // Changeable in demo
-  InputType inputType = InputType.time;
+  //InputType inputType = InputType.time;
   bool editable = false;
-  DateTime date_entrata;
-  DateTime date_uscita;
+  String date_entrata='';
+  String date_uscita='';
   List<Pause> _pause = [];
 
   String descrizione = 'Generica';
@@ -51,10 +58,51 @@ class _DetailPage extends State<DetailPage> {
     }
   }
 
+  showPickerArrayIn(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: JsonDecoder().convert(PickerData),
+          isArray: true,
+        ),
+        hideHeader: true,
+        selecteds: [0, 0],
+        title: Text("Ora inizio lavori"),
+        onConfirm: (Picker picker, List value) {
+          //print(value.toString());
+          //print(picker.getSelectedValues());
+          setState(() {
+            date_entrata = ' ' + picker.getSelectedValues()[0].toString() +':'+ picker.getSelectedValues()[1] ;
+            api.setDataIn(widget.workers.work_id, date_entrata);
+          });
+
+        }
+    ).showDialog(context);
+  }  showPickerArrayOut(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: JsonDecoder().convert(PickerData),
+          isArray: true,
+        ),
+        hideHeader: true,
+        selecteds: [0, 0],
+        title: Text("Ora fine lavori"),
+
+        onConfirm: (Picker picker, List value) {
+          //print(value.toString());
+          //print(picker.getSelectedValues());
+          setState(() {
+            date_uscita = ' ' + picker.getSelectedValues()[0].toString() +':'+ picker.getSelectedValues()[1] ;
+            api.setDataOut(widget.workers.work_id, date_uscita);
+          });
+        }
+    ).showDialog(context);
+  }
+
+
   void refresh(){
     setState(() {});
   }
-  
+
   void _deletePause(int id) async {
     api.removePause(id);
     _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
@@ -144,11 +192,25 @@ class _DetailPage extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(widget.workers.first_name)),
+        appBar: AppBar(title: Text(widget.workers.last_name +' '+ widget.workers.first_name)),
         body: Padding(
           padding: EdgeInsets.all(16.0),
           child: ListView(
-            children: <Widget>[
+            children: <Widget>[SizedBox(height: 10.0),
+              RaisedButton(
+                child: Text('Data inizio lavori'),
+                onPressed: () {
+                  showPickerArrayIn(context);
+                },
+              ),widget.workers.date_start != null ? Text(widget.workers.date_start.substring(10,16)) : Container(),
+              SizedBox(height: 10.0),
+              RaisedButton(
+                child: Text('Data fine lavori'),
+                onPressed: () {
+                  showPickerArrayOut(context);
+                },
+              ),widget.workers.date_end != null ? Text(widget.workers.date_end.substring(10,16)) : Container(),
+              /*
               DateTimePickerFormField(
                 inputType: inputType,
                 format: formats[inputType],
@@ -160,8 +222,9 @@ class _DetailPage extends State<DetailPage> {
                       date_entrata = dt;
                       api.setDataIn(widget.workers.work_id, date_entrata);
                     }),
-              ),
-              Text('ora inizio turno'),
+              ),*/
+              //Text('ora inizio turno'),
+              /*
               DateTimePickerFormField(
                 inputType: inputType,
                 format: formats[inputType],
@@ -173,8 +236,9 @@ class _DetailPage extends State<DetailPage> {
                       date_uscita = dt;
                       api.setDataOut(widget.workers.work_id, date_uscita);
                     }),
-              ),
-              Text('ora fine turno'),
+              ),*/
+              //Text('ora fine turno'),
+              SizedBox(height: 50.0),
               Row(children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(20.0),
@@ -194,7 +258,7 @@ class _DetailPage extends State<DetailPage> {
                 ),
                 Expanded(
                   child: RaisedButton(
-                    child: Text("Ritorna"),
+                    child: Text("Conferma"),
                     onPressed: () {
                       Navigator.push(
                           context,

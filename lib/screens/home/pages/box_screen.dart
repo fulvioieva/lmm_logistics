@@ -22,6 +22,7 @@ class _BoxScreen extends State<BoxScreen> {
   static final TextEditingController _avanzi_seccoController = TextEditingController();
   static final TextEditingController _avanzi_muraleController = TextEditingController();
   static final TextEditingController _avanzi_geloController = TextEditingController();
+  static final TextEditingController _pedaneController = TextEditingController();
   static final TextEditingController _noteController = TextEditingController();
 
 
@@ -44,6 +45,7 @@ class _BoxScreen extends State<BoxScreen> {
         int.parse(_avanzi_seccoController.text),
         int.parse(_avanzi_muraleController.text),
         int.parse(_avanzi_geloController.text),
+        int.parse(_pedaneController.text),
         _noteController.text).whenComplete(calculus);
   }
 
@@ -58,13 +60,14 @@ class _BoxScreen extends State<BoxScreen> {
         _avanzi_seccoController.text=colli.a_secco.toString();
         _avanzi_muraleController.text=colli.a_murale.toString();
         _avanzi_geloController.text=colli.a_gelo.toString();
+        _pedaneController.text=colli.pedane.toString();
         _noteController.text=colli.note.toString();
 
         totale_a = int.parse(_avanzi_seccoController.text)  +
             int.parse(_avanzi_muraleController.text) +
             int.parse(_avanzi_geloController.text);
 
-        totale =  int.parse(_seccoController.text) +
+        totale =  int.parse(_pedaneController.text) + int.parse(_seccoController.text) +
             int.parse(_muraleController.text) +
             int.parse(_geloController.text) - totale_a;
 
@@ -77,6 +80,7 @@ class _BoxScreen extends State<BoxScreen> {
         _avanzi_seccoController.text = '0';
         _avanzi_muraleController.text = '0';
         _avanzi_geloController.text = '0';
+        _pedaneController.text = '0';
         _noteController.text = '';
         totale = 0;
         totale_a = 0;
@@ -92,12 +96,13 @@ class _BoxScreen extends State<BoxScreen> {
       if (_avanzi_seccoController.text=='')_avanzi_seccoController.text='0';
       if (_avanzi_muraleController.text=='')_avanzi_muraleController.text='0';
       if (_avanzi_geloController.text=='')_avanzi_geloController.text='0';
+      if (_pedaneController.text=='')_pedaneController.text='0';
 
       totale_a = int.parse(_avanzi_seccoController.text)  +
           int.parse(_avanzi_muraleController.text) +
           int.parse(_avanzi_geloController.text);
 
-      totale =  int.parse(_seccoController.text) +
+      totale =  int.parse(_seccoController.text) + int.parse(_pedaneController.text) +
           int.parse(_muraleController.text) +
           int.parse(_geloController.text) - totale_a;
 
@@ -108,6 +113,7 @@ class _BoxScreen extends State<BoxScreen> {
       _avanzi_muraleController.text = int.parse(_avanzi_muraleController.text).toString();
       _geloController.text = int.parse(_geloController.text).toString();
       _avanzi_geloController.text = int.parse(_avanzi_geloController.text).toString();
+      _pedaneController.text = int.parse(_pedaneController.text).toString();
 
     });
 
@@ -147,7 +153,7 @@ class _BoxScreen extends State<BoxScreen> {
                     SizedBox(height: 0.0),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
                           controller: _seccoController,
                             onEditingComplete: calculus,
@@ -159,7 +165,7 @@ class _BoxScreen extends State<BoxScreen> {
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
                             controller: _avanzi_seccoController,
                             onEditingComplete: calculus,
@@ -178,7 +184,7 @@ class _BoxScreen extends State<BoxScreen> {
                     SizedBox(height: 0.0),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
                             controller: _muraleController,
                             onEditingComplete: calculus,
@@ -190,7 +196,7 @@ class _BoxScreen extends State<BoxScreen> {
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
                             controller: _avanzi_muraleController,
                             onEditingComplete: calculus,
@@ -209,7 +215,7 @@ class _BoxScreen extends State<BoxScreen> {
                     SizedBox(height: 0.0),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
                             controller: _geloController,
                             onEditingComplete: calculus,
@@ -221,7 +227,7 @@ class _BoxScreen extends State<BoxScreen> {
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
                             controller: _avanzi_geloController,
                             onEditingComplete: calculus,
@@ -232,6 +238,31 @@ class _BoxScreen extends State<BoxScreen> {
                                 TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
+                  ],
+                ), // row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    SizedBox(height: 0.0),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: TextFormField(
+                            controller: _pedaneController,
+                            onEditingComplete: calculus,
+                            decoration:
+                            InputDecoration(labelText: 'Pedane'),
+                            keyboardType: TextInputType.number,
+                            style:
+                            TextStyle(color: Colors.blue, fontSize: 20.0)),
+                      ),
+                    ),/*
+                    Flexible(
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Tot. ' + totale_a.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0))
+                      ),
+                    ),*/
                   ],
                 ), // row
                 Row(
@@ -253,7 +284,7 @@ class _BoxScreen extends State<BoxScreen> {
                     ),
                   ],
                 ), // row
-                Row(
+                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     SizedBox(height: 0.0),
