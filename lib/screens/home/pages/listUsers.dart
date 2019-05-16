@@ -1,8 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/screens/home/pages/detail_page.dart';
+import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 class ListUsers extends StatefulWidget {
   final List<Workers> workers;
@@ -15,8 +16,30 @@ class ListUsers extends StatefulWidget {
 }
 
 class _ListUsers extends State<ListUsers> {
-  void title() {
-    print('ciao');
+  List<Workers> interinali = [];
+  RestDatasource api = new RestDatasource();
+
+  void initState() {
+    super.initState();
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        fetchInterinali();
+      });
+    }
+  }
+
+  void refresh() {
+    setState(() {});
+  }
+
+  void message() {
+    print('Caricamento pagina terminato');
+  }
+
+  void fetchInterinali() async {
+    interinali =
+        await api.fetchInterinali(globals.id_daily_job).whenComplete(refresh);
   }
 
   @override
@@ -35,8 +58,6 @@ class _ListUsers extends State<ListUsers> {
             workers.first_name,
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
           subtitle: Row(
             children: <Widget>[
               Expanded(
@@ -69,8 +90,17 @@ class _ListUsers extends State<ListUsers> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DetailPage(workers: workers)))
-                .whenComplete(title);
+                .whenComplete(message);
           },
+        );
+
+    Card makeCardInterinali(Workers workers) => Card(
+          elevation: 8.0,
+          margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(32, 44, 96, .9)),
+            child: makeListTile(workers),
+          ),
         );
 
     Card makeCard(Workers workers) => Card(
@@ -84,19 +114,34 @@ class _ListUsers extends State<ListUsers> {
 
     final makeBody = Container(
         // decoration: BoxDecoration(color: Color.fromRGBO(58, 66, 86, 1.0)),
-        child: widget.workers.length > 0
-            ? ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: widget.workers.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return makeCard(widget.workers[index]);
-                },
-              )
-            : Center(
-                child: Text('Nessun utente nella tua squadra',
-                    style:
-                        new TextStyle(fontSize: 22.0, color: Colors.white))));
+        child: ListView(
+            children: <Widget>[
+      widget.workers.length > 0
+          ? ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: widget.workers.length,
+              itemBuilder: (BuildContext context, int index) {
+                return makeCard(widget.workers[index]);
+              },
+            )
+          : Center(
+              child: Text('Nessun utente nella tua squadra',
+                  style: new TextStyle(fontSize: 22.0, color: Colors.white))),
+      //interinali.length > 0
+      //    ?
+      ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: interinali.length,
+        itemBuilder: (BuildContext context, int index) {
+          return makeCardInterinali(interinali[index]);
+        },
+      )
+      //  : Center(
+      //      child: Text('Nessun interinale nella tua squadra',
+      //          style: new TextStyle(fontSize: 22.0, color: Colors.white))),
+    ]));
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),

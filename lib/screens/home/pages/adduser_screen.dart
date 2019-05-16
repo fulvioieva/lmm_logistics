@@ -112,7 +112,7 @@ class _AddUserScreen extends State<AddUserScreen> {
                   ),
                   Expanded(
                     child: RaisedButton(
-                      child: Text("Ritorna"),
+                      child: Text("Indietro"),
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => HomeScreen()));

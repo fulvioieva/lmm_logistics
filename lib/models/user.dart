@@ -7,7 +7,7 @@ class User {
   User.map(dynamic obj) {
     this.username = obj["username"];
     this.password = obj["password"];
-    this.id = obj["id"];
+    this.id = obj["id"].toString();
 
   }
 

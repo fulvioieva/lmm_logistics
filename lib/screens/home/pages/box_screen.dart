@@ -320,7 +320,7 @@ class _BoxScreen extends State<BoxScreen> {
               ),
               Expanded(
                 child: RaisedButton(
-                  child: Text("Ritorna"),
+                  child: Text("Indietro"),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => HomeScreen()));

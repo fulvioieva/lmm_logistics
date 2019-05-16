@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../../main.dart';
 import './pages/time_screen.dart';
 import './pages/adduser_screen.dart';
 import './pages/resume_screen.dart';
 import './pages/box_screen.dart';
 import './insertdate.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
+import 'package:lmm_logistics/data/database_helper.dart';
 
 class HomeScreen extends StatelessWidget {
+
+  var db = new DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     //var now = new DateTime.now();
@@ -48,6 +52,16 @@ class HomeScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => InsertDate()));
+                  },
+                ),
+                ListTile(
+                  leading: new Icon(Icons.date_range),
+                  title: Text('Reset utente',
+                      style: TextStyle(color: Colors.green, fontSize: 30.0)),
+                  onTap: () {
+                    db.deleteUsers();
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => LoginApp()));
                   },
                 ),
                 /*ListTile(

@@ -12,6 +12,14 @@ class ResumeScreen extends StatefulWidget {
 
 class _ResumeScreen extends State<ResumeScreen> {
 
+  double fontsize = 1.3;
+
+  int tot_colli_lavorati =0;
+  int tot_ore_economia = 0;
+  int tot_ore_lavorate = 0;
+  int totale_pers = 0;
+  int media = 0;
+  int media_mensile = 0;
   RestDatasource api = new RestDatasource();
 
   void initState() {
@@ -33,13 +41,66 @@ class _ResumeScreen extends State<ResumeScreen> {
         child: ListView(
           children: <Widget>[
             Column(
-              children: <Widget>[
+              children: <Widget>[SizedBox(height: 50.0),
+
+
+
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(height: 0.0),
-                    Text('Totale colli lavorati'),
-                    Text('Totale ore economia'),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Tot. colli lavorati = '+tot_colli_lavorati.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: fontsize)),
+                      ),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Tot. ore economia = '+tot_ore_economia.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: fontsize)),
+                      ),
+                    ),
+                  ],
+                ), // row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 0.0),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Tot. ore lavorate = '+tot_ore_lavorate.toString()
+                            ,style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: fontsize)),
+                      ),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Tot. persone = '+totale_pers.toString()
+                            ,style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: fontsize)),
+                      ),
+                    ),
+                  ],
+                ), // row
+
+                SizedBox(height: 0.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 0.0),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text('Media colli/ore = '+media.toString()+" %",style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: fontsize)),
+                      ),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text('Tot. colli mese = '+media_mensile.toString()+" %",style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: fontsize)),
+                      ),
+                    ),
                   ],
                 ), // row
                 Row(children: <Widget>[
@@ -61,7 +122,7 @@ class _ResumeScreen extends State<ResumeScreen> {
                   ),
                   Expanded(
                     child: RaisedButton(
-                      child: Text("Ritorna"),
+                      child: Text("Indietro"),
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => HomeScreen()));

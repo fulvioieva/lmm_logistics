@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+
 //import 'package:lmm_logistics/datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
@@ -27,7 +28,6 @@ DateTime convertDateFromString(String strDate) {
 }
 
 class _DetailPage extends State<DetailPage> {
-
   // Show some different formats.
   /*
   final formats = {
@@ -41,8 +41,8 @@ class _DetailPage extends State<DetailPage> {
   // Changeable in demo
   //InputType inputType = InputType.time;
   bool editable = false;
-  String date_entrata='';
-  String date_uscita='';
+  String date_entrata = '';
+  String date_uscita = '';
   List<Pause> _pause = [];
 
   String descrizione = 'Generica';
@@ -58,6 +58,25 @@ class _DetailPage extends State<DetailPage> {
     }
   }
 
+  showPickerArray(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: JsonDecoder().convert(PickerData2),
+          isArray: true,
+        ),
+        hideHeader: true,
+        selecteds: [0, 0],
+        title: Text("inserisci la durata"),
+        onConfirm: (Picker picker, List value) {
+          //print(value.toString());
+          //print(picker.getSelectedValues());
+          setState(() {
+            _radioValue1 = picker.getSelectedValues()[0];
+            api.setDataIn(widget.workers.work_id, date_entrata);
+          });
+        }).showDialog(context);
+  }
+
   showPickerArrayIn(BuildContext context) {
     Picker(
         adapter: PickerDataAdapter<String>(
@@ -71,13 +90,16 @@ class _DetailPage extends State<DetailPage> {
           //print(value.toString());
           //print(picker.getSelectedValues());
           setState(() {
-            date_entrata = ' ' + picker.getSelectedValues()[0].toString() +':'+ picker.getSelectedValues()[1] ;
+            date_entrata = ' ' +
+                picker.getSelectedValues()[0].toString() +
+                ':' +
+                picker.getSelectedValues()[1];
             api.setDataIn(widget.workers.work_id, date_entrata);
           });
+        }).showDialog(context);
+  }
 
-        }
-    ).showDialog(context);
-  }  showPickerArrayOut(BuildContext context) {
+  showPickerArrayOut(BuildContext context) {
     Picker(
         adapter: PickerDataAdapter<String>(
           pickerdata: JsonDecoder().convert(PickerData),
@@ -86,35 +108,42 @@ class _DetailPage extends State<DetailPage> {
         hideHeader: true,
         selecteds: [0, 0],
         title: Text("Ora fine lavori"),
-
         onConfirm: (Picker picker, List value) {
           //print(value.toString());
           //print(picker.getSelectedValues());
           setState(() {
-            date_uscita = ' ' + picker.getSelectedValues()[0].toString() +':'+ picker.getSelectedValues()[1] ;
+            date_uscita = ' ' +
+                picker.getSelectedValues()[0].toString() +
+                ':' +
+                picker.getSelectedValues()[1];
             api.setDataOut(widget.workers.work_id, date_uscita);
           });
-        }
-    ).showDialog(context);
+        }).showDialog(context);
   }
 
-
-  void refresh(){
+  void refresh() {
     setState(() {});
   }
 
   void _deletePause(int id) async {
     api.removePause(id);
-    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
+    _pause = await api
+        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
   }
 
   void fetchPause() async {
-    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
+    _pause = await api
+        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
   }
 
   void _addPause(String description, int durata) async {
-    api.setPause(widget.workers.id_daily_job, description, durata, widget.workers.id);
-    _pause = await api.fetchPause(widget.workers.id_daily_job, widget.workers.id).whenComplete(refresh);
+    api.setPause(
+        widget.workers.id_daily_job, description, durata, widget.workers.id);
+    _pause = await api
+        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
   }
 
   Future<String> _asyncInputDialog(BuildContext context) async {
@@ -127,7 +156,7 @@ class _DetailPage extends State<DetailPage> {
           title: Text('Inserimento pause'),
           content: Column(children: <Widget>[
             Text(
-              'Durata:',
+              'Durata',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
@@ -149,7 +178,18 @@ class _DetailPage extends State<DetailPage> {
                       _radioValue1 = int.parse(value);
                     });
                   },
-                )
+                ),
+                SizedBox(height: 10.0),
+                /*
+                RaisedButton(
+                  child: Text('Orario inizio economia'),
+                  onPressed: () {
+                    showPickerArray(context);
+                    setState(() {
+
+                    });
+                  },
+                ),*/
               ],
             ),
             Row(
@@ -192,24 +232,50 @@ class _DetailPage extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(widget.workers.last_name +' '+ widget.workers.first_name)),
+        appBar: AppBar(
+            title: Text(
+                widget.workers.last_name + ' ' + widget.workers.first_name)),
         body: Padding(
           padding: EdgeInsets.all(16.0),
           child: ListView(
-            children: <Widget>[SizedBox(height: 10.0),
+            children: <Widget>[
+              SizedBox(height: 10.0),
               RaisedButton(
-                child: Text('Data inizio lavori'),
+                child: Text('Orario inizio lavori'),
                 onPressed: () {
                   showPickerArrayIn(context);
                 },
-              ),widget.workers.date_start != null ? Text(widget.workers.date_start.substring(10,16)) : Container(),
+              ),
+              widget.workers.date_start != null
+                  ? Text(widget.workers.date_start.substring(10, 16))
+                  : Container(),
               SizedBox(height: 10.0),
               RaisedButton(
-                child: Text('Data fine lavori'),
+                child: Text('Orario fine lavori'),
                 onPressed: () {
                   showPickerArrayOut(context);
                 },
-              ),widget.workers.date_end != null ? Text(widget.workers.date_end.substring(10,16)) : Container(),
+              ),
+              widget.workers.date_end != null
+                  ? Text(widget.workers.date_end.substring(10, 16))
+                  : Container(),
+              SizedBox(height: 10.0),
+              RaisedButton(
+                child: Text('Orario inizio economia'),
+                onPressed: () {
+                  showPickerArrayIn(context);
+                },
+              ),
+              Text(''),
+              SizedBox(height: 10.0),
+              RaisedButton(
+                child: Text('Orario fine economia'),
+                onPressed: () {
+                  showPickerArrayOut(context);
+                },
+              ),
+              Text(''),
+
               /*
               DateTimePickerFormField(
                 inputType: inputType,
@@ -242,7 +308,6 @@ class _DetailPage extends State<DetailPage> {
               Row(children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(20.0),
-
                   child: RaisedButton(
                     child: Text("Inserisci Pausa"),
                     onPressed: () {
@@ -252,9 +317,7 @@ class _DetailPage extends State<DetailPage> {
                     textColor: Colors.white,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
-
                   ),
-
                 ),
                 Expanded(
                   child: RaisedButton(
@@ -269,11 +332,9 @@ class _DetailPage extends State<DetailPage> {
                     textColor: Colors.white,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
-
                   ),
                 ),
               ]),
-
 
               Column(
                 children: _pause
