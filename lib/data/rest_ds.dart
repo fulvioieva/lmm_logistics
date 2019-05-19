@@ -6,6 +6,7 @@ import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
 import 'package:lmm_logistics/models/colli.dart';
+import 'package:lmm_logistics/models/economia.dart';
 
 class RestDatasource {
   NetworkUtil _netUtil = new NetworkUtil();
@@ -234,4 +235,116 @@ class RestDatasource {
       return res["error"];
     });
   }
+
+  Future<bool> setEconomia(String data_inizio, String data_fine, int id_daily_job, int id_user) async {
+    var body = json.encode({
+      "method": "setEconomia",
+      "id_user": id_user.toString(),
+      "id_daily_job": id_daily_job.toString(),
+      "data_inizio": data_inizio,
+      "data_fine": data_fine
+    });
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+
+  Future<bool> delEconomia(int id) async {
+    var body = json.encode({"method": "delEconomia", "id": id});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+
+  Future<Economia> getEconomia(int id_daily_job,int id_user) async {
+    Economia economia = null;
+    var body = json.encode(
+        {"method": "getEconomia", "id_daily_job": id_daily_job.toString(), "id_user": id_user.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No ore economia") {
+        for (var h in res["economia"]) {
+          economia = new Economia(
+              id: int.tryParse(h['id']),
+              id_daily_job: int.tryParse(h['id_daily_job']),
+              id_user: int.tryParse(h['id_user']),
+              data_inizio: h['data_inizio'],
+              data_fine: h['data_fine']);
+        }
+      }
+      return economia;
+    });
+  }
+
+  Future<String> getEconomiaTot(int id_daily_job) async {
+    String economia = null;
+    var body = json.encode(
+        {"method": "getEconomiaTot", "id_daily_job": id_daily_job.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No economia to measure") {
+        for (var h in res["totale"]) {
+          economia = h['totale'];
+        }
+      }
+      return economia;
+    });
+  }
+  Future<String> getTotaleColli(int id_daily_job) async {
+    String quantita = null;
+    var body = json.encode(
+        {"method": "getTotaleColli", "id_daily_job": id_daily_job.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No qty to measure") {
+        for (var h in res["totale"]) {
+          quantita = h['totale'];
+        }
+      }
+      return quantita;
+    });
+  }
+
+  Future<String> getTotalePersone(int id_daily_job) async {
+    String quantita = null;
+    var body = json.encode(
+        {"method": "getTotalePersone", "id_daily_job": id_daily_job.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No persons") {
+        for (var h in res["persone"]) {
+          quantita = h['persone'];
+        }
+      }
+      return quantita;
+    });
+  }
+
+  Future<String> getTotaleOre(int id_daily_job) async {
+    String quantita = null;
+    var body = json.encode(
+        {"method": "getTotaleOre", "id_daily_job": id_daily_job.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No ore") {
+        for (var h in res["ore"]) {
+          quantita = h['ore'];
+        }
+      }
+      return quantita;
+    });
+  }
+
+
+
+
 }
