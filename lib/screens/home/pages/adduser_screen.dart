@@ -48,7 +48,7 @@ class _AddUserScreen extends State<AddUserScreen> {
     if(nome.text!="" && cognome.text!="" ) {
       api.setInterinali(nome.text, cognome.text, globals.id_daily_job);
       _interinali =
-      await api.fetchInterinali(globals.id_daily_job).whenComplete(refresh);
+      await api.fetchInterinali(globals.id_daily_job).whenComplete(refresh);;
       nome.text = "";
       cognome.text = "";
     }

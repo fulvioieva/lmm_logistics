@@ -1,6 +1,6 @@
 library my_prj.globals;
 
-bool logger = false;
+bool logger = true;
 bool resetDB = false;
 bool isLoggedIn = false;
 int userId = 0;

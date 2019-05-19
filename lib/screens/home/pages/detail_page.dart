@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
-//import 'package:lmm_logistics/datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
@@ -28,21 +27,11 @@ DateTime convertDateFromString(String strDate) {
 }
 
 class _DetailPage extends State<DetailPage> {
-  // Show some different formats.
-  /*
-  final formats = {
-    InputType.both: DateFormat("EEEE, MMMM d, yyyy 'at' h:mma"),
-    InputType.date: DateFormat('yyyy-MM-dd'),
-    InputType.time: DateFormat("HH:mm"),
-  };
-  */
-  RestDatasource api = new RestDatasource();
 
-  // Changeable in demo
-  //InputType inputType = InputType.time;
+  RestDatasource api = new RestDatasource();
   bool editable = false;
-  String date_entrata = '';
-  String date_uscita = '';
+  String date_entrata ;
+  String date_uscita ;
   List<Pause> _pause = [];
 
   String descrizione = 'Generica';
@@ -58,23 +47,16 @@ class _DetailPage extends State<DetailPage> {
     }
   }
 
-  showPickerArray(BuildContext context) {
-    Picker(
-        adapter: PickerDataAdapter<String>(
-          pickerdata: JsonDecoder().convert(PickerData2),
-          isArray: true,
-        ),
-        hideHeader: true,
-        selecteds: [0, 0],
-        title: Text("inserisci la durata"),
-        onConfirm: (Picker picker, List value) {
-          //print(value.toString());
-          //print(picker.getSelectedValues());
-          setState(() {
-            _radioValue1 = picker.getSelectedValues()[0];
-            api.setDataIn(widget.workers.work_id, date_entrata);
-          });
-        }).showDialog(context);
+  void setDataIn(int id , String entrata) async{
+
+    api.setDataIn(id, entrata).whenComplete(refresh);
+
+  }
+
+  void setDataOut(int id , String entrata) async{
+
+    api.setDataOut(id, entrata).whenComplete(refresh);
+
   }
 
   showPickerArrayIn(BuildContext context) {
@@ -94,7 +76,7 @@ class _DetailPage extends State<DetailPage> {
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            api.setDataIn(widget.workers.work_id, date_entrata);
+            setDataIn(widget.workers.work_id, date_entrata);
           });
         }).showDialog(context);
   }
@@ -116,7 +98,8 @@ class _DetailPage extends State<DetailPage> {
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            api.setDataOut(widget.workers.work_id, date_uscita);
+            setDataOut(widget.workers.work_id, date_uscita);
+
           });
         }).showDialog(context);
   }
@@ -246,9 +229,9 @@ class _DetailPage extends State<DetailPage> {
                   showPickerArrayIn(context);
                 },
               ),
-              widget.workers.date_start != null
-                  ? Text(widget.workers.date_start.substring(10, 16))
-                  : Container(),
+              date_entrata != null
+                  ? Text(date_entrata)
+                  : widget.workers.date_start!=null?Text(widget.workers.date_start.substring(10, 16)):Container(),
               SizedBox(height: 10.0),
               RaisedButton(
                 child: Text('Orario fine lavori'),
@@ -256,9 +239,9 @@ class _DetailPage extends State<DetailPage> {
                   showPickerArrayOut(context);
                 },
               ),
-              widget.workers.date_end != null
-                  ? Text(widget.workers.date_end.substring(10, 16))
-                  : Container(),
+              date_uscita != null
+                  ? Text(date_uscita)
+                  : widget.workers.date_end!=null?Text(widget.workers.date_end.substring(10, 16)):Container(),
               SizedBox(height: 10.0),
               RaisedButton(
                 child: Text('Orario inizio economia'),

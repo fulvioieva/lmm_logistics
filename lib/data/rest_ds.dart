@@ -100,9 +100,11 @@ class RestDatasource {
       "pedane": pedane.toString(),
       "note": note
     });
+    print(body);
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
+
       return res["error"];
     });
   }
@@ -282,7 +284,7 @@ class RestDatasource {
   }
 
   Future<String> getEconomiaTot(int id_daily_job) async {
-    String economia = null;
+    String economia = "0";
     var body = json.encode(
         {"method": "getEconomiaTot", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
@@ -329,7 +331,7 @@ class RestDatasource {
   }
 
   Future<String> getTotaleOre(int id_daily_job) async {
-    String quantita = null;
+    String quantita = "0";
     var body = json.encode(
         {"method": "getTotaleOre", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {

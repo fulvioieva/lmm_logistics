@@ -97,6 +97,7 @@ class _BoxScreen extends State<BoxScreen> {
       if (_avanzi_muraleController.text=='')_avanzi_muraleController.text='0';
       if (_avanzi_geloController.text=='')_avanzi_geloController.text='0';
       if (_pedaneController.text=='')_pedaneController.text='0';
+      if (_noteController.text=='')_noteController.text=' ';
 
       totale_a = int.parse(_avanzi_seccoController.text)  +
           int.parse(_avanzi_muraleController.text) +
@@ -121,19 +122,6 @@ class _BoxScreen extends State<BoxScreen> {
 
   }
 
-  Widget _boxText() {
-    new Flexible(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: TextFormField(
-          onSaved: (val) {
-            totale = int.parse(val);
-          },
-          decoration: InputDecoration(labelText: 'xxxx'),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
