@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:intl/intl.dart';
-
 import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
+import 'package:lmm_logistics/models/economia.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/screens/home/pages/data/PickerData.dart';
 import 'package:flutter/scheduler.dart';
@@ -32,7 +31,10 @@ class _DetailPage extends State<DetailPage> {
   bool editable = false;
   String date_entrata ;
   String date_uscita ;
+  String date_entrata_economia;
+  String date_uscita_economia ;
   List<Pause> _pause = [];
+  Economia _economia ;
 
   String descrizione = 'Generica';
   int _radioValue1 = 15;
@@ -42,21 +44,31 @@ class _DetailPage extends State<DetailPage> {
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
+
+        fetchEconomia();
         fetchPause();
       });
     }
   }
 
   void setDataIn(int id , String entrata) async{
-
     api.setDataIn(id, entrata).whenComplete(refresh);
-
   }
 
-  void setDataOut(int id , String entrata) async{
+  void setDataOut(int id , String uscita) async{
+    api.setDataOut(id, uscita).whenComplete(refresh);
+  }
 
-    api.setDataOut(id, entrata).whenComplete(refresh);
+  void setDataInEconomia(int id_daily_job , String entrata) async{
+    api.setEconomia(entrata, null, id_daily_job, widget.workers.id).whenComplete(refresh);
+  }
 
+  void setDataOutEconomia(int id_daily_job , String uscita) async{
+    api.setEconomia(null, uscita, id_daily_job,  widget.workers.id).whenComplete(refresh);
+  }
+
+  void refresh() {
+    setState(() {});
   }
 
   showPickerArrayIn(BuildContext context) {
@@ -104,9 +116,51 @@ class _DetailPage extends State<DetailPage> {
         }).showDialog(context);
   }
 
-  void refresh() {
-    setState(() {});
+  showPickerEconomiaIn(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: JsonDecoder().convert(PickerData),
+          isArray: true,
+        ),
+        hideHeader: true,
+        selecteds: [0, 0],
+        title: Text("Ora inizio economia"),
+        onConfirm: (Picker picker, List value) {
+          //print(value.toString());
+          //print(picker.getSelectedValues());
+          setState(() {
+            date_entrata_economia = ' ' +
+                picker.getSelectedValues()[0].toString() +
+                ':' +
+                picker.getSelectedValues()[1];
+            setDataInEconomia(widget.workers.id_daily_job, date_entrata_economia);
+          });
+        }).showDialog(context);
   }
+
+  showPickerEconomiaOut(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerdata: JsonDecoder().convert(PickerData),
+          isArray: true,
+        ),
+        hideHeader: true,
+        selecteds: [0, 0],
+        title: Text("Ora fine economia"),
+        onConfirm: (Picker picker, List value) {
+          //print(value.toString());
+          //print(picker.getSelectedValues());
+          setState(() {
+            date_uscita_economia = ' ' +
+                picker.getSelectedValues()[0].toString() +
+                ':' +
+                picker.getSelectedValues()[1];
+            setDataOutEconomia(widget.workers.id_daily_job, date_uscita_economia);
+
+          });
+        }).showDialog(context);
+  }
+
 
   void _deletePause(int id) async {
     api.removePause(id);
@@ -118,6 +172,11 @@ class _DetailPage extends State<DetailPage> {
   void fetchPause() async {
     _pause = await api
         .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
+  }
+
+  void fetchEconomia() async {
+    _economia = await api.getEconomia(widget.workers.id_daily_job, widget.workers.id)
         .whenComplete(refresh);
   }
 
@@ -246,18 +305,22 @@ class _DetailPage extends State<DetailPage> {
               RaisedButton(
                 child: Text('Orario inizio economia'),
                 onPressed: () {
-                  showPickerArrayIn(context);
+                  showPickerEconomiaIn(context);
                 },
               ),
-              Text(''),
+              date_entrata_economia != null
+                  ? Text(date_entrata_economia)
+                  : _economia!=null?Text(_economia.data_inizio.substring(10, 16)):Container(),
               SizedBox(height: 10.0),
               RaisedButton(
                 child: Text('Orario fine economia'),
                 onPressed: () {
-                  showPickerArrayOut(context);
+                  showPickerEconomiaOut(context);
                 },
               ),
-              Text(''),
+              date_uscita_economia != null
+                  ? Text(date_uscita_economia)
+                  : _economia!=null?Text(_economia.data_fine.substring(10, 16)):Container(),
 
               /*
               DateTimePickerFormField(

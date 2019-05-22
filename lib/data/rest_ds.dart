@@ -239,12 +239,25 @@ class RestDatasource {
   }
 
   Future<bool> setEconomia(String data_inizio, String data_fine, int id_daily_job, int id_user) async {
+    var x = globals.dataLavori.split('/');
+    String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+    //String data3 = data2 + data.toString().substring(10, data.toString().length);
+    String di = data_inizio!=null?data_inizio:' ';
+    String df = data_fine!=null?data_fine:' ';
+    String data_inizio_bis = data2 + di;
+    String data_fine_bis = data2 + df;
+    if (data_inizio==null) data_inizio_bis = '0000-00-00 00:00';
+    if (data_fine==null) data_fine_bis = '0000-00-00 00:00';
+    if (globals.logger) print("INIZIO ->" + data_inizio_bis);
+    if (globals.logger) print("FINE ->" + data_fine_bis);
+    if (globals.logger) print("USER ->" + id_user.toString());
+    if (globals.logger) print("DJOB ->" + id_daily_job.toString());
     var body = json.encode({
       "method": "setEconomia",
       "id_user": id_user.toString(),
       "id_daily_job": id_daily_job.toString(),
-      "data_inizio": data_inizio,
-      "data_fine": data_fine
+      "data_inizio": data_inizio_bis,
+      "data_fine": data_fine_bis
     });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
@@ -291,8 +304,8 @@ class RestDatasource {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       if (res["error_msg"] != "No economia to measure") {
-        for (var h in res["totale"]) {
-          economia = h['totale'];
+        for (var h in res["timediff"]) {
+          economia = h['timediff'];
         }
       }
       return economia;
@@ -303,6 +316,24 @@ class RestDatasource {
     var body = json.encode(
         {"method": "getTotaleColli", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No qty to measure") {
+        for (var h in res["totale"]) {
+          quantita = h['totale'];
+        }
+      }
+      return quantita;
+    });
+  }
+  Future<String> getTotaleColliMese(int id_user, String mese, String anno) async {
+    String quantita = null;
+    var body = json.encode(
+        {"method": "getTotaleColliMese", "id_user": id_user.toString(), "mese": mese, "anno": anno});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("id  ->" + id_user.toString());
+      if (globals.logger) print("mese ->" + mese);
+      if (globals.logger) print("anno ->" + anno);
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       if (res["error_msg"] != "No qty to measure") {
