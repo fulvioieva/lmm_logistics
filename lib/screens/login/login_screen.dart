@@ -129,6 +129,7 @@ class LoginScreenState extends State<LoginScreen>
   @override
   void onLoginError(String errorTxt) {
     _showSnackBar(errorTxt);
+    print("Error ->" + errorTxt);
     setState(() => _isLoading = false);
   }
 

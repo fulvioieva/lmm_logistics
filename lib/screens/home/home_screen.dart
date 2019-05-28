@@ -7,11 +7,12 @@ import './pages/box_screen.dart';
 import './insertdate.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/data/database_helper.dart';
+import 'package:lmm_logistics/auth.dart';
 
 class HomeScreen extends StatelessWidget {
 
   var db = new DatabaseHelper();
-
+  var authStateProvider = new AuthStateProvider();
   @override
   Widget build(BuildContext context) {
     //var now = new DateTime.now();
@@ -60,6 +61,10 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.green, fontSize: 30.0)),
                   onTap: () {
                     db.deleteUsers();
+                    globals.id_daily_job=0;
+                    globals.userId=0;
+
+                    authStateProvider.notify(AuthState.LOGGED_OUT);
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => LoginApp()));
                   },

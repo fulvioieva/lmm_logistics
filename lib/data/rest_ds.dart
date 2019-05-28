@@ -7,6 +7,8 @@ import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
 import 'package:lmm_logistics/models/colli.dart';
 import 'package:lmm_logistics/models/economia.dart';
+import 'package:lmm_logistics/models/working_user.dart';
+import 'package:intl/intl.dart';
 
 class RestDatasource {
   NetworkUtil _netUtil = new NetworkUtil();
@@ -159,10 +161,22 @@ class RestDatasource {
   }
 
   Future<bool> setDataIn(int record, String data) async {
-    var x = globals.dataLavori.split('/');
-    String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
-    //String data3 = data2 + data.toString().substring(10, data.toString().length);
+
+    /*
+    var now = new DateTime.now();
+    var formatter = new DateFormat('MM');
+    String mese = formatter.format(now);
+    formatter = new DateFormat('yyyy');
+    String anno = formatter.format(now);
+    formatter = new DateFormat('dd');
+    String giorno = formatter.format(now);
+    String data2 = anno + '-' + mese + '-' + giorno; //'2019-04-23';
     String data3 = data2 + data;
+*/
+
+    var x = globals.dataLavori.split('/');
+    String data3 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+
     if (globals.logger) print("DATA ->" + data3);
     var body =
         json.encode({"method": "setDataIn", "datain": data3, "id": record});
@@ -174,10 +188,19 @@ class RestDatasource {
   }
 
   Future<bool> setDataOut(int record, String data) async {
-    var x = globals.dataLavori.split('/');
-    String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
-    //String data3 = data2 + data.toString().substring(10, data.toString().length);
+    var now = new DateTime.now();
+    var formatter = new DateFormat('MM');
+    String mese = formatter.format(now);
+    formatter = new DateFormat('yyyy');
+    String anno = formatter.format(now);
+    formatter = new DateFormat('dd');
+    String giorno = formatter.format(now);
+    String data2 = anno + '-' + mese + '-' + giorno; //'2019-04-23';
     String data3 = data2 + data;
+
+    //var x = globals.dataLavori.split('/');
+    //String data3 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+
     if (globals.logger) print("DATA ->" + data3);
     var body =
         json.encode({"method": "setDataOut", "dataout": data3, "id": record});
@@ -198,8 +221,8 @@ class RestDatasource {
   }
 
   Future<List<Workers>> fetchInterinali(int id_daily_job) async {
-    var body =
-    json.encode({"method": "fetchInterinali", "id_daily_job": id_daily_job.toString()});
+    var body = json.encode(
+        {"method": "fetchInterinali", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -220,7 +243,6 @@ class RestDatasource {
       }
       return c;
     });
-
   }
 
   Future<bool> setInterinali(
@@ -238,16 +260,17 @@ class RestDatasource {
     });
   }
 
-  Future<bool> setEconomia(String data_inizio, String data_fine, int id_daily_job, int id_user) async {
+  Future<bool> setEconomia(String data_inizio, String data_fine,
+      int id_daily_job, int id_user) async {
     var x = globals.dataLavori.split('/');
     String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
     //String data3 = data2 + data.toString().substring(10, data.toString().length);
-    String di = data_inizio!=null?data_inizio:' ';
-    String df = data_fine!=null?data_fine:' ';
+    String di = data_inizio != null ? data_inizio : ' ';
+    String df = data_fine != null ? data_fine : ' ';
     String data_inizio_bis = data2 + di;
     String data_fine_bis = data2 + df;
-    if (data_inizio==null) data_inizio_bis = '0000-00-00 00:00';
-    if (data_fine==null) data_fine_bis = '0000-00-00 00:00';
+    if (data_inizio == null) data_inizio_bis = '0000-00-00 00:00';
+    if (data_fine == null) data_fine_bis = '0000-00-00 00:00';
     if (globals.logger) print("INIZIO ->" + data_inizio_bis);
     if (globals.logger) print("FINE ->" + data_fine_bis);
     if (globals.logger) print("USER ->" + id_user.toString());
@@ -275,10 +298,13 @@ class RestDatasource {
     });
   }
 
-  Future<Economia> getEconomia(int id_daily_job,int id_user) async {
+  Future<Economia> getEconomia(int id_daily_job, int id_user) async {
     Economia economia = null;
-    var body = json.encode(
-        {"method": "getEconomia", "id_daily_job": id_daily_job.toString(), "id_user": id_user.toString()});
+    var body = json.encode({
+      "method": "getEconomia",
+      "id_daily_job": id_daily_job.toString(),
+      "id_user": id_user.toString()
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -296,8 +322,27 @@ class RestDatasource {
     });
   }
 
+  Future<List<WorkingUsers>> getUserAgenzia(int id_daily_job) async {
+    List<WorkingUsers> users = new List<WorkingUsers>();
+    var body = json.encode({"method": "getUserAgenzia","id_daily_job": id_daily_job.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No users") {
+        for (var h in res["users"]) {
+          WorkingUsers user = new WorkingUsers(
+              id: int.tryParse(h['id']),
+              first_name: h['first_name'],
+              last_name: h['last_name']);
+          users.add(user);
+        }
+      }
+      return users;
+    });
+  }
+
   Future<String> getEconomiaTot(int id_daily_job) async {
-    String economia = "0";
+    String economia = null;
     var body = json.encode(
         {"method": "getEconomiaTot", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
@@ -311,6 +356,7 @@ class RestDatasource {
       return economia;
     });
   }
+
   Future<String> getTotaleColli(int id_daily_job) async {
     String quantita = null;
     var body = json.encode(
@@ -326,10 +372,16 @@ class RestDatasource {
       return quantita;
     });
   }
-  Future<String> getTotaleColliMese(int id_user, String mese, String anno) async {
+
+  Future<String> getTotaleColliMese(
+      int id_user, String mese, String anno) async {
     String quantita = null;
-    var body = json.encode(
-        {"method": "getTotaleColliMese", "id_user": id_user.toString(), "mese": mese, "anno": anno});
+    var body = json.encode({
+      "method": "getTotaleColliMese",
+      "id_user": id_user.toString(),
+      "mese": mese,
+      "anno": anno
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("id  ->" + id_user.toString());
       if (globals.logger) print("mese ->" + mese);
@@ -347,8 +399,10 @@ class RestDatasource {
 
   Future<String> getTotalePersone(int id_daily_job) async {
     String quantita = null;
-    var body = json.encode(
-        {"method": "getTotalePersone", "id_daily_job": id_daily_job.toString()});
+    var body = json.encode({
+      "method": "getTotalePersone",
+      "id_daily_job": id_daily_job.toString()
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -377,7 +431,42 @@ class RestDatasource {
     });
   }
 
+  Future<bool> setDailyJob(int id_daily_job, int id_user) async {
+    var body = json.encode({
+      "method": "setDailyJob",
+      "id_daily_job": id_daily_job.toString(),
+      "id_user": id_user.toString()
+    });
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
 
+  Future<String> getTotaleOreMese(
+      int id_user, String mese, String anno) async {
+    String ore = null;
+    var body = json.encode({
+      "method": "getTotaleOreMese",
+      "id_user": id_user.toString(),
+      "mese": mese,
+      "anno": anno
+    });
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("id  ->" + id_user.toString());
+      if (globals.logger) print("mese ->" + mese);
+      if (globals.logger) print("anno ->" + anno);
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No ore") {
+        for (var h in res["ore"]) {
+          ore = h['ore'];
+        }
+      }
+      return ore;
+    });
+  }
 
 
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
-
 import 'package:intl/intl.dart';
 import 'dart:async';
 
@@ -34,6 +33,7 @@ class _InsertDate extends State<InsertDate> {
 
     var result = await showDatePicker(
         context: context,
+        locale : const Locale("it","IT"),
         initialDate: initialDate,
         firstDate: new DateTime(1900),
         lastDate: new DateTime.now());
@@ -56,6 +56,13 @@ class _InsertDate extends State<InsertDate> {
         child: ListView(
           children: <Widget>[
             Column(children: <Widget>[
+              SizedBox(height: 50.0),
+              new Image.asset(
+              'assets/intro.jpg',
+              width: 600.0,
+              height: 240.0,
+              fit: BoxFit.contain,
+            ),
               new Row(children: <Widget>[
                 SizedBox(height: 50.0),
                 new Expanded(

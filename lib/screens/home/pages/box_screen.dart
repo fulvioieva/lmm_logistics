@@ -5,7 +5,6 @@ import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 class BoxScreen extends StatefulWidget {
-
   @override
   _BoxScreen createState() {
     return new _BoxScreen();
@@ -13,115 +12,129 @@ class BoxScreen extends StatefulWidget {
 }
 
 class _BoxScreen extends State<BoxScreen> {
-
   RestDatasource api = new RestDatasource();
 
   static final TextEditingController _seccoController = TextEditingController();
-  static final TextEditingController _muraleController = TextEditingController();
+  static final TextEditingController _muraleController =
+      TextEditingController();
   static final TextEditingController _geloController = TextEditingController();
-  static final TextEditingController _avanzi_seccoController = TextEditingController();
-  static final TextEditingController _avanzi_muraleController = TextEditingController();
-  static final TextEditingController _avanzi_geloController = TextEditingController();
-  static final TextEditingController _pedaneController = TextEditingController();
+  static final TextEditingController _avanzi_seccoController =
+      TextEditingController();
+  static final TextEditingController _avanzi_muraleController =
+      TextEditingController();
+  static final TextEditingController _avanzi_geloController =
+      TextEditingController();
+  static final TextEditingController _pedaneController =
+      TextEditingController();
   static final TextEditingController _noteController = TextEditingController();
-
 
   int totale = 0;
   int totale_a = 0;
   Colli colli;
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     getColli();
-
   }
 
   void setColli() async {
-    await api.setColli(globals.id_daily_job,
-        int.parse(_seccoController.text),
-        int.parse(_muraleController.text),
-        int.parse(_geloController.text),
-        int.parse(_avanzi_seccoController.text),
-        int.parse(_avanzi_muraleController.text),
-        int.parse(_avanzi_geloController.text),
-        int.parse(_pedaneController.text),
-        _noteController.text).whenComplete(calculus);
+    await api
+        .setColli(
+            globals.id_daily_job,
+            int.parse(_seccoController.text),
+            int.parse(_muraleController.text),
+            int.parse(_geloController.text),
+            int.parse(_avanzi_seccoController.text),
+            int.parse(_avanzi_muraleController.text),
+            int.parse(_avanzi_geloController.text),
+            int.parse(_pedaneController.text),
+            _noteController.text)
+        .whenComplete(calculus);
   }
 
   void getColli() async {
     Colli cl = await api.getColli(globals.id_daily_job).whenComplete(calculus);
     if (cl != null) {
       colli = cl;
-      setState(() {
-        _seccoController.text=colli.secco.toString();
-        _muraleController.text=colli.murale.toString();
-        _geloController.text=colli.gelo.toString();
-        _avanzi_seccoController.text=colli.a_secco.toString();
-        _avanzi_muraleController.text=colli.a_murale.toString();
-        _avanzi_geloController.text=colli.a_gelo.toString();
-        _pedaneController.text=colli.pedane.toString();
-        _noteController.text=colli.note.toString();
+      if (this.mounted) {
+        setState(() {
+          _seccoController.text = colli.secco.toString();
+          _muraleController.text = colli.murale.toString();
+          _geloController.text = colli.gelo.toString();
+          _avanzi_seccoController.text = colli.a_secco.toString();
+          _avanzi_muraleController.text = colli.a_murale.toString();
+          _avanzi_geloController.text = colli.a_gelo.toString();
+          _pedaneController.text = colli.pedane.toString();
+          _noteController.text = colli.note.toString();
 
-        totale_a = int.parse(_avanzi_seccoController.text)  +
-            int.parse(_avanzi_muraleController.text) +
-            int.parse(_avanzi_geloController.text);
+          totale_a = int.parse(_avanzi_seccoController.text) +
+              int.parse(_avanzi_muraleController.text) +
+              int.parse(_avanzi_geloController.text);
 
-        totale =  int.parse(_pedaneController.text) + int.parse(_seccoController.text) +
-            int.parse(_muraleController.text) +
-            int.parse(_geloController.text) - totale_a;
-
-      });
-    }else{
-      setState(() {
-        _seccoController.text = '0';
-        _muraleController.text = '0';
-        _geloController.text = '0';
-        _avanzi_seccoController.text = '0';
-        _avanzi_muraleController.text = '0';
-        _avanzi_geloController.text = '0';
-        _pedaneController.text = '0';
-        _noteController.text = '';
-        totale = 0;
-        totale_a = 0;
-      });
+          totale = int.parse(_pedaneController.text) +
+              int.parse(_seccoController.text) +
+              int.parse(_muraleController.text) +
+              int.parse(_geloController.text) -
+              totale_a;
+        });
+      }
+    } else {
+      if (this.mounted) {
+        setState(() {
+          _seccoController.text = '';
+          _muraleController.text = '';
+          _geloController.text = '';
+          _avanzi_seccoController.text = '';
+          _avanzi_muraleController.text = '';
+          _avanzi_geloController.text = '';
+          _pedaneController.text = '';
+          _noteController.text = '';
+          totale = 0;
+          totale_a = 0;
+        });
+      }
     }
   }
 
-  void calculus(){
-    setState(() {
-      if (_seccoController.text=='')_seccoController.text='0';
-      if (_muraleController.text=='')_muraleController.text='0';
-      if (_geloController.text=='')_geloController.text='0';
-      if (_avanzi_seccoController.text=='')_avanzi_seccoController.text='0';
-      if (_avanzi_muraleController.text=='')_avanzi_muraleController.text='0';
-      if (_avanzi_geloController.text=='')_avanzi_geloController.text='0';
-      if (_pedaneController.text=='')_pedaneController.text='0';
-      if (_noteController.text=='')_noteController.text=' ';
+  void calculus() {
+    if (this.mounted) {
+      setState(() {
+        if (_seccoController.text == '') _seccoController.text = '0';
+        if (_muraleController.text == '') _muraleController.text = '0';
+        if (_geloController.text == '') _geloController.text = '0';
+        if (_avanzi_seccoController.text == '')
+          _avanzi_seccoController.text = '0';
+        if (_avanzi_muraleController.text == '')
+          _avanzi_muraleController.text = '0';
+        if (_avanzi_geloController.text == '')
+          _avanzi_geloController.text = '0';
+        if (_pedaneController.text == '') _pedaneController.text = '0';
+        if (_noteController.text == '') _noteController.text = ' ';
 
-      totale_a = int.parse(_avanzi_seccoController.text)  +
-          int.parse(_avanzi_muraleController.text) +
-          int.parse(_avanzi_geloController.text);
+        totale_a = int.parse(_avanzi_seccoController.text) +
+            int.parse(_avanzi_muraleController.text) +
+            int.parse(_avanzi_geloController.text);
 
-      totale =  int.parse(_seccoController.text) + int.parse(_pedaneController.text) +
-          int.parse(_muraleController.text) +
-          int.parse(_geloController.text) - totale_a;
+        totale = int.parse(_seccoController.text) +
+            int.parse(_pedaneController.text) +
+            int.parse(_muraleController.text) +
+            int.parse(_geloController.text) -
+            totale_a;
 
-
-      _seccoController.text = int.parse(_seccoController.text).toString();
-      _avanzi_seccoController.text = int.parse(_avanzi_seccoController.text).toString();
-      _muraleController.text = int.parse(_muraleController.text).toString() ;
-      _avanzi_muraleController.text = int.parse(_avanzi_muraleController.text).toString();
-      _geloController.text = int.parse(_geloController.text).toString();
-      _avanzi_geloController.text = int.parse(_avanzi_geloController.text).toString();
-      _pedaneController.text = int.parse(_pedaneController.text).toString();
-
-    });
-
-
-
+        _seccoController.text = int.parse(_seccoController.text).toString();
+        _avanzi_seccoController.text =
+            int.parse(_avanzi_seccoController.text).toString();
+        _muraleController.text = int.parse(_muraleController.text).toString();
+        _avanzi_muraleController.text =
+            int.parse(_avanzi_muraleController.text).toString();
+        _geloController.text = int.parse(_geloController.text).toString();
+        _avanzi_geloController.text =
+            int.parse(_avanzi_geloController.text).toString();
+        _pedaneController.text = int.parse(_pedaneController.text).toString();
+      });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +156,7 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
-                          controller: _seccoController,
+                            controller: _seccoController,
                             onEditingComplete: calculus,
                             decoration: InputDecoration(labelText: 'secco'),
                             keyboardType: TextInputType.number,
@@ -238,13 +251,12 @@ class _BoxScreen extends State<BoxScreen> {
                         child: TextFormField(
                             controller: _pedaneController,
                             onEditingComplete: calculus,
-                            decoration:
-                            InputDecoration(labelText: 'Pedane'),
+                            decoration: InputDecoration(labelText: 'Pedane'),
                             keyboardType: TextInputType.number,
                             style:
-                            TextStyle(color: Colors.blue, fontSize: 20.0)),
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
-                    ),/*
+                    ), /*
                     Flexible(
                       child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -260,19 +272,25 @@ class _BoxScreen extends State<BoxScreen> {
                     Flexible(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('Tot. ' + totale.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),),
-
+                        child: Text(
+                          'Tot. ' + totale.toString(),
+                          style: DefaultTextStyle.of(context)
+                              .style
+                              .apply(fontSizeFactor: 2.0),
+                        ),
                       ),
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Tot. ' + totale_a.toString(),style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0))
-                      ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Tot. ' + totale_a.toString(),
+                              style: DefaultTextStyle.of(context)
+                                  .style
+                                  .apply(fontSizeFactor: 2.0))),
                     ),
                   ],
                 ), // row
-                 Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     SizedBox(height: 0.0),
@@ -284,7 +302,7 @@ class _BoxScreen extends State<BoxScreen> {
                             onEditingComplete: calculus,
                             decoration: InputDecoration(labelText: 'note'),
                             style:
-                            TextStyle(color: Colors.blue, fontSize: 20.0)),
+                                TextStyle(color: Colors.blue, fontSize: 20.0)),
                       ),
                     ),
                   ],

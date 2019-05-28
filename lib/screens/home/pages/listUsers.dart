@@ -114,8 +114,7 @@ class _ListUsers extends State<ListUsers> {
 
     final makeBody = Container(
         // decoration: BoxDecoration(color: Color.fromRGBO(58, 66, 86, 1.0)),
-        child: ListView(
-            children: <Widget>[
+        child:
       widget.workers.length > 0
           ? ListView.builder(
               scrollDirection: Axis.vertical,
@@ -130,18 +129,18 @@ class _ListUsers extends State<ListUsers> {
                   style: new TextStyle(fontSize: 22.0, color: Colors.white))),
       //interinali.length > 0
       //    ?
-      ListView.builder(
+   /*   ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: interinali.length,
         itemBuilder: (BuildContext context, int index) {
           return makeCardInterinali(interinali[index]);
         },
-      )
+      )*/
       //  : Center(
       //      child: Text('Nessun interinale nella tua squadra',
       //          style: new TextStyle(fontSize: 22.0, color: Colors.white))),
-    ]));
+    );
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),

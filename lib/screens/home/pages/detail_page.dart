@@ -35,9 +35,9 @@ class _DetailPage extends State<DetailPage> {
   String date_uscita_economia ;
   List<Pause> _pause = [];
   Economia _economia ;
-
+  List<String> _timepause = ['15', '30', '45', '60', '120'];
   String descrizione = 'Generica';
-  int _radioValue1 = 15;
+  String _valorePausa = '15';
 
   void initState() {
     super.initState();
@@ -68,7 +68,9 @@ class _DetailPage extends State<DetailPage> {
   }
 
   void refresh() {
-    setState(() {});
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   showPickerArrayIn(BuildContext context) {
@@ -207,19 +209,21 @@ class _DetailPage extends State<DetailPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(_radioValue1.toString()),
-                DropdownButton<String>(
-                  items: <String>['15', '30', '45'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String value) {
+                //Text(_radioValue1.toString()),
+                DropdownButton(
+                  hint: Text('Scegli la durata'), // Not necessary for Option 1
+                  value: _valorePausa,
+                  onChanged: (newValue) {
                     setState(() {
-                      _radioValue1 = int.parse(value);
+                      _valorePausa = newValue;
                     });
                   },
+                  items: _timepause.map((_radioValue1) {
+                    return DropdownMenuItem(
+                      child: new Text(_radioValue1),
+                      value: _radioValue1,
+                    );
+                  }).toList(),
                 ),
                 SizedBox(height: 10.0),
                 /*
@@ -256,7 +260,7 @@ class _DetailPage extends State<DetailPage> {
             FlatButton(
               child: Text('Ok'),
               onPressed: () {
-                _addPause(descrizione, _radioValue1);
+                _addPause(descrizione, int.parse(_valorePausa));
                 Navigator.of(context).pop(descrizione);
               },
             ),

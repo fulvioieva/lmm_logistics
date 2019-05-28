@@ -43,6 +43,7 @@ class AuthStateProvider {
   }
 
   void notify(AuthState state) {
+    if (globals.logger) print("State ->" + state.toString());
     _subscribers.forEach((AuthStateListener s) => s.onAuthStateChanged(state));
   }
 }
