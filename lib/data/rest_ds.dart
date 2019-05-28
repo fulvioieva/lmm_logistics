@@ -51,6 +51,7 @@ class RestDatasource {
               last_name: h['last_name'],
               id_daily_job: int.tryParse(h['id_daily_job']),
               work_id: int.tryParse(h['work_id']),
+              agenzia: int.tryParse(h['agenzia']),
               id_sito: int.tryParse(h['id_sito']),
               date_start: h['date_start'],
               date_end: h['date_end']);
@@ -444,9 +445,8 @@ class RestDatasource {
     });
   }
 
-  Future<String> getTotaleOreMese(
-      int id_user, String mese, String anno) async {
-    String ore = null;
+  Future<String> getTotaleOreMese(int id_user, String mese, String anno) async {
+    String ore = '0.0';
     var body = json.encode({
       "method": "getTotaleOreMese",
       "id_user": id_user.toString(),

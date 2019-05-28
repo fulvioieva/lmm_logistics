@@ -5,6 +5,7 @@ class Workers {
   int id_daily_job;
   int id_sito;
   int work_id;
+  int agenzia;
   String date_start;
   String date_end;
 
@@ -14,6 +15,7 @@ class Workers {
             this.id_daily_job,
             this.id_sito,
             this.work_id,
+            this.agenzia,
             this.date_start,
             this.date_end
   });
@@ -26,6 +28,7 @@ class Workers {
     this.id_daily_job = obj["id_daily_job"];
     this.id_sito = obj["id_sito"];
     this.work_id = obj["work_id"];
+    this.agenzia = obj["agenzia"];
     this.date_start = obj["date_start"];
     this.date_end = obj["date_end"];
   }
@@ -38,6 +41,7 @@ class Workers {
     map["id_daily_job"] = id_daily_job;
     map["id_sito"] = id_sito;
     map["work_id"] = work_id;
+    map["agenzia"] = agenzia;
     map["date_start"] = date_start;
     map["date_end"] = date_end;
 

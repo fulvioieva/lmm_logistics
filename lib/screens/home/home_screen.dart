@@ -8,6 +8,7 @@ import './insertdate.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/data/database_helper.dart';
 import 'package:lmm_logistics/auth.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -65,8 +66,8 @@ class HomeScreen extends StatelessWidget {
                     globals.userId=0;
 
                     authStateProvider.notify(AuthState.LOGGED_OUT);
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => LoginApp()));
+                    //Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginApp()));
+                    SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
                   },
                 ),
                 /*ListTile(

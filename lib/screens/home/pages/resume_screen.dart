@@ -75,7 +75,7 @@ class _ResumeScreen extends State<ResumeScreen> {
     if (double.parse(tot_colli_lavorati)!=0.0 &&  double.parse(tot_ore_lavorate)!=0.0){
       media = media_calcolata.toStringAsFixed(2);
     }else{
-      media = "N/A";
+      media = "Non disp.";
     }
 
     var now = new DateTime.now();
@@ -87,6 +87,9 @@ class _ResumeScreen extends State<ResumeScreen> {
     String cmese = await api
         .getTotaleColliMese(globals.userId, mese, anno)
         .whenComplete(refresh);
+    if (cmese == null) {
+      cmese='0';
+    }
 
     String omese = await api.getTotaleOreMese(globals.userId, mese, anno).whenComplete(refresh);
     if (omese != null) {
@@ -97,9 +100,14 @@ class _ResumeScreen extends State<ResumeScreen> {
     String tot_omese =
         int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
+    if (double.parse(cmese)!=0.0 &&  double.parse(tot_omese)!=0.0){
+      media_mensile = (double.parse(cmese) / double.parse(tot_omese)).toStringAsFixed(2);
+    }else{
+      media_mensile = "Non disp.";
+    }
 
 
-    media_mensile = (double.parse(cmese) / double.parse(tot_omese)).toStringAsFixed(2);
+
 
 
   }
