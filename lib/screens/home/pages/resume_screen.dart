@@ -59,7 +59,7 @@ class _ResumeScreen extends State<ResumeScreen> {
       y = "0:0".split(':');
     }
     tot_ore_lavorate =
-        int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
+        int.parse(y[0]).toString() + '.' + (int.parse(y[1])/100).toStringAsFixed(0);
 
     x = await api.getEconomiaTot(globals.id_daily_job).whenComplete(refresh);
     if (x != null) {
@@ -85,13 +85,14 @@ class _ResumeScreen extends State<ResumeScreen> {
     String anno = formatter.format(now);
 
     String cmese = await api
-        .getTotaleColliMese(globals.userId, mese, anno)
+        .getTotaleColliMesexsito(globals.siteId, mese, anno)
         .whenComplete(refresh);
     if (cmese == null) {
       cmese='0';
     }
 
-    String omese = await api.getTotaleOreMese(globals.userId, mese, anno).whenComplete(refresh);
+    //String omese = await api.getTotaleOreMese(globals.userId, mese, anno).whenComplete(refresh);
+    String omese = await api.getTotaleOreMesexsito(globals.siteId, mese, anno).whenComplete(refresh);
     if (omese != null) {
       y = omese.split('.');
     } else {

@@ -64,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                     db.deleteUsers();
                     globals.id_daily_job=0;
                     globals.userId=0;
-
+                    globals.siteId=0;
                     authStateProvider.notify(AuthState.LOGGED_OUT);
                     //Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginApp()));
                     SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');

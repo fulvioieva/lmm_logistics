@@ -180,6 +180,7 @@ class _DetailPage extends State<DetailPage> {
   void fetchEconomia() async {
     _economia = await api.getEconomia(widget.workers.id_daily_job, widget.workers.id)
         .whenComplete(refresh);
+    if (_economia==null) _economia = new Economia();
   }
 
   void _addPause(String description, int durata) async {
@@ -314,7 +315,7 @@ class _DetailPage extends State<DetailPage> {
               ),
               date_entrata_economia != null
                   ? Text(date_entrata_economia)
-                  : _economia!=null?Text(_economia.data_inizio.substring(10, 16)):Container(),
+                  : _economia?.data_inizio!=null?Text(_economia.data_inizio.substring(10, 16)):Container(),
               SizedBox(height: 10.0),
               RaisedButton(
                 child: Text('Orario fine economia'),
@@ -324,7 +325,7 @@ class _DetailPage extends State<DetailPage> {
               ),
               date_uscita_economia != null
                   ? Text(date_uscita_economia)
-                  : _economia!=null?Text(_economia.data_fine.substring(10, 16)):Container(),
+                  : _economia?.data_fine!=null?Text(_economia.data_fine.substring(10, 16)):Container(),
 
               /*
               DateTimePickerFormField(

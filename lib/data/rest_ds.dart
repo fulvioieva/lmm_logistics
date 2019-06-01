@@ -34,6 +34,7 @@ class RestDatasource {
   Future<List<Workers>> fetchUsers() async {
     String utente = globals.userId.toString();
     int dj;
+    int ids;
     var x = globals.dataLavori.split('/');
     String data = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
     if (globals.logger) print("Data Lavori " + data);
@@ -56,10 +57,12 @@ class RestDatasource {
               date_start: h['date_start'],
               date_end: h['date_end']);
           dj = int.tryParse(h['id_daily_job']);
+          ids = int.tryParse(h['id_sito']);
           c.add(work);
         }
       }
       globals.id_daily_job = dj == null ? 0 : dj;
+      globals.siteId = ids == null ? 0 : ids;
       return c;
     });
   }
@@ -174,10 +177,19 @@ class RestDatasource {
     String data2 = anno + '-' + mese + '-' + giorno; //'2019-04-23';
     String data3 = data2 + data;
 */
-
     var x = globals.dataLavori.split('/');
-    String data3 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
-
+    if (x[0].length==1)x[0]='0'+x[0];
+    if (x[1].length==1)x[1]='0'+x[1];
+    String data_fake = x[2] + '-' + x[0] + '-' + x[1] + data;
+    String data3;
+    if (data==' 00:00'){
+      DateTime todayDate = DateTime.parse(data_fake);
+      data3 = todayDate.add(new Duration(days: 1)).toString();
+      if (globals.logger) print(todayDate.add(new Duration(days: 1)));
+    }else {
+      if (globals.logger) print(data_fake);
+      data3 = data_fake; //'2019-04-23';
+    }
     if (globals.logger) print("DATA ->" + data3);
     var body =
         json.encode({"method": "setDataIn", "datain": data3, "id": record});
@@ -398,6 +410,30 @@ class RestDatasource {
     });
   }
 
+  Future<String> getTotaleColliMesexsito(
+      int id_site, String mese, String anno) async {
+    String quantita = null;
+    var body = json.encode({
+      "method": "getTotaleColliMesexsito",
+      "id_site": id_site.toString(),
+      "mese": mese,
+      "anno": anno
+    });
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("id  ->" + id_site.toString());
+      if (globals.logger) print("mese ->" + mese);
+      if (globals.logger) print("anno ->" + anno);
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No qty to measure") {
+        for (var h in res["totale"]) {
+          quantita = h['totale'];
+        }
+      }
+      return quantita;
+    });
+  }
+
   Future<String> getTotalePersone(int id_daily_job) async {
     String quantita = null;
     var body = json.encode({
@@ -455,6 +491,29 @@ class RestDatasource {
     });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("id  ->" + id_user.toString());
+      if (globals.logger) print("mese ->" + mese);
+      if (globals.logger) print("anno ->" + anno);
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No ore") {
+        for (var h in res["ore"]) {
+          ore = h['ore'];
+        }
+      }
+      return ore;
+    });
+  }
+
+  Future<String> getTotaleOreMesexsito(int id_site, String mese, String anno) async {
+    String ore = '0.0';
+    var body = json.encode({
+      "method": "getTotaleOreMesexsito",
+      "id_site": id_site.toString(),
+      "mese": mese,
+      "anno": anno
+    });
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("id  ->" + id_site.toString());
       if (globals.logger) print("mese ->" + mese);
       if (globals.logger) print("anno ->" + anno);
       if (globals.logger) print("JSON ->" + res.toString());
