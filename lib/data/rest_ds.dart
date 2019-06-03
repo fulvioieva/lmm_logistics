@@ -201,6 +201,25 @@ class RestDatasource {
   }
 
   Future<bool> setDataOut(int record, String data) async {
+
+    var x = globals.dataLavori.split('/');
+    if (x[0].length==1)x[0]='0'+x[0];
+    if (x[1].length==1)x[1]='0'+x[1];
+    String data_fake = x[2] + '-' + x[0] + '-' + x[1] + data;
+    String data3;
+
+    var y = data.split(':');
+    if (int.parse(y[0])<12){
+      DateTime todayDate = DateTime.parse(data_fake);
+      data3 = todayDate.add(new Duration(days: 1)).toString();
+      if (globals.logger) print(todayDate.add(new Duration(days: 1)));
+    }else{
+      if (globals.logger) print(data_fake);
+      data3 = data_fake; //'2019-04-23';
+    }
+
+
+    /*
     var now = new DateTime.now();
     var formatter = new DateFormat('MM');
     String mese = formatter.format(now);
@@ -210,7 +229,7 @@ class RestDatasource {
     String giorno = formatter.format(now);
     String data2 = anno + '-' + mese + '-' + giorno; //'2019-04-23';
     String data3 = data2 + data;
-
+*/
     //var x = globals.dataLavori.split('/');
     //String data3 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
 
