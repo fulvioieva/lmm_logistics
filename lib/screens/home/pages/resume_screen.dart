@@ -59,7 +59,7 @@ class _ResumeScreen extends State<ResumeScreen> {
       y = "0:0".split(':');
     }
     tot_ore_lavorate =
-        int.parse(y[0]).toString() + '.' + (int.parse(y[1])/100).toStringAsFixed(0);
+        int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
     x = await api.getEconomiaTot(globals.id_daily_job).whenComplete(refresh);
     if (x != null) {

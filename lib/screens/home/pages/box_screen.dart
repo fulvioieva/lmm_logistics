@@ -49,7 +49,7 @@ class _BoxScreen extends State<BoxScreen> {
             int.parse(_avanzi_muraleController.text),
             int.parse(_avanzi_geloController.text),
             int.parse(_pedaneController.text),
-            _noteController.text)
+            _noteController.text.replaceAll("'", " ").replaceAll('"', " "))
         .whenComplete(calculus);
   }
 

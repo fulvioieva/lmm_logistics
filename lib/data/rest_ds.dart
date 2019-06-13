@@ -7,6 +7,7 @@ import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/models/pause.dart';
 import 'package:lmm_logistics/models/colli.dart';
 import 'package:lmm_logistics/models/economia.dart';
+import 'package:lmm_logistics/models/site.dart';
 import 'package:lmm_logistics/models/working_user.dart';
 import 'package:intl/intl.dart';
 
@@ -546,5 +547,29 @@ class RestDatasource {
     });
   }
 
+
+  Future<List<Site>> getSiti(int id_user,String date) async {
+    List<Site> siti = new List<Site>();
+    var body = json.encode({"method": "getSiti","id_user": id_user.toString(),"date": date});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (globals.logger) print("DATE ->" + date);
+      if (globals.logger) print("USER ->" + id_user.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No siti") {
+        for (var h in res["siti"]) {
+          Site sito = new Site(
+              id: int.tryParse(h['id']),
+              rag_soc: int.tryParse(h['rag_soc']),
+              insegna: h['insegna'],
+              citta: h['citta'],
+              provincia: h['provincia'],
+              indirizzo: h['indirizzo']);
+          siti.add(sito);
+        }
+      }
+      return siti;
+    });
+  }
 
 }
