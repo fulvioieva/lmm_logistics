@@ -9,7 +9,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/flutter_picker/flutter_picker.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
-
+enum ConfirmAction { CANCEL, ACCEPT }
 class DetailPage extends StatefulWidget {
   final Workers workers;
 
@@ -163,17 +163,37 @@ class _DetailPage extends State<DetailPage> {
         }).showDialog(context);
   }
 
+  void _resetUtente(int id) async {
+    api.resetUtente(id);
+    if (this.mounted) {
+      setState(() {
+        date_entrata = ' ' ;
+        date_uscita = ' ';
+      });
+    }
+
+  }
+  void _resetEconomia() async {
+    api.resetEconomia(widget.workers.id , widget.workers.id_daily_job);
+    if (this.mounted) {
+      setState(() {
+        date_entrata_economia = ' ';
+        date_uscita_economia = ' ';
+      });
+    }
+  }
+
 
   void _deletePause(int id) async {
     api.removePause(id);
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .fetchPause(widget.workers.id_daily_job , widget.workers.id)
         .whenComplete(refresh);
   }
 
   void fetchPause() async {
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .fetchPause(widget.workers.id_daily_job , widget.workers.id)
         .whenComplete(refresh);
   }
 
@@ -189,6 +209,36 @@ class _DetailPage extends State<DetailPage> {
     _pause = await api
         .fetchPause(widget.workers.id_daily_job, widget.workers.id)
         .whenComplete(refresh);
+  }
+
+  Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
+    return showDialog<ConfirmAction>(
+      context: context,
+      barrierDismissible: false, // user must tap button for close dialog!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Cancella ore'),
+          content: const Text(
+              'In questo modo cancellerai l\'ora di ingresso, uscita ed economia portandole al valore iniziale.'),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop(ConfirmAction.CANCEL);
+              },
+            ),
+            FlatButton(
+              child: const Text('PROCEDI'),
+              onPressed: () {
+                _resetUtente(widget.workers.work_id);
+                if(_economia?.id!=null)_resetEconomia();
+                Navigator.of(context).pop(ConfirmAction.ACCEPT);
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   Future<String> _asyncInputDialog(BuildContext context) async {
@@ -356,7 +406,27 @@ class _DetailPage extends State<DetailPage> {
               ),*/
               //Text('ora fine turno'),
               SizedBox(height: 50.0),
-              Row(children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                new RawMaterialButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomeScreen()));
+                  },
+                  child: new Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.green,
+                    size: 35.0,
+                  ),
+                  shape: new CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(15.0),
+                ),
+                /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -369,7 +439,56 @@ class _DetailPage extends State<DetailPage> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
                   ),
+                ),*/
+
+
+                new RawMaterialButton(
+                  onPressed: () {
+                    _asyncInputDialog(context);
+                    },
+                  child: new Icon(
+                    Icons.hourglass_empty,
+                    color: Colors.green,
+                    size: 35.0,
+                  ),
+                  shape: new CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(15.0),
                 ),
+                new RawMaterialButton(
+                  onPressed: () {
+                    _asyncConfirmDialog(context);
+                  },
+                  child: new Icon(
+                    Icons.restore_from_trash,
+                    color: Colors.green,
+                    size: 35.0,
+                  ),
+                  shape: new CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(15.0),
+                ),
+                /*
+                Container(
+                  margin: EdgeInsets.all(20.0),
+                  child: RaisedButton(
+                    child: Text("Conferma"),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    },
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    splashColor: Colors.grey,
+                  ),
+                ),*/
+
+                /*
                 Expanded(
                   child: RaisedButton(
                     child: Text("Conferma"),
@@ -384,7 +503,8 @@ class _DetailPage extends State<DetailPage> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
                   ),
-                ),
+                ),*/
+
               ]),
 
               Column(

@@ -23,6 +23,7 @@ class _ResumeScreen extends State<ResumeScreen> {
   String totale_pers = "0";
   String media = '0';
   String media_mensile = '0';
+  String percentuale = '0';
   RestDatasource api = new RestDatasource();
 
   void initState() {
@@ -44,10 +45,13 @@ class _ResumeScreen extends State<ResumeScreen> {
   }
 
   void caricamento() async {
-    var y = [];
-    String xx = await api.getTotaleColli(globals.id_daily_job).whenComplete(refresh);
+    percentuale = await api.getPercentuale(globals.siteId);
 
-    tot_colli_lavorati = xx!=null?xx:'0';
+    var y = [];
+    String xx =
+        await api.getTotaleColli(globals.id_daily_job).whenComplete(refresh);
+
+    tot_colli_lavorati = xx != null ? xx : '0';
 
     totale_pers =
         await api.getTotalePersone(globals.id_daily_job).whenComplete(refresh);
@@ -58,8 +62,9 @@ class _ResumeScreen extends State<ResumeScreen> {
     } else {
       y = "0:0".split(':');
     }
-    tot_ore_lavorate =
-        int.parse(y[0]).toString() + '.' + int.parse(y[1]==''?'0':y[1]).toString();
+    tot_ore_lavorate = int.parse(y[0]).toString() +
+        '.' +
+        int.parse(y[1] == '' ? '0' : y[1]).toString();
 
     x = await api.getEconomiaTot(globals.id_daily_job).whenComplete(refresh);
     if (x != null) {
@@ -72,10 +77,11 @@ class _ResumeScreen extends State<ResumeScreen> {
 
     double media_calcolata =
         double.parse(tot_colli_lavorati) / double.parse(tot_ore_lavorate);
-    if (double.parse(tot_colli_lavorati)!=0.0 &&  double.parse(tot_ore_lavorate)!=0.0){
+    if (double.parse(tot_colli_lavorati) != 0.0 &&
+        double.parse(tot_ore_lavorate) != 0.0) {
       media = media_calcolata.toStringAsFixed(2);
-    }else{
-      media = "Non disp.";
+    } else {
+      media = "0";
     }
 
     var now = new DateTime.now();
@@ -88,11 +94,13 @@ class _ResumeScreen extends State<ResumeScreen> {
         .getTotaleColliMesexsito(globals.siteId, mese, anno)
         .whenComplete(refresh);
     if (cmese == null) {
-      cmese='0';
+      cmese = '0';
     }
 
     //String omese = await api.getTotaleOreMese(globals.userId, mese, anno).whenComplete(refresh);
-    String omese = await api.getTotaleOreMesexsito(globals.siteId, mese, anno).whenComplete(refresh);
+    String omese = await api
+        .getTotaleOreMesexsito(globals.siteId, mese, anno)
+        .whenComplete(refresh);
     if (omese != null) {
       y = omese.split('.');
     } else {
@@ -101,16 +109,12 @@ class _ResumeScreen extends State<ResumeScreen> {
     String tot_omese =
         int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
-    if (double.parse(cmese)!=0.0 &&  double.parse(tot_omese)!=0.0){
-      media_mensile = (double.parse(cmese) / double.parse(tot_omese)).toStringAsFixed(2);
-    }else{
-      media_mensile = "Non disp.";
+    if (double.parse(cmese) != 0.0 && double.parse(tot_omese) != 0.0) {
+      media_mensile =
+          (double.parse(cmese) / double.parse(tot_omese)).toStringAsFixed(2);
+    } else {
+      media_mensile = "N/D";
     }
-
-
-
-
-
   }
 
   Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
@@ -212,7 +216,10 @@ class _ResumeScreen extends State<ResumeScreen> {
         decoration:
             new BoxDecoration(border: new Border.all(color: Colors.lightGreen)),
         child: Row(children: <Widget>[
-          new Icon(Icons.assignment),
+          new Icon(Icons.assignment,
+              color: double.parse(percentuale) < double.parse(media)
+                  ? Colors.lightGreen
+                  : Colors.redAccent),
           SizedBox(width: 40.0),
           new Text('Media colli/ore = ' + media.toString(),
               style: DefaultTextStyle.of(context)

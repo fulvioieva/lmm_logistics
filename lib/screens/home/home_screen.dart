@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../main.dart';
 import './pages/time_screen.dart';
 import './pages/adduser_screen.dart';
 import './pages/resume_screen.dart';
@@ -9,9 +8,9 @@ import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/data/database_helper.dart';
 import 'package:lmm_logistics/auth.dart';
 import 'package:flutter/services.dart';
-
+import 'package:intl/intl.dart';
 class HomeScreen extends StatelessWidget {
-
+  String data;
   var db = new DatabaseHelper();
   var authStateProvider = new AuthStateProvider();
   @override
@@ -19,9 +18,21 @@ class HomeScreen extends StatelessWidget {
     //var now = new DateTime.now();
     //var formatter = new DateFormat('EEE dd-MM-yyyy');
     //String formatted = formatter.format(now);
-    var x = globals.dataLavori.split('/');
-    String data = x[1] + '-' + x[0] + '-' + x[2]; //'2019-04-23';
 
+    if(globals.dataLavori==null){
+      var now = new DateTime.now();
+      var formatter = new DateFormat('MM');
+      String mese = formatter.format(now);
+      formatter = new DateFormat('yyyy');
+      String anno = formatter.format(now);
+      formatter = new DateFormat('dd');
+      String giorno = formatter.format(now);
+      data = anno + '-' + mese + '-' + giorno; //'2019-04-23';
+      globals.dataLavori = anno + '/' + mese + '/' + giorno;
+    }else {
+      var x = globals.dataLavori.split('/');
+      data = x[1] + '-' + x[0] + '-' + x[2]; //'2019-04-23';
+    }
     return MaterialApp(
       theme: new ThemeData(
         brightness: Brightness.light,

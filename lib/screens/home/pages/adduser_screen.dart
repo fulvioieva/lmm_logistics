@@ -30,28 +30,29 @@ class _AddUserScreen extends State<AddUserScreen> {
   }
 
   void fetchUsers() async {
-    _wkusers = await api.getUserAgenzia(globals.id_daily_job).whenComplete(refresh);
+    _wkusers =
+        await api.getUserAgenzia(globals.id_daily_job).whenComplete(refresh);
   }
 
   void refresh() {
     if (this.mounted) {
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 
   void adduser(int id_user) {
-    if(globals.id_daily_job>0 || id_user==null) {
+    if (globals.id_daily_job > 0 || id_user == null) {
       api.setDailyJob(globals.id_daily_job, id_user);
     }
-        Navigator.push(context,
-        MaterialPageRoute(builder: (context) => TimeScreen(title: "Risorse presenti"),));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TimeScreen(title: "Risorse presenti"),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Gestione utenti'),
@@ -61,8 +62,29 @@ class _AddUserScreen extends State<AddUserScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Dropper(),
+            SizedBox(height: 50.0),
             Column(children: <Widget>[
-              Row(children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new RawMaterialButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()));
+                      },
+                      child: new Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.green,
+                        size: 35.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.white,
+                      padding: const EdgeInsets.all(15.0),
+                    ),
+                    /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -76,6 +98,22 @@ class _AddUserScreen extends State<AddUserScreen> {
                     splashColor: Colors.grey,
                   ),
                 ),
+                */
+                    new RawMaterialButton(
+                      onPressed: () {
+                        if (selectedWorker != null) adduser(selectedWorker.id);
+                      },
+                      child: new Icon(
+                        Icons.add_circle_outline,
+                        color: Colors.green,
+                        size: 35.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.white,
+                      padding: const EdgeInsets.all(15.0),
+                    ),
+                    /*
                 Expanded(
                   child: RaisedButton(
                     child: Text("Indietro"),
@@ -88,8 +126,8 @@ class _AddUserScreen extends State<AddUserScreen> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
                   ),
-                ),
-              ]),
+                ),*/
+                  ]),
             ])
           ],
         ),
@@ -126,7 +164,6 @@ class _AddUserScreen extends State<AddUserScreen> {
               }).toList(),
             ),
           ), // end drop
-
         ]));
   }
 }

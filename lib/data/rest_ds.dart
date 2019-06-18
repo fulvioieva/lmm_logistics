@@ -571,5 +571,41 @@ class RestDatasource {
       return siti;
     });
   }
+  Future<bool> resetUtente(int id) async {
+    var body = json.encode({"method": "resetUtente", "id": id});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+  Future<bool> resetEconomia(int id_user, int id_daily_job) async {
+    var body = json.encode({"method": "resetEconomia", "id_user": id_user, "id_daily_job": id_daily_job});
+    if (globals.logger) print("JOB  ->" + id_daily_job.toString());
+    if (globals.logger) print("USER ->" + id_user.toString());
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+  Future<String> getPercentuale(int id) async {
+    String percentuale = "0";
+    var body = json.encode(
+        {"method": "getPercentuale", "id": id.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No site") {
+        for (var h in res["perc"]) {
+          percentuale = h['perc'];
+        }
+      }
+      return percentuale;
+    });
+  }
+
+
+
 
 }
