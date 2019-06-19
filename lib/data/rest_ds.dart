@@ -183,7 +183,8 @@ class RestDatasource {
     if (x[1].length==1)x[1]='0'+x[1];
     String data_fake = x[2] + '-' + x[0] + '-' + x[1] + data;
     String data3;
-    if (data==' 00:00'){
+    var y = data.split(':');
+    if (int.parse(y[0])<5){
       DateTime todayDate = DateTime.parse(data_fake);
       data3 = todayDate.add(new Duration(days: 1)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
