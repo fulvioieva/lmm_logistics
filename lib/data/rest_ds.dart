@@ -211,7 +211,7 @@ class RestDatasource {
     String data3;
 
     var y = data.split(':');
-    if (int.parse(y[0])<12){
+    if (int.parse(y[0])<5){
       DateTime todayDate = DateTime.parse(data_fake);
       data3 = todayDate.add(new Duration(days: 1)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
