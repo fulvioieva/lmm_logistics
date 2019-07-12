@@ -1,7 +1,7 @@
 library my_prj.globals;
 
 bool multiSito = false;
-bool logger = true;
+bool logger = false;
 bool resetDB = false;
 bool isLoggedIn = false;
 int siteId = 0;
