@@ -184,7 +184,7 @@ class RestDatasource {
     String data_fake = x[2] + '-' + x[0] + '-' + x[1] + data;
     String data3;
     var y = data.split(':');
-    if (int.parse(y[0])<5){
+    if ( int.parse(y[0]) < 3 ){
       DateTime todayDate = DateTime.parse(data_fake);
       data3 = todayDate.add(new Duration(days: 1)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
@@ -204,6 +204,10 @@ class RestDatasource {
 
   Future<bool> setDataOut(int record, String data) async {
 
+    List<Workers> lw = await  getDailyJob(record);
+
+
+
     var x = globals.dataLavori.split('/');
     if (x[0].length==1)x[0]='0'+x[0];
     if (x[1].length==1)x[1]='0'+x[1];
@@ -211,7 +215,7 @@ class RestDatasource {
     String data3;
 
     var y = data.split(':');
-    if (int.parse(y[0])<5){
+    if (int.parse(y[0])<12){
       DateTime todayDate = DateTime.parse(data_fake);
       data3 = todayDate.add(new Duration(days: 1)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
@@ -219,8 +223,13 @@ class RestDatasource {
       if (globals.logger) print(data_fake);
       data3 = data_fake; //'2019-04-23';
     }
-
-
+    DateTime dateout = DateTime.parse(data3);
+    DateTime datein = DateTime.parse(lw[0].date_start);
+    int difference = dateout.difference(datein).inHours;
+    if (difference > 24) {
+      data3 = dateout.add(new Duration(days: -1)).toString();
+    }
+    //print ("Differenza " + difference.toString());
     /*
     var now = new DateTime.now();
     var formatter = new DateFormat('MM');
@@ -605,7 +614,40 @@ class RestDatasource {
       return percentuale;
     });
   }
-
+  Future<List<Workers>> getDailyJob(int id) async {
+    int dj;
+    int ids;
+    var x = globals.dataLavori.split('/');
+    String data = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+    if (globals.logger) print("Data Lavori " + data);
+    var body =
+    json.encode({"method": "getDailyJob", "id": id.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      List<Workers> c = new List<Workers>();
+      if (res["error_msg"] != "No user") {
+        for (var h in res["users"]) {
+          Workers work = new Workers(
+              id: int.tryParse(h['id']),
+              first_name: h['first_name'],
+              last_name: h['last_name'],
+              id_daily_job: int.tryParse(h['id_daily_job']),
+              work_id: int.tryParse(h['work_id']),
+              agenzia: int.tryParse(h['agenzia']),
+              id_sito: int.tryParse(h['id_sito']),
+              date_start: h['date_start'],
+              date_end: h['date_end']);
+          dj = int.tryParse(h['id_daily_job']);
+          ids = int.tryParse(h['id_sito']);
+          c.add(work);
+        }
+      }
+      globals.id_daily_job = dj == null ? 0 : dj;
+      globals.siteId = ids == null ? 0 : ids;
+      return c;
+    });
+  }
 
 
 
