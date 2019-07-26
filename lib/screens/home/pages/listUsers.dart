@@ -77,12 +77,22 @@ class _ListUsers extends State<ListUsers> {
                           ? Colors.red
                           : Colors.green,
                       size: 30.0)),
+      Expanded(
+        flex: 1,
+        child:Text(workers.date_start== null?"":workers.date_start.substring(10, 16),
+            style: TextStyle(
+                color: Colors.white, fontSize: 10.0))),
               Expanded(
                   flex: 1,
                   child: Icon(Icons.directions,
                       color:
                           workers.date_end == null ? Colors.red : Colors.green,
                       size: 30.0)),
+              Expanded(
+                  flex: 1,
+                  child:Text(workers.date_end== null?"":workers.date_end.substring(10, 16),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 10.0))),
             ],
           ),
           trailing:

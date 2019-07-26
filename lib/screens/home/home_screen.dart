@@ -107,7 +107,7 @@ class HomeScreen extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              TimeScreen(title: "Risorse presenti"),
+              TimeScreen(title: "Risorse presenti su \nSito - " +  globals.siteName),
               AddUserScreen(),
               BoxScreen(),
               ResumeScreen(),

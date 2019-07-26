@@ -16,7 +16,7 @@ class TimeScreen extends StatelessWidget {
         title: Text(title),backgroundColor: (Colors.green),
       ),
       body: FutureBuilder<List<Workers>>(
-        future: api.fetchUsers(),
+        future: api.fetchUsersEvol(),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
 

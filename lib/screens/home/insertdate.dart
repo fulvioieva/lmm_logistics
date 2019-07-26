@@ -7,6 +7,8 @@ import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 
+enum ConfirmAction { ANNULLA, PROCEDI }
+
 class InsertDate extends StatefulWidget {
   InsertDate({Key key, this.title}) : super(key: key);
   final String title;
@@ -41,8 +43,9 @@ class _InsertDate extends State<InsertDate> {
   }
 
   void fetchSite() async {
-    _wkSite =
-        await api.getSiti(globals.userId, datadefault).whenComplete(refresh);
+    _wkSite = await api
+        .getSitiEvol(globals.userId, datadefault)
+        .whenComplete(refresh);
   }
 
   void refresh() {
@@ -76,16 +79,18 @@ class _InsertDate extends State<InsertDate> {
 
     if (result == null) return;
 
-    setState(() {
-      _controller.text = f.format(result);
+    if (this.mounted) {
+      setState(() {
+        _controller.text = f.format(result);
 
-      globals.dataLavori = new DateFormat.yMd().format(result);
-      var x = globals.dataLavori.split('/');
-      if (x[0].length == 1) x[0] = '0' + x[0];
-      if (x[1].length == 1) x[1] = '0' + x[1];
-      datadefault = x[2] + '-' + x[0] + '-' + x[1];
-    });
-    fetchSite();
+        globals.dataLavori = new DateFormat.yMd().format(result);
+        var x = globals.dataLavori.split('/');
+        if (x[0].length == 1) x[0] = '0' + x[0];
+        if (x[1].length == 1) x[1] = '0' + x[1];
+        datadefault = x[2] + '-' + x[0] + '-' + x[1];
+      });
+      fetchSite();
+    }
   }
 
   @override
@@ -134,9 +139,17 @@ class _InsertDate extends State<InsertDate> {
               RaisedButton(
                 child: Text("Prosegui"),
                 onPressed: () {
-                  if (selectedSite != null) print("Sito " + selectedSite.id.toString());
-                      Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                  if (selectedSite == null) {
+                    _asyncConfirmDialog(context);
+                  } else {
+                    globals.siteId =
+                        selectedSite.id == null ? 0 : selectedSite.id;
+                    globals.siteName = selectedSite.getDescription();
+                    if (globals.logger)
+                      print("Sito scelto " + selectedSite.id.toString());
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  }
                 },
                 color: Colors.green,
                 textColor: Colors.white,
@@ -147,6 +160,41 @@ class _InsertDate extends State<InsertDate> {
           ],
         ), // ListView
       ),
+    );
+  }
+
+  Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
+    return showDialog<ConfirmAction>(
+      context: context,
+      barrierDismissible: false, // user must tap button for close dialog!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('ATTENZIONE'),
+          content: const Text(
+              'Seleziona il sito presso quale devi operare !\nSe non è presente alcun sito significa che la tua squadra non è ancora caricata per il giorno selezionato'),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('ANNULLA'),
+              onPressed: () {
+                Navigator.of(context).pop(ConfirmAction.ANNULLA);
+              },
+            ),
+            FlatButton(
+              child: const Text('PROCEDI'),
+              onPressed: () {
+
+                globals.siteId = 0;
+                globals.siteName = 'SCONOSCIUTO';
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+
+
+                //Navigator.of(context).pop(ConfirmAction.PROCEDI);
+              },
+            )
+          ],
+        );
+      },
     );
   }
 

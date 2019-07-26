@@ -31,16 +31,18 @@ class RestDatasource {
       return us;
     });
   }
-
-  Future<List<Workers>> fetchUsers() async {
+  Future<List<Workers>> fetchUsersEvol() async {
     String utente = globals.userId.toString();
     int dj;
     int ids;
     var x = globals.dataLavori.split('/');
+    var sito = globals.siteId;
     String data = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
     if (globals.logger) print("Data Lavori " + data);
+    if (globals.logger) print("utente " + utente);
+    if (globals.logger) print("sito " + sito.toString());
     var body =
-        json.encode({"method": "getUtenti", "data": data, "utente": utente});
+    json.encode({"method": "fetchUsersEvol", "data": data, "utente": utente, "sito": sito.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -63,7 +65,46 @@ class RestDatasource {
         }
       }
       globals.id_daily_job = dj == null ? 0 : dj;
-      globals.siteId = ids == null ? 0 : ids;
+      //globals.siteId = ids == null ? 0 : ids;
+      return c;
+    });
+  }
+
+  Future<List<Workers>> fetchUsers() async {
+    String utente = globals.userId.toString();
+    int dj;
+    int ids;
+    var x = globals.dataLavori.split('/');
+    var sito = globals.siteId;
+    String data = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+    if (globals.logger) print("Data Lavori " + data);
+    if (globals.logger) print("utente " + utente);
+    if (globals.logger) print("sito " + sito.toString());
+    var body =
+    json.encode({"method": "fetchUsers", "data": data, "utente": utente, "sito": sito.toString()});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      List<Workers> c = new List<Workers>();
+      if (res["error_msg"] != "No user") {
+        for (var h in res["users"]) {
+          Workers work = new Workers(
+              id: int.tryParse(h['id']),
+              first_name: h['first_name'],
+              last_name: h['last_name'],
+              id_daily_job: int.tryParse(h['id_daily_job']),
+              work_id: int.tryParse(h['work_id']),
+              agenzia: int.tryParse(h['agenzia']),
+              id_sito: int.tryParse(h['id_sito']),
+              date_start: h['date_start'],
+              date_end: h['date_end']);
+          dj = int.tryParse(h['id_daily_job']);
+          ids = int.tryParse(h['id_sito']);
+          c.add(work);
+        }
+      }
+      globals.id_daily_job = dj == null ? 0 : dj;
+      //globals.siteId = ids == null ? 0 : ids;
       return c;
     });
   }
@@ -557,6 +598,31 @@ class RestDatasource {
     });
   }
 
+  Future<List<Site>> getSitiEvol(int id_user,String date) async {
+    List<Site> siti = new List<Site>();
+    var body = json.encode({"method": "getSitiEvol","id_user": id_user.toString(),"date": date});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("Call getSitiEvol");
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (globals.logger) print("DATE ->" + date);
+      if (globals.logger) print("USER ->" + id_user.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] != "No siti") {
+        for (var h in res["siti"]) {
+          Site sito = new Site(
+              id: int.tryParse(h['id']),
+              rag_soc: int.tryParse(h['rag_soc']),
+              site_name: h['site_name'],
+              insegna: h['insegna'],
+              citta: h['citta'],
+              provincia: h['provincia'],
+              indirizzo: h['indirizzo']);
+          siti.add(sito);
+        }
+      }
+      return siti;
+    });
+  }
 
   Future<List<Site>> getSiti(int id_user,String date) async {
     List<Site> siti = new List<Site>();
@@ -571,6 +637,7 @@ class RestDatasource {
           Site sito = new Site(
               id: int.tryParse(h['id']),
               rag_soc: int.tryParse(h['rag_soc']),
+              site_name: h['site_name'],
               insegna: h['insegna'],
               citta: h['citta'],
               provincia: h['provincia'],
@@ -581,6 +648,7 @@ class RestDatasource {
       return siti;
     });
   }
+
   Future<bool> resetUtente(int id) async {
     var body = json.encode({"method": "resetUtente", "id": id});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
@@ -644,7 +712,7 @@ class RestDatasource {
         }
       }
       globals.id_daily_job = dj == null ? 0 : dj;
-      globals.siteId = ids == null ? 0 : ids;
+      //globals.siteId = ids == null ? 0 : ids;
       return c;
     });
   }

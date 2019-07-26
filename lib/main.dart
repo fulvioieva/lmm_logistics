@@ -41,8 +41,8 @@ void main() {
       GlobalWidgetsLocalizations.delegate,
     ],
     supportedLocales: [
-      const Locale('en', 'US'),
       const Locale('it', 'IT'),
+      const Locale('en', 'US'),
     ],
     theme: new ThemeData(
       brightness: Brightness.light,
