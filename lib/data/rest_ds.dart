@@ -266,8 +266,10 @@ class RestDatasource {
     }
     DateTime dateout = DateTime.parse(data3);
     DateTime datein = DateTime.parse(lw[0].date_start);
-    int difference = dateout.difference(datein).inHours;
-    if (difference > 24) {
+    double difference = dateout.difference(datein).inHours.toDouble();
+    if (globals.logger) print("DIFFERENZA " + difference.toString());
+
+    if (difference > 23.0) {
       data3 = dateout.add(new Duration(days: -1)).toString();
     }
     //print ("Differenza " + difference.toString());
