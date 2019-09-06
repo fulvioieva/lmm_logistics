@@ -9,7 +9,18 @@ import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/flutter_picker/flutter_picker.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
+
 enum ConfirmAction { CANCEL, ACCEPT }
+
+RestDatasource api = new RestDatasource();
+bool editable = false;
+String _dataEntrata, _dataUscita, _dataEntrataEconomia, _dataUscitaEconomia;
+List<Pause> _pause = [];
+Economia _economia;
+List<String> _listPause = ['15', '30', '45', '60', '120'];
+String descrizione = 'Generica';
+String _valorePausa = '15';
+
 class DetailPage extends StatefulWidget {
   final Workers workers;
 
@@ -26,50 +37,57 @@ DateTime convertDateFromString(String strDate) {
 }
 
 class _DetailPage extends State<DetailPage> {
-
-  RestDatasource api = new RestDatasource();
-  bool editable = false;
-  String date_entrata ;
-  String date_uscita ;
-  String date_entrata_economia;
-  String date_uscita_economia ;
-  List<Pause> _pause = [];
-  Economia _economia ;
-  List<String> _timepause = ['15', '30', '45', '60', '120'];
-  String descrizione = 'Generica';
-  String _valorePausa = '15';
-
   void initState() {
+    _dataEntrata =
+        _dataEntrataEconomia = _dataUscita = _dataUscitaEconomia = "";
     super.initState();
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-
         fetchEconomia();
         fetchPause();
       });
     }
   }
 
-  void setDataIn(int id , String entrata) async{
+  void startedStrings() {
+    widget.workers.date_start == null
+        ? _dataEntrata = ""
+        : _dataEntrata = widget.workers.date_start.substring(10, 16);
+    widget.workers.date_end == null
+        ? _dataUscita = ""
+        : _dataUscita = widget.workers.date_end.substring(10, 16);
+    _economia.data_inizio == null
+        ? _dataEntrataEconomia = ""
+        : _dataEntrataEconomia = _economia.data_inizio.substring(10, 16);
+    _economia.data_fine == null
+        ? _dataUscitaEconomia = ""
+        : _dataUscitaEconomia = _economia.data_fine.substring(10, 16);
+  }
+
+  void setDataIn(int id, String entrata) async {
     api.setDataIn(id, entrata).whenComplete(refresh);
   }
 
-  void setDataOut(int id , String uscita) async{
+  void setDataOut(int id, String uscita) async {
     api.setDataOut(id, uscita).whenComplete(refresh);
   }
 
-  void setDataInEconomia(int id_daily_job , String entrata) async{
-    api.setEconomia(entrata, null, id_daily_job, widget.workers.id).whenComplete(refresh);
+  void setDataInEconomia(int id_daily_job, String entrata) async {
+    api
+        .setEconomia(entrata, null, id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
   }
 
-  void setDataOutEconomia(int id_daily_job , String uscita) async{
-    api.setEconomia(null, uscita, id_daily_job,  widget.workers.id).whenComplete(refresh);
+  void setDataOutEconomia(int id_daily_job, String uscita) async {
+    api
+        .setEconomia(null, uscita, id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
   }
 
   void refresh() {
     if (this.mounted) {
-      setState(() {});
+      this.setState(() {});
     }
   }
 
@@ -86,11 +104,11 @@ class _DetailPage extends State<DetailPage> {
           //print(value.toString());
           //print(picker.getSelectedValues());
           setState(() {
-            date_entrata = ' ' +
+            _dataEntrata = ' ' +
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataIn(widget.workers.work_id, date_entrata);
+            setDataIn(widget.workers.work_id, _dataEntrata);
           });
         }).showDialog(context);
   }
@@ -108,12 +126,11 @@ class _DetailPage extends State<DetailPage> {
           //print(value.toString());
           //print(picker.getSelectedValues());
           setState(() {
-            date_uscita = ' ' +
+            _dataUscita = ' ' +
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataOut(widget.workers.work_id, date_uscita);
-
+            setDataOut(widget.workers.work_id, _dataUscita);
           });
         }).showDialog(context);
   }
@@ -131,11 +148,12 @@ class _DetailPage extends State<DetailPage> {
           //print(value.toString());
           //print(picker.getSelectedValues());
           setState(() {
-            date_entrata_economia = ' ' +
+            _dataEntrataEconomia = ' ' +
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataInEconomia(widget.workers.id_daily_job, date_entrata_economia);
+            setDataInEconomia(
+                widget.workers.id_daily_job, _dataEntrataEconomia);
           });
         }).showDialog(context);
   }
@@ -153,12 +171,12 @@ class _DetailPage extends State<DetailPage> {
           //print(value.toString());
           //print(picker.getSelectedValues());
           setState(() {
-            date_uscita_economia = ' ' +
+            _dataUscitaEconomia = ' ' +
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataOutEconomia(widget.workers.id_daily_job, date_uscita_economia);
-
+            setDataOutEconomia(
+                widget.workers.id_daily_job, _dataUscitaEconomia);
           });
         }).showDialog(context);
   }
@@ -167,48 +185,40 @@ class _DetailPage extends State<DetailPage> {
     api.resetUtente(id);
     if (this.mounted) {
       setState(() {
-        date_entrata = ' ' ;
-        date_uscita = ' ';
+        _dataEntrata = ' ';
+        _dataUscita = ' ';
       });
     }
-
   }
+
   void _resetEconomia() async {
-    api.resetEconomia(widget.workers.id , widget.workers.id_daily_job);
+    api.resetEconomia(widget.workers.id, widget.workers.id_daily_job);
     if (this.mounted) {
       setState(() {
-        date_entrata_economia = ' ';
-        date_uscita_economia = ' ';
+        _dataEntrataEconomia = ' ';
+        _dataUscitaEconomia = ' ';
       });
     }
   }
-
 
   void _deletePause(int id) async {
     api.removePause(id);
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job , widget.workers.id)
+        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
         .whenComplete(refresh);
   }
 
   void fetchPause() async {
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job , widget.workers.id)
-        .whenComplete(refresh);
+        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .whenComplete(startedStrings);
   }
 
   void fetchEconomia() async {
-    _economia = await api.getEconomia(widget.workers.id_daily_job, widget.workers.id)
+    _economia = await api
+        .getEconomia(widget.workers.id_daily_job, widget.workers.id)
         .whenComplete(refresh);
-    if (_economia==null) _economia = new Economia();
-  }
-
-  void _addPause(String description, int durata) async {
-    api.setPause(
-        widget.workers.id_daily_job, description, durata, widget.workers.id);
-    _pause = await api
-        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
-        .whenComplete(refresh);
+    if (_economia == null) _economia = new Economia();
   }
 
   Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
@@ -231,7 +241,7 @@ class _DetailPage extends State<DetailPage> {
               child: const Text('PROCEDI'),
               onPressed: () {
                 _resetUtente(widget.workers.work_id);
-                if(_economia?.id!=null)_resetEconomia();
+                if (_economia?.id != null) _resetEconomia();
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
             )
@@ -246,67 +256,13 @@ class _DetailPage extends State<DetailPage> {
       context: context,
       barrierDismissible: true,
       // dialog is dismissible with a tap on the barrier
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Inserimento pause'),
-          content: Column(children: <Widget>[
-            Text(
-              'Durata',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                //Text(_radioValue1.toString()),
-                DropdownButton(
-                  hint: Text('Scegli la durata'), // Not necessary for Option 1
-                  value: _valorePausa,
-                  onChanged: (newValue) {
-                    setState(() {
-                      _valorePausa = newValue;
-                    });
-                  },
-                  items: _timepause.map((_radioValue1) {
-                    return DropdownMenuItem(
-                      child: new Text(_radioValue1),
-                      value: _radioValue1,
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 10.0),
-                /*
-                RaisedButton(
-                  child: Text('Orario inizio economia'),
-                  onPressed: () {
-                    showPickerArray(context);
-                    setState(() {
-
-                    });
-                  },
-                ),*/
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: TextField(
-                  autofocus: true,
-                  decoration: InputDecoration(
-                      labelText: 'Inserisci motivo', hintText: 'es. Pranzo'),
-                  onChanged: (value) {
-                    descrizione = value;
-                  },
-                ))
-              ],
-            ),
-            Divider(height: 1.0, color: Colors.grey),
-            Padding(
-              padding: EdgeInsets.all(4.0),
-            ),
-          ]),
+      builder: (_) {
+        return MyDialog(
+          workers: widget.workers,
+          detailState: this,
+        );
+        /* 
+        return Dialog(
           actions: <Widget>[
             FlatButton(
               child: Text('Ok'),
@@ -322,7 +278,69 @@ class _DetailPage extends State<DetailPage> {
               },
             ),
           ],
+          child: Container(
+            child: Column(children: <Widget>[
+              Text(
+                'Durata',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  //Text(_radioValue1.toString()),
+                  DropdownButton(
+                    hint:
+                        Text('Scegli la durata'), // Not necessary for Option 1
+                    value: _valorePausa,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _valorePausa = newValue;
+                      });
+                    },
+                    items: _timepause.map((_radioValue1) {
+                      return DropdownMenuItem(
+                        child: new Text(_radioValue1),
+                        value: _radioValue1,
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 10.0),
+                  /*
+                  RaisedButton(
+                    child: Text('Orario inizio economia'),
+                    onPressed: () {
+                      showPickerArray(context);
+                      setState(() {
+
+                      });
+                    },
+                  ),*/
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                      child: TextField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                        labelText: 'Inserisci motivo', hintText: 'es. Pranzo'),
+                    onChanged: (value) {
+                      descrizione = value;
+                    },
+                  ))
+                ],
+              ),
+              Divider(height: 1.0, color: Colors.grey),
+              Padding(
+                padding: EdgeInsets.all(4.0),
+              ),
+            ]),
+          ),
         );
+        */
       },
     );
   }
@@ -330,103 +348,135 @@ class _DetailPage extends State<DetailPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-            title: Text(
-                widget.workers.last_name + ' ' + widget.workers.first_name)),
-        body: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: ListView(
-            children: <Widget>[
-              SizedBox(height: 10.0),
-              RaisedButton(
-                child: Text('Orario inizio lavori'),
-                onPressed: () {
-                  showPickerArrayIn(context);
-                },
+          leading: new IconButton(
+            icon: new Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              setState(() {
+                _dataEntrata = _dataEntrataEconomia =
+                    _dataUscita = _dataUscitaEconomia = "";
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
+              });
+            },
+          ),
+          title:
+              Text(widget.workers.last_name + ' ' + widget.workers.first_name),
+        ),
+        body: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Center(child: Text('Orario inizio lavori')),
+                    onPressed: () {
+                      showPickerArrayIn(context);
+                    },
+                  ),
+                  Text(_dataEntrata)
+                ],
               ),
-              date_entrata != null
-                  ? Text(date_entrata)
-                  : widget.workers.date_start!=null?Text(widget.workers.date_start.substring(10, 16)):Container(),
-              SizedBox(height: 10.0),
-              RaisedButton(
-                child: Text('Orario fine lavori'),
-                onPressed: () {
-                  showPickerArrayOut(context);
-                },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Center(child: Text('Orario fine lavori')),
+                    onPressed: () {
+                      showPickerArrayOut(context);
+                    },
+                  ),
+                  Text(_dataUscita)
+                ],
               ),
-              date_uscita != null
-                  ? Text(date_uscita)
-                  : widget.workers.date_end!=null?Text(widget.workers.date_end.substring(10, 16)):Container(),
-              SizedBox(height: 10.0),
-              RaisedButton(
-                child: Text('Orario inizio economia'),
-                onPressed: () {
-                  showPickerEconomiaIn(context);
-                },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Center(child: Text('Orario inizio economia')),
+                    onPressed: () {
+                      showPickerEconomiaIn(context);
+                    },
+                  ),
+                  Text(_dataEntrataEconomia)
+                ],
               ),
-              date_entrata_economia != null
-                  ? Text(date_entrata_economia)
-                  : _economia?.data_inizio!=null?Text(_economia.data_inizio.substring(10, 16)):Container(),
-              SizedBox(height: 10.0),
-              RaisedButton(
-                child: Text('Orario fine economia'),
-                onPressed: () {
-                  showPickerEconomiaOut(context);
-                },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Center(child: Text('Orario fine economia')),
+                    onPressed: () {
+                      showPickerEconomiaOut(context);
+                    },
+                  ),
+                  Text(_dataUscitaEconomia)
+                ],
               ),
-              date_uscita_economia != null
-                  ? Text(date_uscita_economia)
-                  : _economia?.data_fine!=null?Text(_economia.data_fine.substring(10, 16)):Container(),
+            ),
 
-              /*
-              DateTimePickerFormField(
-                inputType: inputType,
-                format: formats[inputType],
-                editable: editable,
-                initialValue: convertDateFromString(widget.workers.date_start),
-                decoration: InputDecoration(
-                    labelText: 'Ora entrata', hasFloatingPlaceholder: false),
-                onChanged: (dt) => setState(() {
-                      date_entrata = dt;
-                      api.setDataIn(widget.workers.work_id, date_entrata);
-                    }),
-              ),*/
-              //Text('ora inizio turno'),
-              /*
-              DateTimePickerFormField(
-                inputType: inputType,
-                format: formats[inputType],
-                editable: editable,
-                initialValue: convertDateFromString(widget.workers.date_end),
-                decoration: InputDecoration(
-                    labelText: 'Ora entrata', hasFloatingPlaceholder: false),
-                onChanged: (dt) => setState(() {
-                      date_uscita = dt;
-                      api.setDataOut(widget.workers.work_id, date_uscita);
-                    }),
-              ),*/
-              //Text('ora fine turno'),
-              SizedBox(height: 50.0),
-              Row(
+            /*
+            DateTimePickerFormField(
+              inputType: inputType,
+              format: formats[inputType],
+              editable: editable,
+              initialValue: convertDateFromString(widget.workers.date_start),
+              decoration: InputDecoration(
+                  labelText: 'Ora entrata', hasFloatingPlaceholder: false),
+              onChanged: (dt) => setState(() {
+                    date_entrata = dt;
+                    api.setDataIn(widget.workers.work_id, date_entrata);
+                  }),
+            ),*/
+            //Text('ora inizio turno'),
+            /*
+            DateTimePickerFormField(
+              inputType: inputType,
+              format: formats[inputType],
+              editable: editable,
+              initialValue: convertDateFromString(widget.workers.date_end),
+              decoration: InputDecoration(
+                  labelText: 'Ora entrata', hasFloatingPlaceholder: false),
+              onChanged: (dt) => setState(() {
+                    date_uscita = dt;
+                    api.setDataOut(widget.workers.work_id, date_uscita);
+                  }),
+            ),*/
+            //Text('ora fine turno'),
+            Padding(
+              padding: const EdgeInsets.all(50.0),
+              child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                new RawMaterialButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HomeScreen()));
-                  },
-                  child: new Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.green,
-                    size: 35.0,
-                  ),
-                  shape: new CircleBorder(),
-                  elevation: 2.0,
-                  fillColor: Colors.white,
-                  padding: const EdgeInsets.all(15.0),
-                ),
-                /*
+                    /*new RawMaterialButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()));
+                      },
+                      child: new Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.green,
+                        size: 35.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.white,
+                      padding: const EdgeInsets.all(15.0),
+                    ),*/
+                    /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -441,36 +491,35 @@ class _DetailPage extends State<DetailPage> {
                   ),
                 ),*/
 
-
-                new RawMaterialButton(
-                  onPressed: () {
-                    _asyncInputDialog(context);
-                    },
-                  child: new Icon(
-                    Icons.hourglass_empty,
-                    color: Colors.green,
-                    size: 35.0,
-                  ),
-                  shape: new CircleBorder(),
-                  elevation: 2.0,
-                  fillColor: Colors.white,
-                  padding: const EdgeInsets.all(15.0),
-                ),
-                new RawMaterialButton(
-                  onPressed: () {
-                    _asyncConfirmDialog(context);
-                  },
-                  child: new Icon(
-                    Icons.restore_from_trash,
-                    color: Colors.green,
-                    size: 35.0,
-                  ),
-                  shape: new CircleBorder(),
-                  elevation: 2.0,
-                  fillColor: Colors.white,
-                  padding: const EdgeInsets.all(15.0),
-                ),
-                /*
+                    new RawMaterialButton(
+                      onPressed: () {
+                        _asyncInputDialog(context);
+                      },
+                      child: new Icon(
+                        Icons.hourglass_empty,
+                        color: Colors.green,
+                        size: 35.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.white,
+                      padding: const EdgeInsets.all(15.0),
+                    ),
+                    new RawMaterialButton(
+                      onPressed: () {
+                        _asyncConfirmDialog(context);
+                      },
+                      child: new Icon(
+                        Icons.restore_from_trash,
+                        color: Colors.green,
+                        size: 35.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.white,
+                      padding: const EdgeInsets.all(15.0),
+                    ),
+                    /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -488,7 +537,7 @@ class _DetailPage extends State<DetailPage> {
                   ),
                 ),*/
 
-                /*
+                    /*
                 Expanded(
                   child: RaisedButton(
                     child: Text("Conferma"),
@@ -504,59 +553,156 @@ class _DetailPage extends State<DetailPage> {
                     splashColor: Colors.grey,
                   ),
                 ),*/
+                  ]),
+            ),
 
-              ]),
-
-              Column(
-                children: _pause
-                    .map((element) => Card(
-                          child: new Container(
-                              color: Colors.grey,
-                              padding: new EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 0.0),
-                              //width: 200.0,
-                              child: new Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    new MaterialButton(
-                                      height: 40.0,
-                                      child: new Column(
-                                        children: <Widget>[
-                                          new Icon(Icons.hourglass_empty,
-                                              size: 30.0),
-                                          new Text(element.descrizione),
-                                        ],
-                                      ),
-                                      onPressed: null,
-                                    ),
-                                    Column(
+            Column(
+              children: _pause
+                  .map((element) => Card(
+                        child: new Container(
+                            color: Colors.grey,
+                            padding: new EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 0.0),
+                            //width: 200.0,
+                            child: new Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  new MaterialButton(
+                                    height: 40.0,
+                                    child: new Column(
                                       children: <Widget>[
-                                        Text(
-                                            element.durata.toString() + ' min.',
-                                            style: new TextStyle(
-                                                fontSize: 22.0,
-                                                color: Colors.white)),
+                                        new Icon(Icons.hourglass_empty,
+                                            size: 30.0),
+                                        new Text(element.descrizione),
                                       ],
                                     ),
-                                    new MaterialButton(
-                                      height: 40.0,
-                                      child: new Column(
-                                        children: <Widget>[
-                                          new Icon(Icons.remove_circle_outline,
-                                              size: 30.0)
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        _deletePause(element.id);
-                                      },
+                                    onPressed: null,
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Text(element.durata.toString() + ' min.',
+                                          style: new TextStyle(
+                                              fontSize: 22.0,
+                                              color: Colors.white)),
+                                    ],
+                                  ),
+                                  new MaterialButton(
+                                    height: 40.0,
+                                    child: new Column(
+                                      children: <Widget>[
+                                        new Icon(Icons.remove_circle_outline,
+                                            size: 30.0)
+                                      ],
                                     ),
-                                  ])),
-                        ))
-                    .toList(),
-              )
-            ],
-          ),
+                                    onPressed: () {
+                                      _deletePause(element.id);
+                                    },
+                                  ),
+                                ])),
+                      ))
+                  .toList(),
+            )
+          ],
         ),
       );
+}
+
+class MyDialog extends StatefulWidget {
+  final Workers workers;
+  final State detailState;
+
+  MyDialog({Key key, this.workers, this.detailState}) : super(key: key);
+  @override
+  _MyDialogState createState() => _MyDialogState();
+}
+
+class _MyDialogState extends State<MyDialog> {
+  String _valorePausa = '15';
+  List<String> _timepause = ['15', '30', '45', '60', '120'];
+  String descrizione;
+
+  void addPause(String description, int durata) async {
+    api.setPause(
+        widget.workers.id_daily_job, description, durata, widget.workers.id);
+    _pause = await api
+        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .whenComplete(refresh);
+  }
+
+  void refresh() {
+    widget.detailState.setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Container(
+        height: 160.0,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                'Durata pausa',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ),
+              ),
+            ),
+            DropdownButton(
+              hint: Text('Scegli la durata'), // Not necessary for Option 1
+              value: _valorePausa,
+              onChanged: (newValue) {
+                setState(() {
+                  _valorePausa = newValue;
+                });
+              },
+              items: _timepause.map((_radioValue1) {
+                return DropdownMenuItem(
+                  child: new Text(_radioValue1),
+                  value: _radioValue1,
+                );
+              }).toList(),
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                    child: TextField(
+                  maxLength: 256,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      labelText: 'Inserisci motivo', hintText: 'es. Pranzo'),
+                  onChanged: (value) {
+                    descrizione = value;
+                  },
+                ))
+              ],
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            FlatButton(
+              child: Text('Chiudi'),
+              onPressed: () {
+                Navigator.of(context).pop(descrizione);
+              },
+            ),
+            FlatButton(
+              child: Text('Aggiungi Pausa'),
+              onPressed: () {
+                addPause(descrizione, int.parse(_valorePausa));
+                Navigator.of(context).pop(descrizione);
+              },
+            )
+          ],
+        )
+      ],
+    );
+  }
 }

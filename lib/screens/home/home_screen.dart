@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:lmm_logistics/main.dart';
+import 'package:lmm_logistics/screens/home/pages/changePasswordPage.dart';
+import 'package:lmm_logistics/screens/login/login_screen.dart';
 import './pages/time_screen.dart';
 import './pages/adduser_screen.dart';
 import './pages/resume_screen.dart';
@@ -9,29 +14,62 @@ import 'package:lmm_logistics/data/database_helper.dart';
 import 'package:lmm_logistics/auth.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String data;
   var db = new DatabaseHelper();
   var authStateProvider = new AuthStateProvider();
+
+  TabController tabController;
+
+  @override
+  void initState() {
+    tabController = new TabController(
+      vsync: this,
+      initialIndex: 0,
+      length: 4,
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //var now = new DateTime.now();
     //var formatter = new DateFormat('EEE dd-MM-yyyy');
     //String formatted = formatter.format(now);
 
-    if(globals.dataLavori==null){
+    if (globals.dataLavori == null) {
       var now = new DateTime.now();
+      now.month < 10
+          ? now.day < 10
+              ? data = "0${now.year}-0${now.month}-${now.day}"
+              : data = "${now.year}-0${now.month}-${now.day}"
+          : now.day < 10
+              ? data = "0${now.year}-${now.month}-${now.day}"
+              : data = "${now.year}-${now.month}-${now.day}";
       var formatter = new DateFormat('MM');
       String mese = formatter.format(now);
       formatter = new DateFormat('yyyy');
       String anno = formatter.format(now);
       formatter = new DateFormat('dd');
-      String giorno = formatter.format(now);
-      data = anno + '-' + mese + '-' + giorno; //'2019-04-23';
+      String giorno = formatter.format(now); //'2019-04-23';
+      //data = anno + '-' + mese + '-' + giorno;
       globals.dataLavori = anno + '/' + mese + '/' + giorno;
-    }else {
+    } else {
       var x = globals.dataLavori.split('/');
-      data = x[1] + '-' + x[0] + '-' + x[2]; //'2019-04-23';
+      int.parse(x[0]) < 10
+          ? int.parse(x[1]) < 10
+              ? data = "0${x[1]}-0${x[0]}-${x[2]}"
+              : data = "${x[1]}-0${x[0]}-${x[2]}"
+          : int.parse(x[1]) < 10
+              ? data = "0${x[1]}-${x[0]}-${x[2]}"
+              : data = "${x[1]}-${x[0]}-${x[2]}";
+      //data = x[1] + '-' + x[0] + '-' + x[2]; //'2019-04-23';
     }
     return MaterialApp(
       theme: new ThemeData(
@@ -52,8 +90,8 @@ class HomeScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
-                  child: Text('Configurazione',
-                      style: TextStyle(color: Colors.black, fontSize: 30.0)),
+                  child: Text('Impostazioni',
+                      style: TextStyle(color: Colors.white, fontSize: 30.0)),
                   decoration: BoxDecoration(
                     color: Colors.green,
                   ),
@@ -61,24 +99,34 @@ class HomeScreen extends StatelessWidget {
                 ListTile(
                   leading: new Icon(Icons.date_range),
                   title: Text('Cambia data',
-                      style: TextStyle(color: Colors.green, fontSize: 30.0)),
+                      style: TextStyle(color: Colors.green, fontSize: 24.0)),
                   onTap: () {
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => InsertDate()));
                   },
                 ),
                 ListTile(
-                  leading: new Icon(Icons.date_range),
-                  title: Text('Reset utente',
-                      style: TextStyle(color: Colors.green, fontSize: 30.0)),
+                  leading: new Icon(Icons.security),
+                  title: Text('Cambia password',
+                      style: TextStyle(color: Colors.green, fontSize: 24.0)),
+                  onTap: () {
+                    exit(0);
+                  },
+                ),
+                ListTile(
+                  leading: new Icon(Icons.exit_to_app),
+                  title: Text('Cambia utente',
+                      style: TextStyle(color: Colors.green, fontSize: 24.0)),
                   onTap: () {
                     db.deleteUsers();
-                    globals.id_daily_job=0;
-                    globals.userId=0;
-                    globals.siteId=0;
+                    globals.id_daily_job = 0;
+                    globals.userId = 0;
+                    globals.siteId = 0;
                     authStateProvider.notify(AuthState.LOGGED_OUT);
-                    //Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginApp()));
-                    SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        ModalRoute.withName("/"));
                   },
                 ),
                 /*ListTile(
@@ -95,6 +143,7 @@ class HomeScreen extends StatelessWidget {
           ),
           appBar: AppBar(
             bottom: TabBar(
+              controller: tabController,
               tabs: [
                 Tab(icon: Icon(Icons.access_time)),
                 Tab(icon: Icon(Icons.transfer_within_a_station)),
@@ -106,11 +155,13 @@ class HomeScreen extends StatelessWidget {
             title: Text(data),
           ),
           body: TabBarView(
+            controller: tabController,
             children: [
-              TimeScreen(title: "Risorse presenti su \nSito - " +  globals.siteName),
-              AddUserScreen(),
-              BoxScreen(),
-              ResumeScreen(),
+              TimeScreen(
+                  title: "Risorse presenti su \nSito - " + globals.siteName),
+              AddUserScreen(tabController: tabController),
+              BoxScreen(tabController: tabController),
+              ResumeScreen(tabController: tabController),
             ],
           ),
         ),

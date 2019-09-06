@@ -1,24 +1,30 @@
+import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/models/working_user.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/screens/home/home_screen.dart';
-import 'package:lmm_logistics/screens/home/pages/time_screen.dart';
-import 'dart:convert';
+import 'package:dropdownfield/dropdownfield.dart';
+
+WorkingUsers selectedWorker;
+List<WorkingUsers> _wkusers = [];
 
 class AddUserScreen extends StatefulWidget {
+  TabController tabController;
+  AddUserScreen({Key key, this.tabController}) : super(key: key);
+
   @override
   _AddUserScreen createState() {
-    return new _AddUserScreen();
+    return _AddUserScreen(tabController);
   }
 }
 
 class _AddUserScreen extends State<AddUserScreen> {
-  List<WorkingUsers> _wkusers = [];
-  WorkingUsers selectedWorker;
+  TabController tabController;
+  _AddUserScreen(this.tabController);
 
-  RestDatasource api = new RestDatasource();
+  RestDatasource api = RestDatasource();
 
   void initState() {
     super.initState();
@@ -40,51 +46,89 @@ class _AddUserScreen extends State<AddUserScreen> {
     }
   }
 
-  void adduser(int id_user) {
-    if (globals.id_daily_job > 0 || id_user == null) {
-      api.setDailyJob(globals.id_daily_job, id_user);
+  void adduser(int idUser) {
+    if (globals.id_daily_job > 0 || idUser == null) {
+      api.setDailyJob(globals.id_daily_job, idUser);
+      showFlash(
+          context: context,
+          duration: Duration(seconds: 1),
+          builder: (context, controller) {
+            return Flash(
+              controller: controller,
+              style: FlashStyle.floating,
+              boxShadows: kElevationToShadow[4],
+              backgroundColor: Colors.black87,
+              child: FlashBar(
+                message: Text("Utente ${selectedWorker.first_name} aggiunto", style: TextStyle(color: Colors.white),),
+              ),
+            );
+          }).whenComplete(() {
+        tabController.animateTo(0,
+            duration: Duration(seconds: 1), curve: Curves.ease);
+      });
     }
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TimeScreen(title: "Risorse presenti"),
-        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Gestione utenti'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Gestione utenti'),
       ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Dropper(),
-            SizedBox(height: 50.0),
-            Column(children: <Widget>[
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height / 1.5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              CustomDropDownField(),
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new RawMaterialButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
-                      },
-                      child: new Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.green,
-                        size: 35.0,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(10.0),
+                    child: MaterialButton(
+                      onPressed: () => setState(() {
+                        tabController.animateTo(0,
+                            duration: Duration(seconds: 1), curve: Curves.ease);
+                      }),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Text("Lista Risorse"),
                       ),
-                      shape: new CircleBorder(),
-                      elevation: 2.0,
-                      fillColor: Colors.white,
-                      padding: const EdgeInsets.all(15.0),
+                      color: Colors.green,
+                      textColor: Colors.white,
                     ),
-                    /*
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(10.0),
+                    child: MaterialButton(
+                      onPressed: () {
+                        if (selectedWorker != null) adduser(selectedWorker.id);
+                      },
+                      child: Text("Aggiungi Risorsa"),
+                      color: Colors.green,
+                      textColor: Colors.white,
+                    ),
+                  )
+                  /*RawMaterialButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    },
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.green,
+                      size: 35.0,
+                    ),
+                    shape: CircleBorder(),
+                    elevation: 2.0,
+                    fillColor: Colors.white,
+                    padding: const EdgeInsets.all(15.0),
+                  ),
+                  /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -99,21 +143,21 @@ class _AddUserScreen extends State<AddUserScreen> {
                   ),
                 ),
                 */
-                    new RawMaterialButton(
-                      onPressed: () {
-                        if (selectedWorker != null) adduser(selectedWorker.id);
-                      },
-                      child: new Icon(
-                        Icons.add_circle_outline,
-                        color: Colors.green,
-                        size: 35.0,
-                      ),
-                      shape: new CircleBorder(),
-                      elevation: 2.0,
-                      fillColor: Colors.white,
-                      padding: const EdgeInsets.all(15.0),
+                  RawMaterialButton(
+                    onPressed: () {
+                      if (selectedWorker != null) adduser(selectedWorker.id);
+                    },
+                    child: Icon(
+                      Icons.add_circle_outline,
+                      color: Colors.green,
+                      size: 35.0,
                     ),
-                    /*
+                    shape: CircleBorder(),
+                    elevation: 2.0,
+                    fillColor: Colors.white,
+                    padding: const EdgeInsets.all(15.0),
+                  ),
+                  /*
                 Expanded(
                   child: RaisedButton(
                     child: Text("Indietro"),
@@ -126,44 +170,104 @@ class _AddUserScreen extends State<AddUserScreen> {
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     splashColor: Colors.grey,
                   ),
-                ),*/
-                  ]),
-            ])
-          ],
+                ),*/*/
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget Dropper() {
+  Widget dropDownWithHints() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
-        decoration:
-            new BoxDecoration(border: new Border.all(color: Colors.lightGreen)),
+        decoration: BoxDecoration(border: Border.all(color: Colors.lightGreen)),
         child: Row(children: <Widget>[
-          new Icon(Icons.people),
+          Icon(Icons.people),
           SizedBox(width: 40.0),
           DropdownButtonHideUnderline(
-            child: new DropdownButton<WorkingUsers>(
-              hint: new Text("Seleziona risorsa"),
+            child: DropdownButton<WorkingUsers>(
+              hint: Text("Seleziona risorsa"),
               value: selectedWorker,
               isDense: true,
-              onChanged: (WorkingUsers newValue) {
+              onChanged: (WorkingUsers value) {
                 setState(() {
-                  selectedWorker = newValue;
+                  selectedWorker = value;
                 });
                 //print(selectedWorker.id);
               },
               items: _wkusers.map((WorkingUsers map) {
-                return new DropdownMenuItem<WorkingUsers>(
+                return DropdownMenuItem<WorkingUsers>(
                   value: map,
-                  child: new Text((map.getDescription()),
-                      style: new TextStyle(color: Colors.black)),
+                  child: Text((map.getDescription()),
+                      style: TextStyle(color: Colors.black)),
                 );
               }).toList(),
             ),
           ), // end drop
         ]));
+  }
+}
+
+class CustomDropDownField extends StatefulWidget {
+  @override
+  _CustomDropDownFieldState createState() => _CustomDropDownFieldState();
+}
+
+class _CustomDropDownFieldState extends State<CustomDropDownField> {
+  @override
+  Widget build(BuildContext context) {
+    List<String> testList = new List();
+
+    _wkusers.forEach((WorkingUsers workuser) {
+      testList.add(workuser.first_name + " " + workuser.last_name);
+    });
+
+    testList.sort();
+
+    String name;
+
+    void selectUser(String user) {
+      for (WorkingUsers workuser in _wkusers) {
+        if ((workuser.first_name + " " + workuser.last_name).compareTo(user) ==
+            0) {
+          print("${(workuser.first_name + " " + workuser.last_name)} : $user");
+          setState(() {
+            selectedWorker = workuser;
+          });
+          break;
+        }
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 35, right: 15, top: 50),
+      child: Container(
+        child: DropDownField(
+          icon: Icon(Icons.person_add),
+          itemsVisibleInDropdown: 5,
+          hintText: "Seleziona risorsa",
+          setter: (dynamic value) {
+            setState(() {
+              selectUser(value);
+              name = value;
+              FocusScope.of(context).requestFocus(FocusNode());
+            });
+          },
+          value: name,
+          onValueChanged: (dynamic value) {
+            setState(() {
+              selectUser(value);
+              name = value;
+              FocusScope.of(context).requestFocus(FocusNode());
+            });
+          },
+          items: testList,
+        ),
+      ),
+    );
   }
 }

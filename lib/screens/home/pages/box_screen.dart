@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/models/colli.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 class BoxScreen extends StatefulWidget {
+  TabController tabController;
+  BoxScreen({Key key, this.tabController}) : super(key: key);
   @override
   _BoxScreen createState() {
-    return new _BoxScreen();
+    return new _BoxScreen(this.tabController);
   }
 }
 
 class _BoxScreen extends State<BoxScreen> {
+  TabController tabController;
+  _BoxScreen(this.tabController);
   RestDatasource api = new RestDatasource();
 
   static final TextEditingController _seccoController = TextEditingController();
   static final TextEditingController _muraleController =
       TextEditingController();
   static final TextEditingController _geloController = TextEditingController();
-  static final TextEditingController _avanzi_seccoController =
+  static final TextEditingController _avanziSeccoController =
       TextEditingController();
-  static final TextEditingController _avanzi_muraleController =
+  static final TextEditingController _avanziMuraleController =
       TextEditingController();
-  static final TextEditingController _avanzi_geloController =
+  static final TextEditingController _avanziGeloController =
       TextEditingController();
   static final TextEditingController _pedaneController =
       TextEditingController();
@@ -45,9 +50,9 @@ class _BoxScreen extends State<BoxScreen> {
             int.parse(_seccoController.text),
             int.parse(_muraleController.text),
             int.parse(_geloController.text),
-            int.parse(_avanzi_seccoController.text),
-            int.parse(_avanzi_muraleController.text),
-            int.parse(_avanzi_geloController.text),
+            int.parse(_avanziSeccoController.text),
+            int.parse(_avanziMuraleController.text),
+            int.parse(_avanziGeloController.text),
             int.parse(_pedaneController.text),
             _noteController.text.replaceAll("'", " ").replaceAll('"', " "))
         .whenComplete(calculus);
@@ -62,15 +67,15 @@ class _BoxScreen extends State<BoxScreen> {
           _seccoController.text = colli.secco.toString();
           _muraleController.text = colli.murale.toString();
           _geloController.text = colli.gelo.toString();
-          _avanzi_seccoController.text = colli.a_secco.toString();
-          _avanzi_muraleController.text = colli.a_murale.toString();
-          _avanzi_geloController.text = colli.a_gelo.toString();
+          _avanziSeccoController.text = colli.a_secco.toString();
+          _avanziMuraleController.text = colli.a_murale.toString();
+          _avanziGeloController.text = colli.a_gelo.toString();
           _pedaneController.text = colli.pedane.toString();
           _noteController.text = colli.note.toString();
 
-          totale_a = int.parse(_avanzi_seccoController.text) +
-              int.parse(_avanzi_muraleController.text) +
-              int.parse(_avanzi_geloController.text);
+          totale_a = int.parse(_avanziSeccoController.text) +
+              int.parse(_avanziMuraleController.text) +
+              int.parse(_avanziGeloController.text);
 
           totale = int.parse(_pedaneController.text) +
               int.parse(_seccoController.text) +
@@ -85,9 +90,9 @@ class _BoxScreen extends State<BoxScreen> {
           _seccoController.text = '';
           _muraleController.text = '';
           _geloController.text = '';
-          _avanzi_seccoController.text = '';
-          _avanzi_muraleController.text = '';
-          _avanzi_geloController.text = '';
+          _avanziSeccoController.text = '';
+          _avanziMuraleController.text = '';
+          _avanziGeloController.text = '';
           _pedaneController.text = '';
           _noteController.text = '';
           totale = 0;
@@ -103,18 +108,17 @@ class _BoxScreen extends State<BoxScreen> {
         if (_seccoController.text == '') _seccoController.text = '0';
         if (_muraleController.text == '') _muraleController.text = '0';
         if (_geloController.text == '') _geloController.text = '0';
-        if (_avanzi_seccoController.text == '')
-          _avanzi_seccoController.text = '0';
-        if (_avanzi_muraleController.text == '')
-          _avanzi_muraleController.text = '0';
-        if (_avanzi_geloController.text == '')
-          _avanzi_geloController.text = '0';
+        if (_avanziSeccoController.text == '')
+          _avanziSeccoController.text = '0';
+        if (_avanziMuraleController.text == '')
+          _avanziMuraleController.text = '0';
+        if (_avanziGeloController.text == '') _avanziGeloController.text = '0';
         if (_pedaneController.text == '') _pedaneController.text = '0';
         if (_noteController.text == '') _noteController.text = ' ';
 
-        totale_a = int.parse(_avanzi_seccoController.text) +
-            int.parse(_avanzi_muraleController.text) +
-            int.parse(_avanzi_geloController.text);
+        totale_a = int.parse(_avanziSeccoController.text) +
+            int.parse(_avanziMuraleController.text) +
+            int.parse(_avanziGeloController.text);
 
         totale = int.parse(_seccoController.text) +
             int.parse(_pedaneController.text) +
@@ -123,14 +127,14 @@ class _BoxScreen extends State<BoxScreen> {
             totale_a;
 
         _seccoController.text = int.parse(_seccoController.text).toString();
-        _avanzi_seccoController.text =
-            int.parse(_avanzi_seccoController.text).toString();
+        _avanziSeccoController.text =
+            int.parse(_avanziSeccoController.text).toString();
         _muraleController.text = int.parse(_muraleController.text).toString();
-        _avanzi_muraleController.text =
-            int.parse(_avanzi_muraleController.text).toString();
+        _avanziMuraleController.text =
+            int.parse(_avanziMuraleController.text).toString();
         _geloController.text = int.parse(_geloController.text).toString();
-        _avanzi_geloController.text =
-            int.parse(_avanzi_geloController.text).toString();
+        _avanziGeloController.text =
+            int.parse(_avanziGeloController.text).toString();
         _pedaneController.text = int.parse(_pedaneController.text).toString();
       });
     }
@@ -168,7 +172,7 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
-                            controller: _avanzi_seccoController,
+                            controller: _avanziSeccoController,
                             onEditingComplete: calculus,
                             decoration:
                                 InputDecoration(labelText: 'avanzi secco'),
@@ -199,7 +203,7 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
-                            controller: _avanzi_muraleController,
+                            controller: _avanziMuraleController,
                             onEditingComplete: calculus,
                             decoration:
                                 InputDecoration(labelText: 'avanzi murale'),
@@ -230,7 +234,7 @@ class _BoxScreen extends State<BoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: TextFormField(
-                            controller: _avanzi_geloController,
+                            controller: _avanziGeloController,
                             onEditingComplete: calculus,
                             decoration:
                                 InputDecoration(labelText: 'avanzi gelo'),
@@ -308,38 +312,73 @@ class _BoxScreen extends State<BoxScreen> {
                   ],
                 ), // row
               ],
-            ), // column
-            Row(children: <Widget>[
-              Container(
-                margin: EdgeInsets.all(20.0),
-                child: RaisedButton(
-                  child: Text("Invia Dati"),
-                  onPressed: () {
-                    calculus();
-                    setColli();
-                  },
-                  color: Colors.green,
-                  textColor: Colors.white,
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  splashColor: Colors.grey,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(10.0),
+                  child: MaterialButton(
+                    onPressed: () => setState(() {
+                          tabController.animateTo(0,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.ease);
+                        }),
+                    child: Text("Lista Risorse"),
+                    color: Colors.green,
+                    textColor: Colors.white,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: RaisedButton(
-                  child: Text("Indietro"),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
-                  },
-                  color: Colors.green,
-                  textColor: Colors.white,
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  splashColor: Colors.grey,
+                Container(
+                  margin: EdgeInsets.all(10.0),
+                  child: MaterialButton(
+                    onPressed: () {
+                      calculus();
+                      setColli();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 7, right: 7),
+                      child: Text("Invia dati"),
+                    ),
+                    color: Colors.green,
+                    textColor: Colors.white,
+                  ),
                 ),
-              ),
-            ]),
+
+                /*Container(
+                  margin: EdgeInsets.all(20.0),
+                  child: RaisedButton(
+                    child: Text("Invia Dati"),
+                    onPressed: () {
+                      calculus();
+                      setColli();
+                    },
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    splashColor: Colors.grey,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(20.0),
+                  child: RaisedButton(
+                    child: Text("Indietro"),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    },
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    splashColor: Colors.grey,
+                  ),
+                ),*/
+              ],
+            ),
           ],
-        ), // ListView
+        ),
       ),
     );
   }

@@ -54,7 +54,8 @@ class _ListUsers extends State<ListUsers> {
             decoration: new BoxDecoration(
                 border: new Border(
                     right: new BorderSide(width: 1.0, color: Colors.white24))),
-            child: Icon(Icons.person, color: workers.agenzia==1?Colors.white:Colors.lightGreen),
+            child: Icon(Icons.person,
+                color: workers.agenzia == 1 ? Colors.white : Colors.lightGreen),
           ),
           title: Text(
             workers.first_name,
@@ -77,11 +78,13 @@ class _ListUsers extends State<ListUsers> {
                           ? Colors.red
                           : Colors.green,
                       size: 30.0)),
-      Expanded(
-        flex: 1,
-        child:Text(workers.date_start== null?"":workers.date_start.substring(10, 16),
-            style: TextStyle(
-                color: Colors.white, fontSize: 10.0))),
+              Expanded(
+                  flex: 1,
+                  child: Text(
+                      workers.date_start == null
+                          ? ""
+                          : workers.date_start.substring(10, 16),
+                      style: TextStyle(color: Colors.white, fontSize: 10.0))),
               Expanded(
                   flex: 1,
                   child: Icon(Icons.directions,
@@ -90,9 +93,11 @@ class _ListUsers extends State<ListUsers> {
                       size: 30.0)),
               Expanded(
                   flex: 1,
-                  child:Text(workers.date_end== null?"":workers.date_end.substring(10, 16),
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 10.0))),
+                  child: Text(
+                      workers.date_end == null
+                          ? ""
+                          : workers.date_end.substring(10, 16),
+                      style: TextStyle(color: Colors.white, fontSize: 10.0))),
             ],
           ),
           trailing:
@@ -125,8 +130,7 @@ class _ListUsers extends State<ListUsers> {
         );
 
     final makeBody = Container(
-        child:
-      widget.workers.length > 0
+      child: widget.workers.length > 0
           ? ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -138,7 +142,6 @@ class _ListUsers extends State<ListUsers> {
           : Center(
               child: Text('Nessun utente nella tua squadra',
                   style: new TextStyle(fontSize: 22.0, color: Colors.white))),
-
     );
 
     return Scaffold(

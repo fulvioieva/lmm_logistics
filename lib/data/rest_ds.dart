@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:lmm_logistics/data/database_helper.dart';
 import 'package:lmm_logistics/utils/network_util.dart';
 import 'package:lmm_logistics/models/user.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
@@ -31,6 +32,7 @@ class RestDatasource {
       return us;
     });
   }
+
   Future<List<Workers>> fetchUsersEvol() async {
     String utente = globals.userId.toString();
     int dj;
@@ -41,8 +43,12 @@ class RestDatasource {
     if (globals.logger) print("Data Lavori " + data);
     if (globals.logger) print("utente " + utente);
     if (globals.logger) print("sito " + sito.toString());
-    var body =
-    json.encode({"method": "fetchUsersEvol", "data": data, "utente": utente, "sito": sito.toString()});
+    var body = json.encode({
+      "method": "fetchUsersEvol",
+      "data": data,
+      "utente": utente,
+      "sito": sito.toString()
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -80,8 +86,12 @@ class RestDatasource {
     if (globals.logger) print("Data Lavori " + data);
     if (globals.logger) print("utente " + utente);
     if (globals.logger) print("sito " + sito.toString());
-    var body =
-    json.encode({"method": "fetchUsers", "data": data, "utente": utente, "sito": sito.toString()});
+    var body = json.encode({
+      "method": "fetchUsers",
+      "data": data,
+      "utente": utente,
+      "sito": sito.toString()
+    });
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -207,7 +217,6 @@ class RestDatasource {
   }
 
   Future<bool> setDataIn(int record, String data) async {
-
     /*
     var now = new DateTime.now();
     var formatter = new DateFormat('MM');
@@ -220,16 +229,16 @@ class RestDatasource {
     String data3 = data2 + data;
 */
     var x = globals.dataLavori.split('/');
-    if (x[0].length==1)x[0]='0'+x[0];
-    if (x[1].length==1)x[1]='0'+x[1];
+    if (x[0].length == 1) x[0] = '0' + x[0];
+    if (x[1].length == 1) x[1] = '0' + x[1];
     String data_fake = x[2] + '-' + x[0] + '-' + x[1] + data;
     String data3;
     var y = data.split(':');
-    if ( int.parse(y[0]) < 3 ){
+    if (int.parse(y[0]) < 3) {
       DateTime todayDate = DateTime.parse(data_fake);
       data3 = todayDate.add(new Duration(days: 1)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
-    }else {
+    } else {
       if (globals.logger) print(data_fake);
       data3 = data_fake; //'2019-04-23';
     }
@@ -244,23 +253,20 @@ class RestDatasource {
   }
 
   Future<bool> setDataOut(int record, String data) async {
-
-    List<Workers> lw = await  getDailyJob(record);
-
-
+    List<Workers> lw = await getDailyJob(record);
 
     var x = globals.dataLavori.split('/');
-    if (x[0].length==1)x[0]='0'+x[0];
-    if (x[1].length==1)x[1]='0'+x[1];
+    if (x[0].length == 1) x[0] = '0' + x[0];
+    if (x[1].length == 1) x[1] = '0' + x[1];
     String data_fake = x[2] + '-' + x[0] + '-' + x[1] + data;
     String data3;
 
     var y = data.split(':');
-    if (int.parse(y[0])<12){
+    if (int.parse(y[0]) < 12) {
       DateTime todayDate = DateTime.parse(data_fake);
       data3 = todayDate.add(new Duration(days: 1)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
-    }else{
+    } else {
       if (globals.logger) print(data_fake);
       data3 = data_fake; //'2019-04-23';
     }
@@ -410,7 +416,8 @@ class RestDatasource {
 
   Future<List<WorkingUsers>> getUserAgenzia(int id_daily_job) async {
     List<WorkingUsers> users = new List<WorkingUsers>();
-    var body = json.encode({"method": "getUserAgenzia","id_daily_job": id_daily_job.toString()});
+    var body = json.encode(
+        {"method": "getUserAgenzia", "id_daily_job": id_daily_job.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -577,7 +584,8 @@ class RestDatasource {
     });
   }
 
-  Future<String> getTotaleOreMesexsito(int id_site, String mese, String anno) async {
+  Future<String> getTotaleOreMesexsito(
+      int id_site, String mese, String anno) async {
     String ore = '0.0';
     var body = json.encode({
       "method": "getTotaleOreMesexsito",
@@ -600,9 +608,10 @@ class RestDatasource {
     });
   }
 
-  Future<List<Site>> getSitiEvol(int id_user,String date) async {
+  Future<List<Site>> getSitiEvol(int id_user, String date) async {
     List<Site> siti = new List<Site>();
-    var body = json.encode({"method": "getSitiEvol","id_user": id_user.toString(),"date": date});
+    var body = json.encode(
+        {"method": "getSitiEvol", "id_user": id_user.toString(), "date": date});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("Call getSitiEvol");
       if (globals.logger) print("JSON ->" + res.toString());
@@ -626,9 +635,10 @@ class RestDatasource {
     });
   }
 
-  Future<List<Site>> getSiti(int id_user,String date) async {
+  Future<List<Site>> getSiti(int id_user, String date) async {
     List<Site> siti = new List<Site>();
-    var body = json.encode({"method": "getSiti","id_user": id_user.toString(),"date": date});
+    var body = json.encode(
+        {"method": "getSiti", "id_user": id_user.toString(), "date": date});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (globals.logger) print("DATE ->" + date);
@@ -659,8 +669,13 @@ class RestDatasource {
       return res["error"];
     });
   }
+
   Future<bool> resetEconomia(int id_user, int id_daily_job) async {
-    var body = json.encode({"method": "resetEconomia", "id_user": id_user, "id_daily_job": id_daily_job});
+    var body = json.encode({
+      "method": "resetEconomia",
+      "id_user": id_user,
+      "id_daily_job": id_daily_job
+    });
     if (globals.logger) print("JOB  ->" + id_daily_job.toString());
     if (globals.logger) print("USER ->" + id_user.toString());
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
@@ -669,10 +684,10 @@ class RestDatasource {
       return res["error"];
     });
   }
+
   Future<String> getPercentuale(int id) async {
     String percentuale = "0";
-    var body = json.encode(
-        {"method": "getPercentuale", "id": id.toString()});
+    var body = json.encode({"method": "getPercentuale", "id": id.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -684,14 +699,14 @@ class RestDatasource {
       return percentuale;
     });
   }
+
   Future<List<Workers>> getDailyJob(int id) async {
     int dj;
     int ids;
     var x = globals.dataLavori.split('/');
     String data = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
     if (globals.logger) print("Data Lavori " + data);
-    var body =
-    json.encode({"method": "getDailyJob", "id": id.toString()});
+    var body = json.encode({"method": "getDailyJob", "id": id.toString()});
     return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -719,6 +734,30 @@ class RestDatasource {
     });
   }
 
-
-
+  Future<String> changePassword(String oldPassword, String newPassword) async {
+    DatabaseHelper db = new DatabaseHelper();
+    User user = await db.getUser(globals.userId);
+    if (user.password == oldPassword) {
+      var body = json.encode({
+        "method": "setpassword",
+        "user": user.username,
+        "newpass": newPassword,
+        "oldpass": oldPassword
+      });
+      if (newPassword != user.password) {
+        return _netUtil.post(LOGIN_URL, body: body).then((dynamic response) {
+          user.password = newPassword;
+          db.changePassword(user);
+          return Future.value("200");
+        }).catchError((onError) {
+          print(onError);
+          return Future.value("403");
+        });
+      }else{
+        return Future.value("406");
+      }
+    } else {
+      return Future.value("400");
+    }
+  }
 }

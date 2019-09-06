@@ -50,7 +50,7 @@ class LoginScreenState extends State<LoginScreen>
   @override
   onAuthStateChanged(AuthState state) {
     if (state == AuthState.LOGGED_IN) {
-      Navigator.of(_ctx).pushReplacementNamed("/insertdate");
+      Navigator.of(context).pushReplacementNamed("/insertdate");
     }
   }
 

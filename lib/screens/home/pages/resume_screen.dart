@@ -8,21 +8,25 @@ import 'package:intl/intl.dart';
 enum ConfirmAction { CANCEL, ACCEPT }
 
 class ResumeScreen extends StatefulWidget {
+  TabController tabController;
+  ResumeScreen({Key key, this.tabController}) : super(key: key);
   @override
   _ResumeScreen createState() {
-    return new _ResumeScreen();
+    return new _ResumeScreen(this.tabController);
   }
 }
 
 class _ResumeScreen extends State<ResumeScreen> {
+  TabController tabController;
+  _ResumeScreen(this.tabController);
   double fontsize = 1.3;
 
-  String tot_colli_lavorati = "0";
-  String tot_ore_economia = "0";
-  String tot_ore_lavorate = "0";
-  String totale_pers = "0";
+  String totColliLavorati = "0";
+  String totOreEconomia = "0";
+  String totOreLavorate = "0";
+  String totPers = "0";
   String media = '0';
-  String media_mensile = '0';
+  String mediaMensile = '0';
   String percentuale = '0';
   RestDatasource api = new RestDatasource();
 
@@ -51,9 +55,9 @@ class _ResumeScreen extends State<ResumeScreen> {
     String xx =
         await api.getTotaleColli(globals.id_daily_job).whenComplete(refresh);
 
-    tot_colli_lavorati = xx != null ? xx : '0';
+    totColliLavorati = xx != null ? xx : '0';
 
-    totale_pers =
+    totPers =
         await api.getTotalePersone(globals.id_daily_job).whenComplete(refresh);
 
     var x = await api.getTotaleOre(globals.id_daily_job).whenComplete(refresh);
@@ -62,7 +66,7 @@ class _ResumeScreen extends State<ResumeScreen> {
     } else {
       y = "0:0".split(':');
     }
-    tot_ore_lavorate = int.parse(y[0]).toString() +
+    totOreLavorate = int.parse(y[0]).toString() +
         '.' +
         int.parse(y[1] == '' ? '0' : y[1]).toString();
 
@@ -72,13 +76,13 @@ class _ResumeScreen extends State<ResumeScreen> {
     } else {
       y = "0:0".split(':');
     }
-    tot_ore_economia =
+    totOreEconomia =
         int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
     double media_calcolata =
-        double.parse(tot_colli_lavorati) / double.parse(tot_ore_lavorate);
-    if (double.parse(tot_colli_lavorati) != 0.0 &&
-        double.parse(tot_ore_lavorate) != 0.0) {
+        double.parse(totColliLavorati) / double.parse(totOreLavorate);
+    if (double.parse(totColliLavorati) != 0.0 &&
+        double.parse(totOreLavorate) != 0.0) {
       media = media_calcolata.toStringAsFixed(2);
     } else {
       media = "0";
@@ -110,10 +114,10 @@ class _ResumeScreen extends State<ResumeScreen> {
         int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
     if (double.parse(cmese) != 0.0 && double.parse(tot_omese) != 0.0) {
-      media_mensile =
+      mediaMensile =
           (double.parse(cmese) / double.parse(tot_omese)).toStringAsFixed(2);
     } else {
-      media_mensile = "N/D";
+      mediaMensile = "N/D";
     }
   }
 
@@ -154,7 +158,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         child: Row(children: <Widget>[
           new Icon(Icons.add_shopping_cart),
           SizedBox(width: 40.0),
-          new Text('Totale colli lavorati = ' + tot_colli_lavorati.toString(),
+          new Text('Totale colli lavorati = ' + totColliLavorati.toString(),
               style: DefaultTextStyle.of(context)
                   .style
                   .apply(fontSizeFactor: fontsize)),
@@ -170,7 +174,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         child: Row(children: <Widget>[
           new Icon(Icons.save_alt),
           SizedBox(width: 40.0),
-          new Text('Totale ore economia = ' + tot_ore_economia.toString(),
+          new Text('Totale ore economia = ' + totOreEconomia.toString(),
               style: DefaultTextStyle.of(context)
                   .style
                   .apply(fontSizeFactor: fontsize)),
@@ -186,7 +190,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         child: Row(children: <Widget>[
           new Icon(Icons.access_time),
           SizedBox(width: 40.0),
-          new Text('Totale ore lavorate = ' + tot_ore_lavorate.toString(),
+          new Text('Totale ore lavorate = ' + totOreLavorate.toString(),
               style: DefaultTextStyle.of(context)
                   .style
                   .apply(fontSizeFactor: fontsize)),
@@ -202,7 +206,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         child: Row(children: <Widget>[
           new Icon(Icons.supervisor_account),
           SizedBox(width: 40.0),
-          new Text('Totale persone = ' + totale_pers.toString(),
+          new Text('Totale persone = ' + totPers.toString(),
               style: DefaultTextStyle.of(context)
                   .style
                   .apply(fontSizeFactor: fontsize)),
@@ -237,7 +241,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         child: Row(children: <Widget>[
           new Icon(Icons.chrome_reader_mode),
           SizedBox(width: 40.0),
-          new Text('Media colli/ore mese = ' + media_mensile.toString(),
+          new Text('Media colli/ore mese = ' + mediaMensile.toString(),
               style: DefaultTextStyle.of(context)
                   .style
                   .apply(fontSizeFactor: fontsize)),
@@ -263,40 +267,71 @@ class _ResumeScreen extends State<ResumeScreen> {
                 _TotalePersone(),
                 _MediaColli(),
                 _TotaleColliMese(),
-                Row(children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.all(20.0),
-                    child: RaisedButton(
-                      child: Text("Conferma finale"),
-                      onPressed: () {
-                        _asyncConfirmDialog(context);
-                      },
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      splashColor: Colors.grey,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.all(10.0),
+                      child: MaterialButton(
+                        onPressed: () => setState(() {
+                              tabController.animateTo(0,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.ease);
+                            }),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Text("Lista Risorse"),
+                        ),
+                        color: Colors.green,
+                        textColor: Colors.white,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: RaisedButton(
-                      child: Text("Indietro"),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()));
-                      },
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      splashColor: Colors.grey,
+                    Container(
+                      margin: EdgeInsets.all(10.0),
+                      child: MaterialButton(
+                        onPressed: () {
+                          _asyncConfirmDialog(context);
+                        },
+                        child: Text("Conferma finale"),
+                        color: Colors.green,
+                        textColor: Colors.white,
+                      ),
                     ),
-                  ),
-                ]),
+                    /*Container(
+                      margin: EdgeInsets.all(20.0),
+                      child: RaisedButton(
+                        child: Text("Conferma finale"),
+                        onPressed: () {
+                          _asyncConfirmDialog(context);
+                        },
+                        color: Colors.green,
+                        textColor: Colors.white,
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        splashColor: Colors.grey,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(20.0),
+                      child: RaisedButton(
+                        child: Text("Indietro"),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+                        },
+                        color: Colors.green,
+                        textColor: Colors.white,
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        splashColor: Colors.grey,
+                      ),
+                    ),*/
+                  ],
+                ),
               ],
-            ), // column
+            ),
           ],
-        ), // ListView
+        ),
       ),
     );
   }

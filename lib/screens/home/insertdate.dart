@@ -1,3 +1,4 @@
+import 'package:dropdownfield/dropdownfield.dart';
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
@@ -20,10 +21,10 @@ class InsertDate extends StatefulWidget {
 class _InsertDate extends State<InsertDate> {
   final TextEditingController _controller = new TextEditingController();
   final f = new DateFormat('dd/MM/yyyy');
-  Site selectedSite;
-  List<Site> _wkSite = [];
   RestDatasource api = new RestDatasource();
   String datadefault;
+  Site selectedSite;
+  List<Site> _wkSite = [];
 
   void initState() {
     super.initState();
@@ -82,7 +83,6 @@ class _InsertDate extends State<InsertDate> {
     if (this.mounted) {
       setState(() {
         _controller.text = f.format(result);
-
         globals.dataLavori = new DateFormat.yMd().format(result);
         var x = globals.dataLavori.split('/');
         if (x[0].length == 1) x[0] = '0' + x[0];
@@ -97,6 +97,7 @@ class _InsertDate extends State<InsertDate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: null,
         title: Text('Inserimento giorno lavorativo'),
       ),
       body: Center(
@@ -106,11 +107,34 @@ class _InsertDate extends State<InsertDate> {
               SizedBox(height: 50.0),
               new Image.asset(
                 'assets/intro.jpg',
-                width: 600.0,
-                height: 240.0,
                 fit: BoxFit.contain,
               ),
-              new Row(children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Container(
+                  decoration: new BoxDecoration(
+                      border: new Border.all(color: Colors.lightGreen)),
+                  child: MaterialButton(
+                    onPressed: () {
+                      _chooseDate(context, _controller.text);
+                    },
+                    child: TextField(
+                      decoration: new InputDecoration(
+                        border: InputBorder.none,
+                        prefixIcon: Icon(Icons.calendar_today),
+                        suffixIcon: Icon(Icons.add_circle),
+                        hintText: 'Inserisci il giorno di lavoro',
+                        labelText: 'Data gg/mm/aaaa',
+                      ),
+                      //initialValue: datadefault,
+                      controller: _controller,
+                      enabled: false,
+                      keyboardType: TextInputType.datetime,
+                    ),
+                  ),
+                ),
+              ),
+              /*new Row(children: <Widget>[
                 SizedBox(height: 50.0),
                 new Expanded(
                     child: new TextFormField(
@@ -132,9 +156,9 @@ class _InsertDate extends State<InsertDate> {
                     _chooseDate(context, _controller.text);
                   }),
                 )
-              ]),
-              SizedBox(height: 20.0),
-              if (globals.multiSito) Dropper(),
+              ]),*/
+              if (globals.multiSito)
+                dropper(),
               SizedBox(height: 50.0),
               RaisedButton(
                 child: Text("Prosegui"),
@@ -182,12 +206,10 @@ class _InsertDate extends State<InsertDate> {
             FlatButton(
               child: const Text('PROCEDI'),
               onPressed: () {
-
                 globals.siteId = 0;
                 globals.siteName = 'SCONOSCIUTO';
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => HomeScreen()));
-
 
                 //Navigator.of(context).pop(ConfirmAction.PROCEDI);
               },
@@ -198,35 +220,48 @@ class _InsertDate extends State<InsertDate> {
     );
   }
 
-  Widget Dropper() {
-    return Container(
-        margin: const EdgeInsets.all(10.0),
-        padding: const EdgeInsets.all(5.0),
-        decoration:
-            new BoxDecoration(border: new Border.all(color: Colors.lightGreen)),
-        child: Row(children: <Widget>[
-          new Icon(Icons.home),
-          SizedBox(width: 40.0),
-          DropdownButtonHideUnderline(
-            child: new DropdownButton<Site>(
-              hint: new Text("Seleziona sito"),
-              value: selectedSite,
-              isDense: true,
-              onChanged: (Site newValue) {
-                setState(() {
-                  selectedSite = newValue;
-                });
-                //print(selectedWorker.id);
-              },
-              items: _wkSite.map((Site map) {
-                return new DropdownMenuItem<Site>(
-                  value: map,
-                  child: new Text((map.getDescription()),
-                      style: new TextStyle(color: Colors.black)),
-                );
-              }).toList(),
-            ),
-          ), // end drop
-        ]));
+  Widget dropper() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: new BoxDecoration(
+              border: new Border.all(color: Colors.lightGreen)),
+          child: Flex(
+              direction: Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                    flex: 2,
+                    child: Icon(
+                      Icons.store_mall_directory,
+                      size: 30,
+                      color: Colors.grey,
+                    )),
+                Expanded(
+                  flex: 11,
+                  child: DropdownButtonHideUnderline(
+                    child: new DropdownButton<Site>(
+                      hint: new Text("Seleziona sito"),
+                      value: selectedSite,
+                      isDense: true,
+                      onChanged: (Site newValue) {
+                        setState(() {
+                          selectedSite = newValue;
+                        });
+                        //print(selectedWorker.id);
+                      },
+                      items: _wkSite.map((Site map) {
+                        return new DropdownMenuItem<Site>(
+                          value: map,
+                          child: new Text((map.getDescription()),
+                              style: new TextStyle(color: Colors.black)),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ), // end drop
+              ])),
+    );
   }
 }
