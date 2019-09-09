@@ -42,9 +42,11 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   void _showSnackBar(String text) {
-    scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text('Invalid credentials'),backgroundColor: Colors.red,
-    duration: Duration(seconds: 5),));
+    scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text('Invalid credentials'),
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 5),
+    ));
   }
 
   @override
@@ -52,6 +54,11 @@ class LoginScreenState extends State<LoginScreen>
     if (state == AuthState.LOGGED_IN) {
       Navigator.of(context).pushReplacementNamed("/insertdate");
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override

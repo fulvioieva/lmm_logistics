@@ -25,6 +25,7 @@ class AuthStateProvider {
     int idUser = await db.idUser();
     if (globals.logger) print("IdUser " + idUser.toString());
     globals.userId = idUser;
+    globals.listener = _subscribers;
     if(isLoggedIn)
       notify(AuthState.LOGGED_IN);
     else

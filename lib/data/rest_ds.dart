@@ -753,7 +753,7 @@ class RestDatasource {
           print(onError);
           return Future.value("403");
         });
-      }else{
+      } else {
         return Future.value("406");
       }
     } else {

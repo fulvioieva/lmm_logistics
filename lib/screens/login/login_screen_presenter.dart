@@ -14,13 +14,13 @@ class LoginScreenPresenter {
 
   LoginScreenPresenter(this._view);
 
-
-  doLogin(String username, String password) async  {
+  doLogin(String username, String password) async {
     try {
       if (globals.logger) print("DoLogin-> " + username + ' ' + password);
-      var user = await api.login(username, password);
-      _view.onLoginSuccess(user);
-    } on Exception catch(error) {
+      await api.login(username, password).then((User user) {
+        _view.onLoginSuccess(user);
+      });
+    } on Exception catch (error) {
       _view.onLoginError(error.toString());
     }
   }

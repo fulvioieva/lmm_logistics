@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/main.dart';
 import 'package:lmm_logistics/screens/home/pages/changePasswordPage.dart';
+import 'package:lmm_logistics/screens/login/loginPage.dart';
 import 'package:lmm_logistics/screens/login/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './pages/time_screen.dart';
 import './pages/adduser_screen.dart';
 import './pages/resume_screen.dart';
@@ -23,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String data;
   var db = new DatabaseHelper();
-  var authStateProvider = new AuthStateProvider();
+  AuthStateProvider authStateProvider = new AuthStateProvider();
 
   TabController tabController;
 
@@ -110,7 +112,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   title: Text('Cambia password',
                       style: TextStyle(color: Colors.green, fontSize: 24.0)),
                   onTap: () {
-                    exit(0);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChangePassword()));
                   },
                 ),
                 ListTile(
@@ -118,15 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   title: Text('Cambia utente',
                       style: TextStyle(color: Colors.green, fontSize: 24.0)),
                   onTap: () {
-                    db.deleteUsers();
-                    globals.id_daily_job = 0;
-                    globals.userId = 0;
-                    globals.siteId = 0;
-                    authStateProvider.notify(AuthState.LOGGED_OUT);
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                        ModalRoute.withName("/"));
+                    logout();
                   },
                 ),
                 /*ListTile(
@@ -167,5 +164,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  void logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.clear();
+      db.deleteUsers();
+      globals.id_daily_job = 0;
+      globals.userId = 0;
+      globals.siteId = 0;
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+    });
   }
 }

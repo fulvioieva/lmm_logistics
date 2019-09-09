@@ -1,5 +1,8 @@
 library my_prj.globals;
 
+import 'package:lmm_logistics/auth.dart';
+
+List<AuthStateListener> listener;
 bool multiSito = true;
 bool logger = false;
 bool resetDB = false;
