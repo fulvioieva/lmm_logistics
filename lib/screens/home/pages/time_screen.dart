@@ -176,7 +176,7 @@ class _ListEmployesState extends State<ListEmployes> {
         ),
         contentPadding: EdgeInsets.all(8),
         title: Text(
-          "${workers.firstName} ${workers..lastName}",
+          "${workers.firstName} ${workers.lastName}",
           style: TextStyle(
               color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
         ),
