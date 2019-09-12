@@ -4,14 +4,13 @@ import 'package:lmm_logistics/models/working_user.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
-import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:dropdownfield/dropdownfield.dart';
 
 WorkingUsers selectedWorker;
 List<WorkingUsers> _wkusers = [];
 
 class AddUserScreen extends StatefulWidget {
-  TabController tabController;
+  final TabController tabController;
   AddUserScreen({Key key, this.tabController}) : super(key: key);
 
   @override
@@ -37,7 +36,7 @@ class _AddUserScreen extends State<AddUserScreen> {
 
   void fetchUsers() async {
     _wkusers =
-        await api.getUserAgenzia(globals.id_daily_job).whenComplete(refresh);
+        await api.getUserAgenzia(globals.idDailyJob).whenComplete(refresh);
   }
 
   void refresh() {
@@ -47,8 +46,8 @@ class _AddUserScreen extends State<AddUserScreen> {
   }
 
   void adduser(int idUser) {
-    if (globals.id_daily_job > 0 || idUser == null) {
-      api.setDailyJob(globals.id_daily_job, idUser);
+    if (globals.idDailyJob > 0 || idUser == null) {
+      api.setDailyJob(globals.idDailyJob, idUser);
       showFlash(
           context: context,
           duration: Duration(seconds: 1),
@@ -59,7 +58,7 @@ class _AddUserScreen extends State<AddUserScreen> {
               boxShadows: kElevationToShadow[4],
               backgroundColor: Colors.black87,
               child: FlashBar(
-                message: Text("Utente ${selectedWorker.first_name} aggiunto", style: TextStyle(color: Colors.white),),
+                message: Text("Utente ${selectedWorker.firstName} aggiunto", style: TextStyle(color: Colors.white),),
               ),
             );
           }).whenComplete(() {
@@ -223,7 +222,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
     List<String> testList = new List();
 
     _wkusers.forEach((WorkingUsers workuser) {
-      testList.add(workuser.first_name + " " + workuser.last_name);
+      testList.add(workuser.firstName + " " + workuser.lastName);
     });
 
     testList.sort();
@@ -232,9 +231,9 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
 
     void selectUser(String user) {
       for (WorkingUsers workuser in _wkusers) {
-        if ((workuser.first_name + " " + workuser.last_name).compareTo(user) ==
+        if ((workuser.firstName + " " + workuser.lastName).compareTo(user) ==
             0) {
-          print("${(workuser.first_name + " " + workuser.last_name)} : $user");
+          print("${(workuser.firstName + " " + workuser.lastName)} : $user");
           setState(() {
             selectedWorker = workuser;
           });

@@ -9,14 +9,12 @@ import 'package:lmm_logistics/utils/globals.dart' as globals;
 class LoginScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return new LoginScreenState();
   }
 }
 
 class LoginScreenState extends State<LoginScreen>
     implements LoginScreenContract, AuthStateListener {
-  BuildContext _ctx;
 
   bool _isLoading = false;
   final formKey = new GlobalKey<FormState>();
@@ -63,7 +61,6 @@ class LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    _ctx = context;
     var loginBtn = new RaisedButton(
       onPressed: _submit,
       child: new Text("LOGIN"),

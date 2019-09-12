@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/material/dialog.dart' as Dialog;
+import 'package:flutter/material.dart' as dialog;
 
 const bool __printDebug = false;
 
@@ -166,7 +166,7 @@ class Picker {
 
   /// show dialog picker
   void showDialog(BuildContext context) {
-    Dialog.showDialog(
+    dialog.showDialog(
         context: context,
         builder: (BuildContext context) {
           List<Widget> actions = [];

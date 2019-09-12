@@ -8,7 +8,6 @@ import 'package:lmm_logistics/screens/home/pages/data/PickerData.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/flutter_picker/flutter_picker.dart';
-import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 enum ConfirmAction { CANCEL, ACCEPT }
 
@@ -17,9 +16,7 @@ bool editable = false;
 String _dataEntrata, _dataUscita, _dataEntrataEconomia, _dataUscitaEconomia;
 List<Pause> _pause = [];
 Economia _economia;
-List<String> _listPause = ['15', '30', '45', '60', '120'];
 String descrizione = 'Generica';
-String _valorePausa = '15';
 
 class DetailPage extends StatefulWidget {
   final Workers workers;
@@ -51,18 +48,18 @@ class _DetailPage extends State<DetailPage> {
   }
 
   void startedStrings() {
-    widget.workers.date_start == null
+    widget.workers.dateStart == null
         ? _dataEntrata = ""
-        : _dataEntrata = widget.workers.date_start.substring(10, 16);
-    widget.workers.date_end == null
+        : _dataEntrata = widget.workers.dateStart.substring(10, 16);
+    widget.workers.dateEnd == null
         ? _dataUscita = ""
-        : _dataUscita = widget.workers.date_end.substring(10, 16);
-    _economia.data_inizio == null
+        : _dataUscita = widget.workers.dateEnd.substring(10, 16);
+    _economia.dataInizio == null
         ? _dataEntrataEconomia = ""
-        : _dataEntrataEconomia = _economia.data_inizio.substring(10, 16);
-    _economia.data_fine == null
+        : _dataEntrataEconomia = _economia.dataInizio.substring(10, 16);
+    _economia.dataFine == null
         ? _dataUscitaEconomia = ""
-        : _dataUscitaEconomia = _economia.data_fine.substring(10, 16);
+        : _dataUscitaEconomia = _economia.dataFine.substring(10, 16);
   }
 
   void setDataIn(int id, String entrata) async {
@@ -73,15 +70,15 @@ class _DetailPage extends State<DetailPage> {
     api.setDataOut(id, uscita).whenComplete(refresh);
   }
 
-  void setDataInEconomia(int id_daily_job, String entrata) async {
+  void setDataInEconomia(int idDailyJob, String entrata) async {
     api
-        .setEconomia(entrata, null, id_daily_job, widget.workers.id)
+        .setEconomia(entrata, null, idDailyJob, widget.workers.id)
         .whenComplete(refresh);
   }
 
-  void setDataOutEconomia(int id_daily_job, String uscita) async {
+  void setDataOutEconomia(int idDailyJob, String uscita) async {
     api
-        .setEconomia(null, uscita, id_daily_job, widget.workers.id)
+        .setEconomia(null, uscita, idDailyJob, widget.workers.id)
         .whenComplete(refresh);
   }
 
@@ -108,7 +105,7 @@ class _DetailPage extends State<DetailPage> {
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataIn(widget.workers.work_id, _dataEntrata);
+            setDataIn(widget.workers.workId, _dataEntrata);
           });
         }).showDialog(context);
   }
@@ -130,7 +127,7 @@ class _DetailPage extends State<DetailPage> {
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataOut(widget.workers.work_id, _dataUscita);
+            setDataOut(widget.workers.workId, _dataUscita);
           });
         }).showDialog(context);
   }
@@ -153,7 +150,7 @@ class _DetailPage extends State<DetailPage> {
                 ':' +
                 picker.getSelectedValues()[1];
             setDataInEconomia(
-                widget.workers.id_daily_job, _dataEntrataEconomia);
+                widget.workers.idDailyJob, _dataEntrataEconomia);
           });
         }).showDialog(context);
   }
@@ -176,7 +173,7 @@ class _DetailPage extends State<DetailPage> {
                 ':' +
                 picker.getSelectedValues()[1];
             setDataOutEconomia(
-                widget.workers.id_daily_job, _dataUscitaEconomia);
+                widget.workers.idDailyJob, _dataUscitaEconomia);
           });
         }).showDialog(context);
   }
@@ -192,7 +189,7 @@ class _DetailPage extends State<DetailPage> {
   }
 
   void _resetEconomia() async {
-    api.resetEconomia(widget.workers.id, widget.workers.id_daily_job);
+    api.resetEconomia(widget.workers.id, widget.workers.idDailyJob);
     if (this.mounted) {
       setState(() {
         _dataEntrataEconomia = ' ';
@@ -204,19 +201,19 @@ class _DetailPage extends State<DetailPage> {
   void _deletePause(int id) async {
     api.removePause(id);
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .fetchPause(widget.workers.idDailyJob, widget.workers.id)
         .whenComplete(refresh);
   }
 
   void fetchPause() async {
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .fetchPause(widget.workers.idDailyJob, widget.workers.id)
         .whenComplete(startedStrings);
   }
 
   void fetchEconomia() async {
     _economia = await api
-        .getEconomia(widget.workers.id_daily_job, widget.workers.id)
+        .getEconomia(widget.workers.idDailyJob, widget.workers.id)
         .whenComplete(refresh);
     if (_economia == null) _economia = new Economia();
   }
@@ -240,7 +237,7 @@ class _DetailPage extends State<DetailPage> {
             FlatButton(
               child: const Text('PROCEDI'),
               onPressed: () {
-                _resetUtente(widget.workers.work_id);
+                _resetUtente(widget.workers.workId);
                 if (_economia?.id != null) _resetEconomia();
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
@@ -365,7 +362,7 @@ class _DetailPage extends State<DetailPage> {
             },
           ),
           title:
-              Text(widget.workers.last_name + ' ' + widget.workers.first_name),
+              Text(widget.workers.lastName + ' ' + widget.workers.firstName),
         ),
         body: ListView(
           children: <Widget>[
@@ -624,9 +621,9 @@ class _MyDialogState extends State<MyDialog> {
 
   void addPause(String description, int durata) async {
     api.setPause(
-        widget.workers.id_daily_job, description, durata, widget.workers.id);
+        widget.workers.idDailyJob, description, durata, widget.workers.id);
     _pause = await api
-        .fetchPause(widget.workers.id_daily_job, widget.workers.id)
+        .fetchPause(widget.workers.idDailyJob, widget.workers.id)
         .whenComplete(refresh);
   }
 
