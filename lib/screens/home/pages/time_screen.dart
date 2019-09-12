@@ -165,7 +165,7 @@ class _ListEmployesState extends State<ListEmployes> {
                 padding: EdgeInsets.all(4),
                 child: Icon(
                   Icons.person,
-                  color: Colors.white,
+                  color: workers.agenzia == 1 ? Colors.white : Colors.lightGreen,
                   size: 40,
                 ),
               ),
