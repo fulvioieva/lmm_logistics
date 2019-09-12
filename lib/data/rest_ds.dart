@@ -760,4 +760,8 @@ class RestDatasource {
       return Future.value("400");
     }
   }
+
+  Future<bool> setInizioFineList(List<int> listId, String dataInzio, String dataFine) async {
+    return false;
+  }
 }

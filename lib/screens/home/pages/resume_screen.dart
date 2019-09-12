@@ -266,7 +266,10 @@ class _ResumeScreen extends State<ResumeScreen> {
                 _TotaleOreLavorate(),
                 _TotalePersone(),
                 _MediaColli(),
-                _TotaleColliMese(),
+                /*
+                Aggiungere metodo che controlli che l'utente è un capoarea o meno
+                 */
+                //_TotaleColliMese(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
