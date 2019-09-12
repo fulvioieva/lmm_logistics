@@ -71,7 +71,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                               focusNode: oldPasswordFocus,
                               onSubmitted: (value) {
                                 oldPasswordFocus.unfocus();
-                                FocusScope.of(context).requestFocus(newPasswordFocus);
+                                FocusScope.of(context)
+                                    .requestFocus(newPasswordFocus);
                               },
                               controller: oldPassword,
                               obscureText: !pswView1,
@@ -119,7 +120,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                               focusNode: newPasswordFocus,
                               onSubmitted: (value) {
                                 oldPasswordFocus.unfocus();
-                                FocusScope.of(context).requestFocus(renewPasswordFocus);
+                                FocusScope.of(context)
+                                    .requestFocus(renewPasswordFocus);
                               },
                               onChanged: (value) {
                                 newPassword.text == renewPassword.text
@@ -251,88 +253,89 @@ class _ChangePasswordState extends State<ChangePassword> {
     setState(() async {
       if (oldPassword.text.isNotEmpty) {
         if (newPassword.text == renewPassword.text) {
-          String res =
-              await api.changePassword(oldPassword.text, newPassword.text);
-          switch (res) {
-            case "200":
-              showFlash(
-                  context: context,
-                  duration: Duration(seconds: 1),
-                  builder: (context, controller) {
-                    return Flash(
-                      controller: controller,
-                      style: FlashStyle.floating,
-                      boxShadows: kElevationToShadow[4],
-                      backgroundColor: Colors.black87,
-                      child: FlashBar(
-                        message: Text(
-                          "Password cambiata correttamente",
-                          style: TextStyle(color: Colors.white),
+          if (newPassword.text.isNotEmpty && renewPassword.text.isNotEmpty) {
+            String res = await api.changePassword(oldPassword.text, newPassword.text);
+            switch (res) {
+              case "200":
+                showFlash(
+                    context: context,
+                    duration: Duration(seconds: 1),
+                    builder: (context, controller) {
+                      return Flash(
+                        controller: controller,
+                        style: FlashStyle.floating,
+                        boxShadows: kElevationToShadow[4],
+                        backgroundColor: Colors.black87,
+                        child: FlashBar(
+                          message: Text(
+                            "Password cambiata correttamente",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                      ),
-                    );
-                  }).whenComplete(() {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
-              });
-              break;
-            case "400":
-              showFlash(
-                  context: context,
-                  duration: Duration(seconds: 1),
-                  builder: (context, controller) {
-                    return Flash(
-                      controller: controller,
-                      style: FlashStyle.floating,
-                      boxShadows: kElevationToShadow[4],
-                      backgroundColor: Colors.black87,
-                      child: FlashBar(
-                        message: Text(
-                          "La vecchia password non è corretta",
-                          style: TextStyle(color: Colors.white),
+                      );
+                    }).whenComplete(() {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                });
+                break;
+              case "400":
+                showFlash(
+                    context: context,
+                    duration: Duration(seconds: 1),
+                    builder: (context, controller) {
+                      return Flash(
+                        controller: controller,
+                        style: FlashStyle.floating,
+                        boxShadows: kElevationToShadow[4],
+                        backgroundColor: Colors.black87,
+                        child: FlashBar(
+                          message: Text(
+                            "La vecchia password non è corretta",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                      ),
-                    );
-                  });
-              break;
-            case "404":
-              showFlash(
-                  context: context,
-                  duration: Duration(seconds: 1),
-                  builder: (context, controller) {
-                    return Flash(
-                      controller: controller,
-                      style: FlashStyle.floating,
-                      boxShadows: kElevationToShadow[4],
-                      backgroundColor: Colors.black87,
-                      child: FlashBar(
-                        message: Text(
-                          "Ci sono dei problemi con il server, riprova più tardi",
-                          style: TextStyle(color: Colors.white),
+                      );
+                    });
+                break;
+              case "404":
+                showFlash(
+                    context: context,
+                    duration: Duration(seconds: 1),
+                    builder: (context, controller) {
+                      return Flash(
+                        controller: controller,
+                        style: FlashStyle.floating,
+                        boxShadows: kElevationToShadow[4],
+                        backgroundColor: Colors.black87,
+                        child: FlashBar(
+                          message: Text(
+                            "Ci sono dei problemi con il server, riprova più tardi",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                      ),
-                    );
-                  });
-              break;
-            case "406":
-              showFlash(
-                  context: context,
-                  duration: Duration(seconds: 1),
-                  builder: (context, controller) {
-                    return Flash(
-                      controller: controller,
-                      style: FlashStyle.floating,
-                      boxShadows: kElevationToShadow[4],
-                      backgroundColor: Colors.black87,
-                      child: FlashBar(
-                        message: Text(
-                          "La nuova password inserita è uguale a quella vecchia",
-                          style: TextStyle(color: Colors.white),
+                      );
+                    });
+                break;
+              case "406":
+                showFlash(
+                    context: context,
+                    duration: Duration(seconds: 1),
+                    builder: (context, controller) {
+                      return Flash(
+                        controller: controller,
+                        style: FlashStyle.floating,
+                        boxShadows: kElevationToShadow[4],
+                        backgroundColor: Colors.black87,
+                        child: FlashBar(
+                          message: Text(
+                            "La nuova password inserita è uguale a quella vecchia",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                      ),
-                    );
-                  });
-              break;
+                      );
+                    });
+                break;
+            }
           }
         }
       }

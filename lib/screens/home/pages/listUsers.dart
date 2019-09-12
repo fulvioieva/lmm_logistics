@@ -5,10 +5,11 @@ import 'package:lmm_logistics/models/workers.dart';
 import 'package:lmm_logistics/screens/home/pages/detail_page.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 
+bool checkOptions;
 class ListUsers extends StatefulWidget {
   final List<Workers> workers;
 
-  ListUsers({Key key, this.workers}) : super(key: key);
+  ListUsers({Key key, this.workers, checkOptions}) : super(key: key);
   final String title = "Sito - ";
 
   @override
@@ -16,6 +17,7 @@ class ListUsers extends StatefulWidget {
 }
 
 class _ListUsers extends State<ListUsers> {
+  _ListUsers();
   List<Workers> interinali = [];
   RestDatasource api = new RestDatasource();
 
@@ -46,6 +48,23 @@ class _ListUsers extends State<ListUsers> {
 
   @override
   Widget build(BuildContext context) {
+    bool checkFrame = false;
+
+    ListTile createItem(Workers workers) {
+      return ListTile(
+        leading: checkOptions
+            ? Checkbox(
+                value: checkFrame,
+                onChanged: (value) {
+                  setState(() {
+                    checkFrame = value;
+                  });
+                },
+              )
+            : Icon(Icons.person),
+      );
+    }
+
     ListTile makeListTile(Workers workers) => ListTile(
           contentPadding:
               EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -125,7 +144,7 @@ class _ListUsers extends State<ListUsers> {
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
             decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-            child: makeListTile(workers),
+            child: createItem(workers),
           ),
         );
 

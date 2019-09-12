@@ -265,7 +265,7 @@ class _ResumeScreen extends State<ResumeScreen> {
                 _totaleOreLavorate(),
                 _totalePersone(),
                 _mediaColli(),
-                _totaleColliMese(),
+                //_totaleColliMese(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

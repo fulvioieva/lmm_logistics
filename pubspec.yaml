@@ -10,6 +10,7 @@ dependencies:
   sqflite: ^1.1.5
   path_provider: ^0.5.0
   dropdownfield: ^1.0.1
+  circular_check_box: ^1.0.1
   flutter:
     sdk: flutter
   shared_preferences: ^0.5.3+4
