@@ -761,7 +761,78 @@ class RestDatasource {
     }
   }
 
-  Future<bool> setInizioFineList(List<int> listId, String dataInzio, String dataFine) async {
-    return false;
+  Future<bool> setInizioOraList(List<int> listId, String data) async {
+    var x = globals.dataLavori.split('/');
+    if (x[0].length == 1) x[0] = '0' + x[0];
+    if (x[1].length == 1) x[1] = '0' + x[1];
+    String data_fake = x[2] + '-' + x[0] + '-' + x[1] + " $data";
+    String data3;
+    var y = data.split(':');
+    if (int.parse(y[0]) < 3) {
+      DateTime todayDate = DateTime.parse(data_fake);
+      data3 = todayDate.add(new Duration(days: 1)).toString();
+      if (globals.logger) print(todayDate.add(new Duration(days: 1)));
+    } else {
+      if (globals.logger) print(data_fake);
+      data3 = data_fake; //'2019-04-23';
+    }
+    if (globals.logger) print("DATA ->" + data3);
+    var body =
+        json.encode({"method": "setDataIn", "datain": data3, "id": listId.join(',')});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+  Future<bool> setFineOraList(List<int> listId, String data) async {
+    List<Workers> lw = await getDailyJob(listId[0]);
+
+    var x = globals.dataLavori.split('/');
+    if (x[0].length == 1) x[0] = '0' + x[0];
+    if (x[1].length == 1) x[1] = '0' + x[1];
+    String data_fake = x[2] + '-' + x[0] + '-' + x[1] + " $data";
+    String data3;
+
+    var y = data.split(':');
+    if (int.parse(y[0]) < 12) {
+      DateTime todayDate = DateTime.parse(data_fake);
+      data3 = todayDate.add(new Duration(days: 1)).toString();
+      if (globals.logger) print(todayDate.add(new Duration(days: 1)));
+    } else {
+      if (globals.logger) print(data_fake);
+      data3 = data_fake; //'2019-04-23';
+    }
+    DateTime dateout = DateTime.parse(data3);
+    DateTime datein = DateTime.parse(lw[0].date_start);
+    double difference = dateout.difference(datein).inHours.toDouble();
+    if (globals.logger) print("DIFFERENZA " + difference.toString());
+
+    if (difference > 23.0) {
+      data3 = dateout.add(new Duration(days: -1)).toString();
+    }
+    //print ("Differenza " + difference.toString());
+    /*
+    var now = new DateTime.now();
+    var formatter = new DateFormat('MM');
+    String mese = formatter.format(now);
+    formatter = new DateFormat('yyyy');
+    String anno = formatter.format(now);
+    formatter = new DateFormat('dd');
+    String giorno = formatter.format(now);
+    String data2 = anno + '-' + mese + '-' + giorno; //'2019-04-23';
+    String data3 = data2 + data;
+*/
+    //var x = globals.dataLavori.split('/');
+    //String data3 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
+
+    if (globals.logger) print("DATA ->" + data3);
+    var body =
+        json.encode({"method": "setDataOut", "dataout": data3, "id": listId.join(",")});
+    return _netUtil.post(LOGIN_URL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
   }
 }

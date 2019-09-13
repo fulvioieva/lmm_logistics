@@ -5,6 +5,8 @@ import 'package:lmm_logistics/flutter_picker/flutter_picker.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/screens/home/pages/data/PickerData.dart';
 
+RestDatasource rest = new RestDatasource();
+
 class CustomDialog extends StatefulWidget {
   final State state;
   final List<int> listIdWorker;
@@ -93,8 +95,9 @@ class _CustomDialogState extends State<CustomDialog> {
           child: Text("Invia"),
           textColor: Colors.green,
           onPressed: () {
-            setOrarioInizioFine();
             Navigator.of(context).pop();
+            Navigator.of(state.context).pushReplacement(
+                MaterialPageRoute(builder: (context) => HomeScreen()));
           },
         )
       ],
@@ -113,22 +116,32 @@ class _CustomDialogState extends State<CustomDialog> {
             title: Text("Ora $title economia"),
             onConfirm: (Picker picker, List value) {
               setState(() {
-                print(value.toString());
-                typePicker == true
-                    ? _oraInizio = picker.getSelectedValues()[0].toString() +
-                        ':' +
-                        picker.getSelectedValues()[1]
-                    : _oraFine = picker.getSelectedValues()[0].toString() +
-                        ':' +
-                        picker.getSelectedValues()[1];
+                if (typePicker) {
+                  _oraInizio = picker.getSelectedValues()[0].toString() +
+                      ':' +
+                      picker.getSelectedValues()[1];
+                  setOrarioInizio();
+                } else {
+                  _oraFine = picker.getSelectedValues()[0].toString() +
+                      ':' +
+                      picker.getSelectedValues()[1];
+                  setOrarioFine();
+                }
               });
             },
             columnPadding: EdgeInsets.all(0))
         .showDialog(context);
   }
 
-  void setOrarioInizioFine() async {
-    Navigator.of(state.context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+  void setOrarioInizio() async {
+    await rest.setInizioOraList(listIdWorker, _oraInizio).then((res){
+      print(res);
+    });
+  }
+
+  void setOrarioFine() async {
+    await rest.setFineOraList(listIdWorker, _oraFine).then((res){
+      print(res);
+    });
   }
 }

@@ -53,6 +53,7 @@ class _TimeScreenState extends State<TimeScreen> {
                         showDialog(
                             context: context,
                             builder: (_) {
+                              print(selectedIdWorkers.join(","));
                               return CustomDialog(
                                 listIdWorker: selectedIdWorkers,
                                 state: this,
@@ -152,11 +153,11 @@ class _ListEmployesState extends State<ListEmployes> {
                 onChanged: (value) {
                   setState(() {
                     if (value) {
-                      selectedIdWorkers.add(index);
+                      selectedIdWorkers.add(workers.id);
                       listSelected[index] = value;
                     } else {
                       listSelected[index] = value;
-                      selectedIdWorkers.remove(index);
+                      selectedIdWorkers.remove(workers.id);
                     }
                   });
                 },
