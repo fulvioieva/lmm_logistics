@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
-import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
 
 class ResumeScreen extends StatefulWidget {
-  TabController tabController;
+  final TabController tabController;
   ResumeScreen({Key key, this.tabController}) : super(key: key);
   @override
   _ResumeScreen createState() {
@@ -53,14 +52,14 @@ class _ResumeScreen extends State<ResumeScreen> {
 
     var y = [];
     String xx =
-        await api.getTotaleColli(globals.id_daily_job).whenComplete(refresh);
+        await api.getTotaleColli(globals.idDailyJob).whenComplete(refresh);
 
     totColliLavorati = xx != null ? xx : '0';
 
     totPers =
-        await api.getTotalePersone(globals.id_daily_job).whenComplete(refresh);
+        await api.getTotalePersone(globals.idDailyJob).whenComplete(refresh);
 
-    var x = await api.getTotaleOre(globals.id_daily_job).whenComplete(refresh);
+    var x = await api.getTotaleOre(globals.idDailyJob).whenComplete(refresh);
     if (x != null) {
       y = x.split('.');
     } else {
@@ -70,7 +69,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         '.' +
         int.parse(y[1] == '' ? '0' : y[1]).toString();
 
-    x = await api.getEconomiaTot(globals.id_daily_job).whenComplete(refresh);
+    x = await api.getEconomiaTot(globals.idDailyJob).whenComplete(refresh);
     if (x != null) {
       y = x.split(':');
     } else {
@@ -79,11 +78,11 @@ class _ResumeScreen extends State<ResumeScreen> {
     totOreEconomia =
         int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
-    double media_calcolata =
+    double mediaCalcolata =
         double.parse(totColliLavorati) / double.parse(totOreLavorate);
     if (double.parse(totColliLavorati) != 0.0 &&
         double.parse(totOreLavorate) != 0.0) {
-      media = media_calcolata.toStringAsFixed(2);
+      media = mediaCalcolata.toStringAsFixed(2);
     } else {
       media = "0";
     }
@@ -110,12 +109,12 @@ class _ResumeScreen extends State<ResumeScreen> {
     } else {
       y = "0:0".split(':');
     }
-    String tot_omese =
+    String totOmese =
         int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
 
-    if (double.parse(cmese) != 0.0 && double.parse(tot_omese) != 0.0) {
+    if (double.parse(cmese) != 0.0 && double.parse(totOmese) != 0.0) {
       mediaMensile =
-          (double.parse(cmese) / double.parse(tot_omese)).toStringAsFixed(2);
+          (double.parse(cmese) / double.parse(totOmese)).toStringAsFixed(2);
     } else {
       mediaMensile = "N/D";
     }
@@ -149,7 +148,7 @@ class _ResumeScreen extends State<ResumeScreen> {
     );
   }
 
-  Widget _TotaleColliLavorati() {
+  Widget _totaleColliLavorati() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -165,7 +164,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         ]));
   }
 
-  Widget _TotaleOreEconomia() {
+  Widget _totaleOreEconomia() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -181,7 +180,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         ]));
   }
 
-  Widget _TotaleOreLavorate() {
+  Widget _totaleOreLavorate() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -197,7 +196,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         ]));
   }
 
-  Widget _TotalePersone() {
+  Widget _totalePersone() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -213,7 +212,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         ]));
   }
 
-  Widget _MediaColli() {
+  Widget _mediaColli() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -232,7 +231,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         ]));
   }
 
-  Widget _TotaleColliMese() {
+  Widget _totaleColliMese() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -261,15 +260,12 @@ class _ResumeScreen extends State<ResumeScreen> {
             Column(
               children: <Widget>[
                 SizedBox(height: 50.0),
-                _TotaleColliLavorati(),
-                _TotaleOreEconomia(),
-                _TotaleOreLavorate(),
-                _TotalePersone(),
-                _MediaColli(),
-                /*
-                Aggiungere metodo che controlli che l'utente è un capoarea o meno
-                 */
-                //_TotaleColliMese(),
+                _totaleColliLavorati(),
+                _totaleOreEconomia(),
+                _totaleOreLavorate(),
+                _totalePersone(),
+                _mediaColli(),
+                //_totaleColliMese(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

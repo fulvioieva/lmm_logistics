@@ -117,6 +117,7 @@ class TimePickerFormField extends FormField<TimeOfDay> {
             validator: validator,
             onSaved: onSaved,
             builder: (FormFieldState<TimeOfDay> field) {
+              return null;
               // final _TimePickerTextFormFieldState state = field;
             });
 
@@ -233,6 +234,7 @@ class _TimePickerTextFormFieldState extends FormFieldState<TimeOfDay> {
         if (parent.validator != null) {
           return parent.validator(_toTime(value, parent.format));
         }
+        return null;
       },
       onSaved: (value) {
         if (parent.onSaved != null) {

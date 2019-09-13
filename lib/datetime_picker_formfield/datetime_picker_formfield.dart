@@ -151,7 +151,9 @@ class DateTimePickerFormField extends FormField<DateTime> {
             autovalidate: autovalidate,
             validator: validator,
             onSaved: onSaved,
-            builder: (FormFieldState<DateTime> field) {});
+            builder: (FormFieldState<DateTime> field) {
+              return null;
+            });
 
   @override
   _DateTimePickerTextFormFieldState createState() =>
@@ -299,6 +301,7 @@ class _DateTimePickerTextFormFieldState extends FormFieldState<DateTime> {
         if (widget.validator != null) {
           return widget.validator(_toDate(value, widget.format));
         }
+        return null;
       },
       autovalidate: widget.autovalidate,
       onSaved: (value) {

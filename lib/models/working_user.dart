@@ -1,19 +1,19 @@
 class WorkingUsers {
   final int id;
-  final String first_name;
-  final String last_name;
+  final String firstName;
+  final String lastName;
 
-  WorkingUsers({this.id, this.first_name, this.last_name});
+  WorkingUsers({this.id, this.firstName, this.lastName});
 
   factory WorkingUsers.fromJson(Map<String, dynamic> json) {
     return new WorkingUsers(
         id: json['id'],
-        first_name: json['first_name'],
-        last_name: json['last_name']);
+        firstName: json['first_name'],
+        lastName: json['last_name']);
   }
 
   String getDescription(){
-    String a =  this.last_name+ ' ' + this.first_name ;
+    String a =  this.lastName+ ' ' + this.firstName ;
     if (a.length>20) a = a.substring(0,20) + '..';
     return a;
 

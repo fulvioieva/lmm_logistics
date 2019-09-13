@@ -1,23 +1,23 @@
 class Colli {
   int id;
-  int id_daily_work;
+  int idDailyWork;
   int secco;
   int murale;
   int gelo;
-  int a_secco;
-  int a_murale;
-  int a_gelo;
+  int aSecco;
+  int aMurale;
+  int aGelo;
   int pedane;
   String note;
 
   Colli({ this.id,
-            this.id_daily_work,
+            this.idDailyWork,
             this.secco,
             this.murale,
             this.gelo,
-            this.a_secco,
-            this.a_murale,
-            this.a_gelo,
+            this.aSecco,
+            this.aMurale,
+            this.aGelo,
             this.pedane,
             this.note
   });
@@ -25,13 +25,13 @@ class Colli {
 
   Colli.map(dynamic obj) {
     this.id = obj["id"];
-    this.id_daily_work = obj["id_daily_work"];
+    this.idDailyWork = obj["id_daily_work"];
     this.secco = obj["secco"];
     this.murale = obj["murale"];
     this.gelo = obj["gelo"];
-    this.a_secco = obj["a_secco"];
-    this.a_gelo = obj["a_gelo"];
-    this.a_murale = obj["a_murale"];
+    this.aSecco = obj["a_secco"];
+    this.aGelo = obj["a_gelo"];
+    this.aMurale = obj["a_murale"];
     this.pedane = obj["pedane"];
     this.note = obj["note"];
   }
@@ -39,13 +39,13 @@ class Colli {
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
     map["id"] = id;
-    map["id_daily_work"] = id_daily_work;
+    map["id_daily_work"] = idDailyWork;
     map["secco"] = secco;
     map["murale"] = murale;
     map["gelo"] = gelo;
-    map["a_secco"] = a_secco;
-    map["a_gelo"] = a_gelo;
-    map["a_murale"] = a_murale;
+    map["a_secco"] = aSecco;
+    map["a_gelo"] = aGelo;
+    map["a_murale"] = aMurale;
     map["pedane"] = pedane;
     map["note"] = note;
 

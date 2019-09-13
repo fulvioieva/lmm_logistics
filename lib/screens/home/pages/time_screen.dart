@@ -36,39 +36,7 @@ class _TimeScreenState extends State<TimeScreen> {
         title: Text(title),
         backgroundColor: (Colors.green),
         actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: !checkOptions
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        checkOptions = !checkOptions;
-                      });
-                    },
-                    icon: Icon(Icons.access_time),
-                  )
-                : MaterialButton(
-                    onPressed: () {
-                      setState(() {
-                        showDialog(
-                            context: context,
-                            builder: (_) {
-                              print(selectedIdWorkers.join(","));
-                              return CustomDialog(
-                                listIdWorker: selectedIdWorkers,
-                                state: this,
-                              );
-                            });
-                      });
-                    },
-                    color: Colors.green,
-                    elevation: 10,
-                    child: Text(
-                      "Aggiungi orario",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-          )
+          Padding(padding: const EdgeInsets.all(4.0), child: selectButton())
         ],
       ),
       body: FutureBuilder<List<Workers>>(
@@ -77,26 +45,74 @@ class _TimeScreenState extends State<TimeScreen> {
           if (snapshot.hasError) print(snapshot.error);
 
           return snapshot.hasData
-              ? ListEmployes(workers: snapshot.data)
+              ? ListEmployes(workers: snapshot.data, state: this,)
               : Center(child: CircularProgressIndicator());
         },
       ),
     );
   }
+
+  Widget selectButton() {
+    if (!checkOptions) {
+      return IconButton(
+        onPressed: () {
+          setState(() {
+            checkOptions = !checkOptions;
+          });
+        },
+        icon: Icon(Icons.access_time),
+      );
+    } else {
+      if (selectedIdWorkers.length < 1) {
+        return IconButton(
+          onPressed: () {
+            setState(() {
+              checkOptions = !checkOptions;
+            });
+          },
+          icon: Icon(Icons.close),
+        );
+      } else {
+        return MaterialButton(
+          onPressed: () {
+            setState(() {
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    print(selectedIdWorkers.join(","));
+                    return CustomDialog(
+                      listIdWorker: selectedIdWorkers,
+                      state: this,
+                    );
+                  });
+            });
+          },
+          color: Colors.green,
+          elevation: 10,
+          child: Text(
+            "Aggiungi orario",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
+    }
+  }
 }
 
 class ListEmployes extends StatefulWidget {
   final List<Workers> workers;
+  final State state;
 
-  const ListEmployes({Key key, this.workers}) : super(key: key);
+  const ListEmployes({Key key, this.workers, this.state}) : super(key: key);
   @override
-  _ListEmployesState createState() => _ListEmployesState(this.workers);
+  _ListEmployesState createState() => _ListEmployesState(this.workers, this.state);
 }
 
 class _ListEmployesState extends State<ListEmployes> {
   final List<Workers> workers;
+  final State state;
 
-  _ListEmployesState(this.workers);
+  _ListEmployesState(this.workers, this.state);
 
   List<bool> listSelected;
 
@@ -153,11 +169,15 @@ class _ListEmployesState extends State<ListEmployes> {
                 onChanged: (value) {
                   setState(() {
                     if (value) {
-                      selectedIdWorkers.add(workers.id);
-                      listSelected[index] = value;
+                      state.setState(() {
+                        selectedIdWorkers.add(workers.workId);
+                        listSelected[index] = value;
+                      });
                     } else {
-                      listSelected[index] = value;
-                      selectedIdWorkers.remove(workers.id);
+                      state.setState(() {
+                        listSelected[index] = value;
+                        selectedIdWorkers.remove(workers.workId);
+                      });
                     }
                   });
                 },
@@ -166,7 +186,8 @@ class _ListEmployesState extends State<ListEmployes> {
                 padding: EdgeInsets.all(4),
                 child: Icon(
                   Icons.person,
-                  color: workers.agenzia == 1 ? Colors.white : Colors.lightGreen,
+                  color:
+                      workers.agenzia == 1 ? Colors.white : Colors.lightGreen,
                   size: 40,
                 ),
               ),
@@ -177,7 +198,7 @@ class _ListEmployesState extends State<ListEmployes> {
         ),
         contentPadding: EdgeInsets.all(8),
         title: Text(
-          "${workers.first_name} ${workers.last_name}",
+          "${workers.firstName} ${workers.lastName}",
           style: TextStyle(
               color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
         ),
@@ -194,14 +215,13 @@ class _ListEmployesState extends State<ListEmployes> {
                   children: <Widget>[
                     Icon(
                       Icons.directions_walk,
-                      color: workers.date_start == null
-                          ? Colors.red
-                          : Colors.green,
+                      color:
+                          workers.dateStart == null ? Colors.red : Colors.green,
                     ),
                     Text(
-                      workers.date_start == null
+                      workers.dateStart == null
                           ? ""
-                          : workers.date_start.substring(10, 16),
+                          : workers.dateStart.substring(10, 16),
                       style: TextStyle(color: Colors.white),
                     ),
                   ],
@@ -215,12 +235,12 @@ class _ListEmployesState extends State<ListEmployes> {
                     Icon(
                       Icons.directions,
                       color:
-                          workers.date_end == null ? Colors.red : Colors.green,
+                          workers.dateEnd == null ? Colors.red : Colors.green,
                     ),
                     Text(
-                      workers.date_end == null
+                      workers.dateEnd == null
                           ? ""
-                          : workers.date_end.substring(10, 16),
+                          : workers.dateEnd.substring(10, 16),
                       style: TextStyle(color: Colors.white),
                     ),
                   ],

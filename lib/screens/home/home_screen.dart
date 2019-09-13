@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:lmm_logistics/main.dart';
 import 'package:lmm_logistics/screens/home/pages/changePasswordPage.dart';
 import 'package:lmm_logistics/screens/login/loginPage.dart';
-import 'package:lmm_logistics/screens/login/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './pages/time_screen.dart';
 import './pages/adduser_screen.dart';
@@ -103,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   title: Text('Cambia data',
                       style: TextStyle(color: Colors.green, fontSize: 24.0)),
                   onTap: () {
-                    Navigator.pushReplacement(context,
+                    Navigator.push(context,
                         MaterialPageRoute(builder: (context) => InsertDate()));
                   },
                 ),
@@ -171,10 +167,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       prefs.clear();
       db.deleteUsers();
-      globals.id_daily_job = 0;
+      globals.idDailyJob = 0;
       globals.userId = 0;
       globals.siteId = 0;
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginPage()));
     });
   }
 }

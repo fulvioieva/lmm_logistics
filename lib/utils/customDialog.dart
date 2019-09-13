@@ -89,17 +89,10 @@ class _CustomDialogState extends State<CustomDialog> {
           textColor: Colors.green,
           onPressed: () {
             Navigator.of(context).pop();
-          },
-        ),
-        FlatButton(
-          child: Text("Invia"),
-          textColor: Colors.green,
-          onPressed: () {
-            Navigator.of(context).pop();
             Navigator.of(state.context).pushReplacement(
                 MaterialPageRoute(builder: (context) => HomeScreen()));
           },
-        )
+        ),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'package:dropdownfield/dropdownfield.dart';
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
@@ -97,8 +96,8 @@ class _InsertDate extends State<InsertDate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: null,
         title: Text('Inserimento giorno lavorativo'),
+        leading: Container()
       ),
       body: Center(
         child: ListView(

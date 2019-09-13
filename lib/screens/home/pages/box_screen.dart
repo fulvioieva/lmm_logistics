@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/models/colli.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 class BoxScreen extends StatefulWidget {
-  TabController tabController;
+  final TabController tabController;
   BoxScreen({Key key, this.tabController}) : super(key: key);
   @override
   _BoxScreen createState() {
@@ -34,7 +33,7 @@ class _BoxScreen extends State<BoxScreen> {
   static final TextEditingController _noteController = TextEditingController();
 
   int totale = 0;
-  int totale_a = 0;
+  int totaleA = 0;
   Colli colli;
 
   @override
@@ -46,7 +45,7 @@ class _BoxScreen extends State<BoxScreen> {
   void setColli() async {
     await api
         .setColli(
-            globals.id_daily_job,
+            globals.idDailyJob,
             int.parse(_seccoController.text),
             int.parse(_muraleController.text),
             int.parse(_geloController.text),
@@ -59,7 +58,7 @@ class _BoxScreen extends State<BoxScreen> {
   }
 
   void getColli() async {
-    Colli cl = await api.getColli(globals.id_daily_job).whenComplete(calculus);
+    Colli cl = await api.getColli(globals.idDailyJob).whenComplete(calculus);
     if (cl != null) {
       colli = cl;
       if (this.mounted) {
@@ -67,13 +66,13 @@ class _BoxScreen extends State<BoxScreen> {
           _seccoController.text = colli.secco.toString();
           _muraleController.text = colli.murale.toString();
           _geloController.text = colli.gelo.toString();
-          _avanziSeccoController.text = colli.a_secco.toString();
-          _avanziMuraleController.text = colli.a_murale.toString();
-          _avanziGeloController.text = colli.a_gelo.toString();
+          _avanziSeccoController.text = colli.aSecco.toString();
+          _avanziMuraleController.text = colli.aMurale.toString();
+          _avanziGeloController.text = colli.aGelo.toString();
           _pedaneController.text = colli.pedane.toString();
           _noteController.text = colli.note.toString();
 
-          totale_a = int.parse(_avanziSeccoController.text) +
+          totaleA = int.parse(_avanziSeccoController.text) +
               int.parse(_avanziMuraleController.text) +
               int.parse(_avanziGeloController.text);
 
@@ -81,7 +80,7 @@ class _BoxScreen extends State<BoxScreen> {
               int.parse(_seccoController.text) +
               int.parse(_muraleController.text) +
               int.parse(_geloController.text) -
-              totale_a;
+              totaleA;
         });
       }
     } else {
@@ -96,7 +95,7 @@ class _BoxScreen extends State<BoxScreen> {
           _pedaneController.text = '';
           _noteController.text = '';
           totale = 0;
-          totale_a = 0;
+          totaleA = 0;
         });
       }
     }
@@ -116,7 +115,7 @@ class _BoxScreen extends State<BoxScreen> {
         if (_pedaneController.text == '') _pedaneController.text = '0';
         if (_noteController.text == '') _noteController.text = ' ';
 
-        totale_a = int.parse(_avanziSeccoController.text) +
+        totaleA = int.parse(_avanziSeccoController.text) +
             int.parse(_avanziMuraleController.text) +
             int.parse(_avanziGeloController.text);
 
@@ -124,7 +123,7 @@ class _BoxScreen extends State<BoxScreen> {
             int.parse(_pedaneController.text) +
             int.parse(_muraleController.text) +
             int.parse(_geloController.text) -
-            totale_a;
+            totaleA;
 
         _seccoController.text = int.parse(_seccoController.text).toString();
         _avanziSeccoController.text =
@@ -287,7 +286,7 @@ class _BoxScreen extends State<BoxScreen> {
                     Flexible(
                       child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('Tot. ' + totale_a.toString(),
+                          child: Text('Tot. ' + totaleA.toString(),
                               style: DefaultTextStyle.of(context)
                                   .style
                                   .apply(fontSizeFactor: 2.0))),

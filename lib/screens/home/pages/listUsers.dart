@@ -43,7 +43,7 @@ class _ListUsers extends State<ListUsers> {
 
   void fetchInterinali() async {
     interinali =
-        await api.fetchInterinali(globals.id_daily_job).whenComplete(refresh);
+        await api.fetchInterinali(globals.idDailyJob).whenComplete(refresh);
   }
 
   @override
@@ -77,7 +77,7 @@ class _ListUsers extends State<ListUsers> {
                 color: workers.agenzia == 1 ? Colors.white : Colors.lightGreen),
           ),
           title: Text(
-            workers.first_name,
+            workers.firstName,
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           subtitle: Row(
@@ -86,36 +86,36 @@ class _ListUsers extends State<ListUsers> {
                 flex: 4,
                 child: Padding(
                     padding: EdgeInsets.only(left: 0.0),
-                    child: Text(workers.last_name,
+                    child: Text(workers.lastName,
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold))),
               ),
               Expanded(
                   flex: 1,
                   child: Icon(Icons.directions_walk,
-                      color: workers.date_start == null
+                      color: workers.dateStart == null
                           ? Colors.red
                           : Colors.green,
                       size: 30.0)),
               Expanded(
                   flex: 1,
                   child: Text(
-                      workers.date_start == null
+                      workers.dateStart == null
                           ? ""
-                          : workers.date_start.substring(10, 16),
+                          : workers.dateStart.substring(10, 16),
                       style: TextStyle(color: Colors.white, fontSize: 10.0))),
               Expanded(
                   flex: 1,
                   child: Icon(Icons.directions,
                       color:
-                          workers.date_end == null ? Colors.red : Colors.green,
+                          workers.dateEnd == null ? Colors.red : Colors.green,
                       size: 30.0)),
               Expanded(
                   flex: 1,
                   child: Text(
-                      workers.date_end == null
+                      workers.dateEnd == null
                           ? ""
-                          : workers.date_end.substring(10, 16),
+                          : workers.dateEnd.substring(10, 16),
                       style: TextStyle(color: Colors.white, fontSize: 10.0))),
             ],
           ),
@@ -130,16 +130,14 @@ class _ListUsers extends State<ListUsers> {
           },
         );
 
-    Card makeCardInterinali(Workers workers) => Card(
+    /*Card makeCardInterinali(Workers workers) => Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
-              decoration: BoxDecoration(color: Color.fromRGBO(32, 44, 96, .9)),
-              child: createItem(workers)
-
-              //makeListTile(workers),
-              ),
-        );
+            decoration: BoxDecoration(color: Color.fromRGBO(32, 44, 96, .9)),
+            child: makeListTile(workers),
+          ),
+        );*/
 
     Card makeCard(Workers workers) => Card(
           elevation: 8.0,
