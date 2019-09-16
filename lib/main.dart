@@ -33,26 +33,28 @@ class LoginApp extends StatelessWidget {
 */
 
 void main() {
-  runApp(new LoginApp(
+  runApp(
+    new LoginApp(
       child: new MaterialApp(
-    title: 'LMM Logistics',
-    localizationsDelegates: [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-    ],
-    supportedLocales: [
-      const Locale('it', 'IT'),
-      const Locale('en', 'US'),
-    ],
-    theme: new ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.green, //Changing this will change the color of the TabBar
-      accentColor: Colors.greenAccent,
+        title: 'LMM Logistics',
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('it', 'IT'),
+          const Locale('en', 'US'),
+        ],
+        theme: new ThemeData(
+          brightness: Brightness.light,
+          primaryColor:
+              Colors.green, //Changing this will change the color of the TabBar
+          accentColor: Colors.greenAccent,
+        ),
+        routes: routes,
+      ),
     ),
-
-    routes: routes,
-  )
-  ));
+  );
 }
 
 class LoginApp extends StatefulWidget {
@@ -62,7 +64,7 @@ class LoginApp extends StatefulWidget {
 
   static restartApp(BuildContext context) {
     final _RestartWidgetState state =
-    context.ancestorStateOfType(const TypeMatcher<_RestartWidgetState>());
+        context.ancestorStateOfType(const TypeMatcher<_RestartWidgetState>());
     state.restartApp();
   }
 

@@ -97,7 +97,8 @@ class _InsertDate extends State<InsertDate> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Inserimento giorno lavorativo'),
-        leading: Container()
+        centerTitle: true,
+        leading: null
       ),
       body: Center(
         child: ListView(

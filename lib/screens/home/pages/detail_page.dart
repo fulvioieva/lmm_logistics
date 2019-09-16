@@ -617,7 +617,7 @@ class MyDialog extends StatefulWidget {
 class _MyDialogState extends State<MyDialog> {
   String _valorePausa = '15';
   List<String> _timepause = ['15', '30', '45', '60', '120'];
-  String descrizione;
+  String descrizione = "Generico";
 
   void addPause(String description, int durata) async {
     api.setPause(
@@ -672,7 +672,9 @@ class _MyDialogState extends State<MyDialog> {
                   decoration: InputDecoration(
                       labelText: 'Inserisci motivo', hintText: 'es. Pranzo'),
                   onChanged: (value) {
-                    descrizione = value;
+                    setState(() {
+                      descrizione = value; 
+                    });
                   },
                 ))
               ],
@@ -695,6 +697,7 @@ class _MyDialogState extends State<MyDialog> {
               onPressed: () {
                 addPause(descrizione, int.parse(_valorePausa));
                 Navigator.of(context).pop(descrizione);
+                refresh();
               },
             )
           ],
