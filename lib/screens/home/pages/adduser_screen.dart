@@ -73,6 +73,12 @@ class _AddUserScreen extends State<AddUserScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Gestione utenti'),
+        centerTitle: true,
+        leading: Container(
+          padding: EdgeInsets.all(0),
+          width: 0,
+          height: 0,
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(

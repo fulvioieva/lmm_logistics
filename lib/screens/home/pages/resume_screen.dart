@@ -252,6 +252,12 @@ class _ResumeScreen extends State<ResumeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('RESOCONTO'),
+        centerTitle: true,
+        leading: Container(
+          padding: EdgeInsets.all(0),
+          width: 0,
+          height: 0,
+        ),
         backgroundColor: (Colors.green),
       ),
       body: Center(

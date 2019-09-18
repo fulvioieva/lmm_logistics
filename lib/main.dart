@@ -36,6 +36,7 @@ void main() {
   runApp(
     new LoginApp(
       child: new MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'LMM Logistics',
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
