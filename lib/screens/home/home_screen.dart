@@ -10,7 +10,6 @@ import './insertdate.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:lmm_logistics/data/database_helper.dart';
 import 'package:lmm_logistics/auth.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -69,14 +68,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               : data = "${x[1]}-${x[0]}-${x[2]}";
       //data = x[1] + '-' + x[0] + '-' + x[2]; //'2019-04-23';
     }
-    return MaterialApp(
-      theme: new ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Colors.green,
-        //Changing this will change the color of the TabBar
-        accentColor: Colors.greenAccent,
-      ),
-      home: DefaultTabController(
+    return Scaffold(
+      body: DefaultTabController(
         length: 4,
         child: Scaffold(
           drawer: Drawer(
@@ -151,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             controller: tabController,
             children: [
               TimeScreen(
-                  title: "Risorse presenti su \nSito - " + globals.siteName),
+                  title: "${globals.siteName}"),
               AddUserScreen(tabController: tabController),
               BoxScreen(tabController: tabController),
               ResumeScreen(tabController: tabController),

@@ -32,8 +32,16 @@ class _TimeScreenState extends State<TimeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
-        title: Text(title),
+        leading: Container(
+          padding: EdgeInsets.all(0),
+          width: 0,
+          height: 0,
+        ),
+        centerTitle: true,
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 16),
+        ),
         backgroundColor: (Colors.green),
         actions: <Widget>[
           Padding(padding: const EdgeInsets.all(4.0), child: selectButton())
@@ -44,9 +52,14 @@ class _TimeScreenState extends State<TimeScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
 
-          return snapshot.hasData
-              ? ListEmployes(workers: snapshot.data, state: this,)
-              : Center(child: CircularProgressIndicator());
+          return Center(
+            child: snapshot.hasData
+                ? ListEmployes(
+                    workers: snapshot.data,
+                    state: this,
+                  )
+                : Center(child: CircularProgressIndicator()),
+          );
         },
       ),
     );
@@ -73,27 +86,22 @@ class _TimeScreenState extends State<TimeScreen> {
           icon: Icon(Icons.close),
         );
       } else {
-        return MaterialButton(
-          onPressed: () {
-            setState(() {
-              showDialog(
-                  context: context,
-                  builder: (_) {
-                    print(selectedIdWorkers.join(","));
-                    return CustomDialog(
-                      listIdWorker: selectedIdWorkers,
-                      state: this,
-                    );
-                  });
-            });
-          },
-          color: Colors.green,
-          elevation: 10,
-          child: Text(
-            "Aggiungi orario",
-            style: TextStyle(color: Colors.white),
-          ),
-        );
+        return IconButton(
+            onPressed: () {
+              setState(() {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (_) {
+                      print(selectedIdWorkers.join(","));
+                      return CustomDialog(
+                        listIdWorker: selectedIdWorkers,
+                        state: this,
+                      );
+                    });
+              });
+            },
+            icon: Icon(Icons.group_add));
       }
     }
   }
@@ -105,7 +113,8 @@ class ListEmployes extends StatefulWidget {
 
   const ListEmployes({Key key, this.workers, this.state}) : super(key: key);
   @override
-  _ListEmployesState createState() => _ListEmployesState(this.workers, this.state);
+  _ListEmployesState createState() =>
+      _ListEmployesState(this.workers, this.state);
 }
 
 class _ListEmployesState extends State<ListEmployes> {
@@ -129,6 +138,7 @@ class _ListEmployesState extends State<ListEmployes> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Color.fromRGBO(58, 66, 86, 1.0),
       ),
