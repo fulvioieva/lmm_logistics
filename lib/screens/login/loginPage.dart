@@ -16,11 +16,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController username = new TextEditingController();
   TextEditingController password = new TextEditingController();
+  DatabaseHelper db = new DatabaseHelper();
   bool isloading = false;
   RestDatasource api = new RestDatasource();
 
   @override
   void initState() {
+    db.initDb();
     autoLogIn();
     super.initState();
   }
@@ -130,7 +132,6 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString("id", user.id);
     prefs.setString("username", user.username);
     prefs.setString("password", user.password);
-    var db = new DatabaseHelper();
     await db.deleteUsers();
     await db.saveUser(user).then((dynamic value) {
       globals.userId = int.parse(user.id);

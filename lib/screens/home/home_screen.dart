@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   title: Text('Cambia data',
                       style: TextStyle(color: Colors.green, fontSize: 24.0)),
                   onTap: () {
-                    Navigator.push(context,
+                    Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => InsertDate()));
                   },
                 ),

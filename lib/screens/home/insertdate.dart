@@ -98,16 +98,18 @@ class _InsertDate extends State<InsertDate> {
       appBar: AppBar(
         title: Text('Inserimento giorno lavorativo'),
         centerTitle: true,
-        leading: Container()
       ),
       body: Center(
         child: ListView(
           children: <Widget>[
             Column(children: <Widget>[
               SizedBox(height: 50.0),
-              new Image.asset(
-                'assets/intro.jpg',
-                fit: BoxFit.contain,
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: Image.asset(
+                  'assets/intro.jpg',
+                  fit: BoxFit.contain,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
