@@ -231,7 +231,7 @@ class _ResumeScreen extends State<ResumeScreen> {
         ]));
   }
 
-  Widget _totaleColliMese() {
+  /*Widget _totaleColliMese() {
     return Container(
         margin: const EdgeInsets.all(10.0),
         padding: const EdgeInsets.all(5.0),
@@ -245,7 +245,7 @@ class _ResumeScreen extends State<ResumeScreen> {
                   .style
                   .apply(fontSizeFactor: fontsize)),
         ]));
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {

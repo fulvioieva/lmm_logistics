@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 import 'package:lmm_logistics/models/workers.dart';
-import 'package:lmm_logistics/screens/home/pages/detail_page.dart';
+//import 'package:lmm_logistics/screens/home/pages/detail_page.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 
 bool checkOptions;
@@ -65,7 +65,7 @@ class _ListUsers extends State<ListUsers> {
       );
     }
 
-    ListTile makeListTile(Workers workers) => ListTile(
+    /*ListTile makeListTile(Workers workers) => ListTile(
           contentPadding:
               EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           leading: Container(
@@ -128,7 +128,7 @@ class _ListUsers extends State<ListUsers> {
                         builder: (context) => DetailPage(workers: workers)))
                 .whenComplete(message);
           },
-        );
+        );*/
 
     /*Card makeCardInterinali(Workers workers) => Card(
           elevation: 8.0,
