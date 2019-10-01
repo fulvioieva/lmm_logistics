@@ -10,10 +10,11 @@ RestDatasource rest = new RestDatasource();
 class CustomDialog extends StatefulWidget {
   final State state;
   final List<int> listIdWorker;
-  CustomDialog({this.listIdWorker, this.state});
+  final int typeDialog;
+  CustomDialog({this.listIdWorker, this.state, this.typeDialog});
   @override
   _CustomDialogState createState() =>
-      _CustomDialogState(this.listIdWorker, this.state);
+      _CustomDialogState(this.listIdWorker, this.state, this.typeDialog);
 }
 
 class _CustomDialogState extends State<CustomDialog> {
@@ -21,7 +22,10 @@ class _CustomDialogState extends State<CustomDialog> {
   RestDatasource api = new RestDatasource();
   List<int> listIdWorker;
   State state;
-  _CustomDialogState(this.listIdWorker, this.state);
+  int typeDialog;
+  String _valorePausa;
+  List<String> _timepause = ['15', '30', '45', '60', '120'];
+  _CustomDialogState(this.listIdWorker, this.state, this.typeDialog);
   @override
   void initState() {
     _oraFine = "00:00";
@@ -31,70 +35,116 @@ class _CustomDialogState extends State<CustomDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: EdgeInsets.all(20),
-      title: Text(
-        "Seleziona gli orari",
-        textAlign: TextAlign.center,
-      ),
-      content: Container(
-        height: 150,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: MaterialButton(
-                onPressed: () {
-                  showPickerEconomia(context, "inizio", true);
-                },
-                color: Colors.green,
-                textColor: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 14, right: 14, top: 4, bottom: 4),
-                  child: Text(
-                    "Orario inizio \n $_oraInizio",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
+    switch (typeDialog) {
+      case 0:
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(20),
+          title: Text(
+            "Seleziona gli orari",
+            textAlign: TextAlign.center,
+          ),
+          content: Container(
+            height: 150,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: MaterialButton(
+                    onPressed: () {
+                      showPickerEconomia(context, "inizio", true);
+                    },
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14, right: 14, top: 4, bottom: 4),
+                      child: Text(
+                        "Orario inizio \n $_oraInizio",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: MaterialButton(
+                    onPressed: () {
+                      showPickerEconomia(context, "fine", false);
+                    },
+                    color: Colors.green,
+                    textColor: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 4, bottom: 4),
+                      child: Text(
+                        "Orario fine \n $_oraFine",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: MaterialButton(
-                onPressed: () {
-                  showPickerEconomia(context, "fine", false);
-                },
-                color: Colors.green,
-                textColor: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, top: 4, bottom: 4),
-                  child: Text(
-                    "Orario fine \n $_oraFine",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Chiudi"),
+              textColor: Colors.green,
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(state.context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
             ),
           ],
-        ),
-      ),
-      actions: <Widget>[
-        FlatButton(
-          child: Text("Chiudi"),
-          textColor: Colors.green,
-          onPressed: () {
-            Navigator.of(context).pop();
-            Navigator.of(state.context).pushReplacement(
-                MaterialPageRoute(builder: (context) => HomeScreen()));
-          },
-        ),
-      ],
-    );
+        );
+        break;
+      case 1:
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(20),
+          title: Text(
+            "Seleziona l'orario per la pausa",
+            textAlign: TextAlign.center,
+          ),
+          content: Container(
+            child: DropdownButton(
+              isDense: true,
+              isExpanded: true,
+              hint: Text('Scegli la durata'),
+              value: _valorePausa == null ? null : _valorePausa,
+              onChanged: (newValue) {
+                setState(() {
+                  _valorePausa = newValue;
+                });
+              },
+              items: _timepause.map((_radioValue1) {
+                return DropdownMenuItem(
+                  child: new Text(_radioValue1),
+                  value: _radioValue1,
+                );
+              }).toList(),
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Invia pausa"),
+              textColor: Colors.green,
+              onPressed: () {
+                api.setPauseGroup(_valorePausa, listIdWorker).then((res) => {
+                  
+                });
+                Navigator.of(context).pop();
+                Navigator.of(state.context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+            ),
+          ],
+        );
+        break;
+    }
   }
 
   showPickerEconomia(BuildContext context, String title, bool typePicker) {
@@ -127,13 +177,13 @@ class _CustomDialogState extends State<CustomDialog> {
   }
 
   void setOrarioInizio() async {
-    await rest.setInizioOraList(listIdWorker, _oraInizio).then((res){
+    await rest.setInizioOraList(listIdWorker, _oraInizio).then((res) {
       print(res);
     });
   }
 
   void setOrarioFine() async {
-    await rest.setFineOraList(listIdWorker, _oraFine).then((res){
+    await rest.setFineOraList(listIdWorker, _oraFine).then((res) {
       print(res);
     });
   }

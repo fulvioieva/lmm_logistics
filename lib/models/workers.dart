@@ -8,6 +8,7 @@ class Workers {
   int agenzia;
   String dateStart;
   String dateEnd;
+  int pause;
 
   Workers({ this.id,
             this.firstName,
@@ -17,20 +18,22 @@ class Workers {
             this.workId,
             this.agenzia,
             this.dateStart,
-            this.dateEnd
+            this.dateEnd,
+            this.pause
   });
 
 
   Workers.map(dynamic obj) {
-    this.id = obj["id"];
+    this.id = int.tryParse(obj["id"]);
     this.firstName = obj["first_name"];
     this.lastName = obj["last_name"];
-    this.idDailyJob = obj["id_daily_job"];
-    this.idSito = obj["id_sito"];
-    this.workId = obj["work_id"];
-    this.agenzia = obj["agenzia"];
+    this.idDailyJob = int.tryParse(obj["id_daily_job"]);
+    this.idSito = int.tryParse(obj["id_sito"]);
+    this.workId = int.tryParse(obj["work_id"]);
+    this.agenzia = int.tryParse(obj["agenzia"]);
     this.dateStart = obj["date_start"];
     this.dateEnd = obj["date_end"];
+    this.pause = int.tryParse(obj["pause"]);
   }
 
   Map<String, dynamic> toMap() {
@@ -44,6 +47,7 @@ class Workers {
     map["agenzia"] = agenzia;
     map["date_start"] = dateStart;
     map["date_end"] = dateEnd;
+    map["pause"] = pause;
 
     return map;
   }

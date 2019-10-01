@@ -8,6 +8,7 @@ import 'package:lmm_logistics/screens/home/pages/data/PickerData.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:lmm_logistics/screens/home/home_screen.dart';
 import 'package:lmm_logistics/flutter_picker/flutter_picker.dart';
+import 'package:flash/flash.dart';
 
 enum ConfirmAction { CANCEL, ACCEPT }
 
@@ -17,6 +18,7 @@ String _dataEntrata, _dataUscita, _dataEntrataEconomia, _dataUscitaEconomia;
 List<Pause> _pause = [];
 Economia _economia;
 String descrizione = 'Generica';
+bool loaded;
 
 class DetailPage extends StatefulWidget {
   final Workers workers;
@@ -24,7 +26,7 @@ class DetailPage extends StatefulWidget {
   DetailPage({Key key, this.workers}) : super(key: key);
 
   @override
-  _DetailPage createState() => _DetailPage();
+  _DetailPage createState() => _DetailPage(this.workers);
 }
 
 DateTime convertDateFromString(String strDate) {
@@ -34,15 +36,17 @@ DateTime convertDateFromString(String strDate) {
 }
 
 class _DetailPage extends State<DetailPage> {
+  Workers workers;
+  _DetailPage(this.workers);
   void initState() {
+    loaded = true;
     _dataEntrata =
         _dataEntrataEconomia = _dataUscita = _dataUscitaEconomia = "";
     super.initState();
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        fetchEconomia();
-        fetchPause();
+        awaitAPI();
       });
     }
   }
@@ -149,8 +153,7 @@ class _DetailPage extends State<DetailPage> {
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataInEconomia(
-                widget.workers.idDailyJob, _dataEntrataEconomia);
+            setDataInEconomia(widget.workers.idDailyJob, _dataEntrataEconomia);
           });
         }).showDialog(context);
   }
@@ -172,8 +175,7 @@ class _DetailPage extends State<DetailPage> {
                 picker.getSelectedValues()[0].toString() +
                 ':' +
                 picker.getSelectedValues()[1];
-            setDataOutEconomia(
-                widget.workers.idDailyJob, _dataUscitaEconomia);
+            setDataOutEconomia(widget.workers.idDailyJob, _dataUscitaEconomia);
           });
         }).showDialog(context);
   }
@@ -205,17 +207,26 @@ class _DetailPage extends State<DetailPage> {
         .whenComplete(refresh);
   }
 
-  void fetchPause() async {
+  Future fetchPause() async {
     _pause = await api
         .fetchPause(widget.workers.idDailyJob, widget.workers.id)
-        .whenComplete(startedStrings);
+        .whenComplete(refresh);
   }
 
-  void fetchEconomia() async {
+  Future fetchEconomia() async {
     _economia = await api
         .getEconomia(widget.workers.idDailyJob, widget.workers.id)
         .whenComplete(refresh);
     if (_economia == null) _economia = new Economia();
+  }
+
+  void awaitAPI() async {
+    await fetchPause();
+    await fetchEconomia();
+    setState(() {
+      startedStrings();
+      loaded = false;
+    });
   }
 
   Future<ConfirmAction> _asyncConfirmDialog(BuildContext context) async {
@@ -238,6 +249,9 @@ class _DetailPage extends State<DetailPage> {
               child: const Text('PROCEDI'),
               onPressed: () {
                 _resetUtente(widget.workers.workId);
+                setState(() {
+                  _dataEntrata = _dataUscita = "";
+                });
                 if (_economia?.id != null) _resetEconomia();
                 Navigator.of(context).pop(ConfirmAction.ACCEPT);
               },
@@ -361,69 +375,78 @@ class _DetailPage extends State<DetailPage> {
               });
             },
           ),
-          title:
-              Text(widget.workers.lastName + ' ' + widget.workers.firstName),
+          title: Text(widget.workers.lastName + ' ' + widget.workers.firstName),
         ),
-        body: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: Column(
+        body: loaded
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView(
                 children: <Widget>[
-                  RaisedButton(
-                    child: Center(child: Text('Orario inizio lavori')),
-                    onPressed: () {
-                      showPickerArrayIn(context);
-                    },
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: Column(
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Center(child: Text('Orario inizio lavori')),
+                          onPressed: () {
+                            showPickerArrayIn(context);
+                          },
+                        ),
+                        Text(_dataEntrata)
+                      ],
+                    ),
                   ),
-                  Text(_dataEntrata)
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: Column(
-                children: <Widget>[
-                  RaisedButton(
-                    child: Center(child: Text('Orario fine lavori')),
-                    onPressed: () {
-                      showPickerArrayOut(context);
-                    },
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: Column(
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Center(child: Text('Orario fine lavori')),
+                          onPressed: _dataEntrata.isNotEmpty
+                              ? () {
+                                  showPickerArrayOut(context);
+                                }
+                              : null,
+                        ),
+                        Text(_dataUscita)
+                      ],
+                    ),
                   ),
-                  Text(_dataUscita)
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: Column(
-                children: <Widget>[
-                  RaisedButton(
-                    child: Center(child: Text('Orario inizio economia')),
-                    onPressed: () {
-                      showPickerEconomiaIn(context);
-                    },
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: Column(
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Center(child: Text('Orario inizio economia')),
+                          onPressed: () {
+                            showPickerEconomiaIn(context);
+                          },
+                        ),
+                        Text(_dataEntrataEconomia)
+                      ],
+                    ),
                   ),
-                  Text(_dataEntrataEconomia)
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: Column(
-                children: <Widget>[
-                  RaisedButton(
-                    child: Center(child: Text('Orario fine economia')),
-                    onPressed: () {
-                      showPickerEconomiaOut(context);
-                    },
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    child: Column(
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Center(child: Text('Orario fine economia')),
+                          onPressed: () {
+                            showPickerEconomiaOut(context);
+                          },
+                        ),
+                        Text(_dataUscitaEconomia)
+                      ],
+                    ),
                   ),
-                  Text(_dataUscitaEconomia)
-                ],
-              ),
-            ),
 
-            /*
+                  /*
             DateTimePickerFormField(
               inputType: inputType,
               format: formats[inputType],
@@ -436,8 +459,8 @@ class _DetailPage extends State<DetailPage> {
                     api.setDataIn(widget.workers.work_id, date_entrata);
                   }),
             ),*/
-            //Text('ora inizio turno'),
-            /*
+                  //Text('ora inizio turno'),
+                  /*
             DateTimePickerFormField(
               inputType: inputType,
               format: formats[inputType],
@@ -450,13 +473,13 @@ class _DetailPage extends State<DetailPage> {
                     api.setDataOut(widget.workers.work_id, date_uscita);
                   }),
             ),*/
-            //Text('ora fine turno'),
-            Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    /*new RawMaterialButton(
+                  //Text('ora fine turno'),
+                  Padding(
+                    padding: const EdgeInsets.all(50.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          /*new RawMaterialButton(
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -473,7 +496,7 @@ class _DetailPage extends State<DetailPage> {
                       fillColor: Colors.white,
                       padding: const EdgeInsets.all(15.0),
                     ),*/
-                    /*
+                          /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -487,36 +510,73 @@ class _DetailPage extends State<DetailPage> {
                     splashColor: Colors.grey,
                   ),
                 ),*/
-
-                    new RawMaterialButton(
-                      onPressed: () {
-                        _asyncInputDialog(context);
-                      },
-                      child: new Icon(
-                        Icons.hourglass_empty,
-                        color: Colors.green,
-                        size: 35.0,
-                      ),
-                      shape: new CircleBorder(),
-                      elevation: 2.0,
-                      fillColor: Colors.white,
-                      padding: const EdgeInsets.all(15.0),
-                    ),
-                    new RawMaterialButton(
-                      onPressed: () {
-                        _asyncConfirmDialog(context);
-                      },
-                      child: new Icon(
-                        Icons.restore_from_trash,
-                        color: Colors.green,
-                        size: 35.0,
-                      ),
-                      shape: new CircleBorder(),
-                      elevation: 2.0,
-                      fillColor: Colors.white,
-                      padding: const EdgeInsets.all(15.0),
-                    ),
-                    /*
+                          new RawMaterialButton(
+                            onPressed: () {
+                              _dataEntrata.isNotEmpty
+                                  ? _asyncInputDialog(context)
+                                  : showFlash(
+                                      duration: Duration(seconds: 3),
+                                      builder: (context, controller) {
+                                        return Flash(
+                                          controller: controller,
+                                          style: FlashStyle.floating,
+                                          boxShadows: kElevationToShadow[4],
+                                          backgroundColor: Colors.black87,
+                                          child: FlashBar(
+                                            message: Text(
+                                              "Inserire orario di inizio lavoro prima di inserire una pausa!",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      context: context);
+                            },
+                            child: new Icon(
+                              Icons.hourglass_empty,
+                              color: Colors.green,
+                              size: 35.0,
+                            ),
+                            shape: new CircleBorder(),
+                            elevation: 5.0,
+                            fillColor: Colors.white,
+                            padding: const EdgeInsets.all(15.0),
+                          ),
+                          new RawMaterialButton(
+                            onPressed: () {
+                              _dataEntrata.isNotEmpty
+                                  ? _asyncConfirmDialog(context)
+                                  : showFlash(
+                                      duration: Duration(seconds: 3),
+                                      builder: (context, controller) {
+                                        return Flash(
+                                          controller: controller,
+                                          style: FlashStyle.floating,
+                                          boxShadows: kElevationToShadow[4],
+                                          backgroundColor: Colors.black87,
+                                          child: FlashBar(
+                                            message: Text(
+                                              "Nessun dato da cancellare!",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      context: context);
+                            },
+                            child: new Icon(
+                              Icons.restore_from_trash,
+                              color: Colors.green,
+                              size: 35.0,
+                            ),
+                            shape: new CircleBorder(),
+                            elevation: 5.0,
+                            fillColor: Colors.white,
+                            padding: const EdgeInsets.all(15.0),
+                          ),
+                          /*
                 Container(
                   margin: EdgeInsets.all(20.0),
                   child: RaisedButton(
@@ -534,7 +594,7 @@ class _DetailPage extends State<DetailPage> {
                   ),
                 ),*/
 
-                    /*
+                          /*
                 Expanded(
                   child: RaisedButton(
                     child: Text("Conferma"),
@@ -550,58 +610,61 @@ class _DetailPage extends State<DetailPage> {
                     splashColor: Colors.grey,
                   ),
                 ),*/
-                  ]),
-            ),
+                        ]),
+                  ),
 
-            Column(
-              children: _pause
-                  .map((element) => Card(
-                        child: new Container(
-                            color: Colors.grey,
-                            padding: new EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 0.0),
-                            //width: 200.0,
-                            child: new Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  new MaterialButton(
-                                    height: 40.0,
-                                    child: new Column(
+                  Column(
+                    children: _pause
+                        .map((element) => Card(
+                              child: new Container(
+                                  color: Colors.grey,
+                                  padding: new EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 0.0),
+                                  //width: 200.0,
+                                  child: new Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: <Widget>[
-                                        new Icon(Icons.hourglass_empty,
-                                            size: 30.0),
-                                        new Text(element.descrizione),
-                                      ],
-                                    ),
-                                    onPressed: null,
-                                  ),
-                                  Column(
-                                    children: <Widget>[
-                                      Text(element.durata.toString() + ' min.',
-                                          style: new TextStyle(
-                                              fontSize: 22.0,
-                                              color: Colors.white)),
-                                    ],
-                                  ),
-                                  new MaterialButton(
-                                    height: 40.0,
-                                    child: new Column(
-                                      children: <Widget>[
-                                        new Icon(Icons.remove_circle_outline,
-                                            size: 30.0)
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      _deletePause(element.id);
-                                    },
-                                  ),
-                                ])),
-                      ))
-                  .toList(),
-            )
-          ],
-        ),
+                                        new MaterialButton(
+                                          height: 40.0,
+                                          child: new Column(
+                                            children: <Widget>[
+                                              new Icon(Icons.hourglass_empty,
+                                                  size: 30.0),
+                                              new Text(element.descrizione),
+                                            ],
+                                          ),
+                                          onPressed: null,
+                                        ),
+                                        Column(
+                                          children: <Widget>[
+                                            Text(
+                                                element.durata.toString() +
+                                                    ' min.',
+                                                style: new TextStyle(
+                                                    fontSize: 22.0,
+                                                    color: Colors.white)),
+                                          ],
+                                        ),
+                                        new MaterialButton(
+                                          height: 40.0,
+                                          child: new Column(
+                                            children: <Widget>[
+                                              new Icon(
+                                                  Icons.remove_circle_outline,
+                                                  size: 30.0)
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            _deletePause(element.id);
+                                          },
+                                        ),
+                                      ])),
+                            ))
+                        .toList(),
+                  )
+                ],
+              ),
       );
 }
 
@@ -673,7 +736,7 @@ class _MyDialogState extends State<MyDialog> {
                       labelText: 'Inserisci motivo', hintText: 'es. Pranzo'),
                   onChanged: (value) {
                     setState(() {
-                      descrizione = value; 
+                      descrizione = value;
                     });
                   },
                 ))

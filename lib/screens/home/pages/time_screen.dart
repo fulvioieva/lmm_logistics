@@ -7,6 +7,7 @@ import 'detail_page.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
 
 bool checkOptions;
+bool checkPauseSelect;
 List<int> selectedIdWorkers;
 
 class TimeScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _TimeScreenState extends State<TimeScreen> {
   @override
   void initState() {
     checkOptions = false;
+    checkPauseSelect = false;
     super.initState();
   }
 
@@ -36,6 +38,10 @@ class _TimeScreenState extends State<TimeScreen> {
           padding: EdgeInsets.all(0),
           width: 0,
           height: 0,
+          child: Padding(
+            padding: EdgeInsets.all(4),
+            child: selectPauseButton(),
+          ),
         ),
         centerTitle: true,
         title: Text(
@@ -65,43 +71,88 @@ class _TimeScreenState extends State<TimeScreen> {
     );
   }
 
+  Widget selectPauseButton() {
+    if (checkOptions == false) {
+      if (!checkPauseSelect) {
+        return IconButton(
+          onPressed: () => setState(() {
+            checkPauseSelect = !checkPauseSelect;
+          }),
+          icon: Icon(Icons.hourglass_empty),
+        );
+      } else {
+        if (selectedIdWorkers.length < 1) {
+          return IconButton(
+            onPressed: () {
+              setState(() {
+                checkPauseSelect = !checkPauseSelect;
+              });
+            },
+            icon: Icon(Icons.close),
+          );
+        } else {
+          return IconButton(
+              onPressed: () {
+                setState(() {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (_) {
+                        print(selectedIdWorkers.join(","));
+                        return CustomDialog(
+                          listIdWorker: selectedIdWorkers,
+                          state: this,
+                          typeDialog: 1,
+                        );
+                      });
+                });
+              },
+              icon: Icon(Icons.hourglass_full));
+        }
+      }
+    }
+  }
+
   Widget selectButton() {
-    if (!checkOptions) {
-      return IconButton(
-        onPressed: () {
-          setState(() {
-            checkOptions = !checkOptions;
-          });
-        },
-        icon: Icon(Icons.access_time),
-      );
-    } else {
-      if (selectedIdWorkers.length < 1) {
+    if (checkPauseSelect == false) {
+      if (!checkOptions) {
         return IconButton(
           onPressed: () {
             setState(() {
               checkOptions = !checkOptions;
             });
           },
-          icon: Icon(Icons.close),
+          icon: Icon(Icons.access_time),
         );
       } else {
-        return IconButton(
+        if (selectedIdWorkers.length < 1) {
+          return IconButton(
             onPressed: () {
               setState(() {
-                showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (_) {
-                      print(selectedIdWorkers.join(","));
-                      return CustomDialog(
-                        listIdWorker: selectedIdWorkers,
-                        state: this,
-                      );
-                    });
+                checkOptions = !checkOptions;
               });
             },
-            icon: Icon(Icons.group_add));
+            icon: Icon(Icons.close),
+          );
+        } else {
+          return IconButton(
+              onPressed: () {
+                setState(() {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (_) {
+                        print(selectedIdWorkers.join(","));
+                        return CustomDialog(
+                          listIdWorker: selectedIdWorkers,
+                          state: this,
+                          typeDialog: 0,
+                        );
+                      });
+                });
+              },
+              icon: Icon(Icons.group_add));
+        }
       }
     }
   }
@@ -168,39 +219,98 @@ class _ListEmployesState extends State<ListEmployes> {
     );
   }
 
-  ListTile buildTile(Workers workers, int index) {
-    return ListTile(
-        leading: checkOptions == true
-            ? CircularCheckBox(
-                activeColor: Colors.green,
-                inactiveColor: Colors.white,
-                materialTapTargetSize: MaterialTapTargetSize.padded,
-                value: listSelected[index],
-                onChanged: (value) {
-                  setState(() {
-                    if (value) {
-                      state.setState(() {
-                        selectedIdWorkers.add(workers.workId);
-                        listSelected[index] = value;
-                      });
+  Widget buildLeading(Workers workers, int index) {
+    if (checkOptions) {
+      return CircularCheckBox(
+        activeColor: Colors.green,
+        inactiveColor: Colors.white,
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        value: listSelected[index],
+        onChanged: (value) {
+          setState(() {
+            if (value) {
+              state.setState(() {
+                if (checkOptions) {
+                  selectedIdWorkers.add(workers.workId);
+                  listSelected[index] = value;
+                } else {
+                  selectedIdWorkers.add(workers.id);
+                  listSelected[index] = value;
+                }
+              });
+            } else {
+              state.setState(() {
+                if (checkOptions) {
+                  listSelected[index] = value;
+                  selectedIdWorkers.remove(workers.workId);
+                } else {
+                  listSelected[index] = value;
+                  selectedIdWorkers.remove(workers.id);
+                }
+              });
+            }
+          });
+        },
+      );
+    } else {
+      if (checkPauseSelect) {
+        if (workers.dateStart != null) {
+          return CircularCheckBox(
+            activeColor: Colors.green,
+            inactiveColor: Colors.white,
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            value: listSelected[index],
+            onChanged: (value) {
+              setState(() {
+                if (value) {
+                  state.setState(() {
+                    if (checkOptions) {
+                      selectedIdWorkers.add(workers.workId);
+                      listSelected[index] = value;
                     } else {
-                      state.setState(() {
-                        listSelected[index] = value;
-                        selectedIdWorkers.remove(workers.workId);
-                      });
+                      selectedIdWorkers.add(workers.id);
+                      listSelected[index] = value;
                     }
                   });
-                },
-              )
-            : Padding(
-                padding: EdgeInsets.all(4),
-                child: Icon(
-                  Icons.person,
-                  color:
-                      workers.agenzia == 1 ? Colors.white : Colors.lightGreen,
-                  size: 40,
-                ),
-              ),
+                } else {
+                  state.setState(() {
+                    if (checkOptions) {
+                      listSelected[index] = value;
+                      selectedIdWorkers.remove(workers.workId);
+                    } else {
+                      listSelected[index] = value;
+                      selectedIdWorkers.remove(workers.id);
+                    }
+                  });
+                }
+              });
+            },
+          );
+        }
+      } else {
+        return Padding(
+          padding: EdgeInsets.all(4),
+          child: Icon(
+            Icons.person,
+            color: workers.agenzia == 1 ? Colors.white : Colors.lightGreen,
+            size: 40,
+          ),
+        );
+      }
+      return Padding(
+        padding: EdgeInsets.all(10),
+        child: Icon(
+          Icons.block,
+          color: Colors.red,
+          size: 28,
+        ),
+      );
+    }
+  }
+
+  ListTile buildTile(Workers workers, int index) {
+    return ListTile(
+        leading: buildLeading(workers, index),
         trailing: Icon(
           Icons.navigate_next,
           size: 35,
@@ -208,15 +318,14 @@ class _ListEmployesState extends State<ListEmployes> {
         ),
         contentPadding: EdgeInsets.all(8),
         title: Text(
-          "${workers.firstName} ${workers.lastName}",
+          "${workers.firstName.replaceFirst(workers.firstName[0], workers.firstName[0].toUpperCase())} ${workers.lastName.replaceFirst(workers.lastName[0], workers.lastName[0].toUpperCase())}",
           style: TextStyle(
               color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           child: Flex(
             direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(
                 flex: 2,
@@ -234,6 +343,22 @@ class _ListEmployesState extends State<ListEmployes> {
                           : workers.dateStart.substring(10, 16),
                       style: TextStyle(color: Colors.white),
                     ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.hourglass_full,
+                      color: workers.pause > 0 ? Colors.green : Colors.red,
+                    ),
+                    Text(
+                      workers.pause > 0 ? "${workers.pause}" : "",
+                      style: TextStyle(color: Colors.white),
+                    )
                   ],
                 ),
               ),

@@ -53,7 +53,7 @@ class RestDatasource {
       List<Workers> c = new List<Workers>();
       if (res["error_msg"] != "No user") {
         for (var h in res["users"]) {
-          Workers work = new Workers(
+          /*Workers work = new Workers(
               id: int.tryParse(h['id']),
               firstName: h['first_name'],
               lastName: h['last_name'],
@@ -62,7 +62,8 @@ class RestDatasource {
               agenzia: int.tryParse(h['agenzia']),
               idSito: int.tryParse(h['id_sito']),
               dateStart: h['date_start'],
-              dateEnd: h['date_end']);
+              dateEnd: h['date_end']);*/
+          Workers work = Workers.map(h);
           dj = int.tryParse(h['id_daily_job']);
           c.add(work);
         }
@@ -116,8 +117,8 @@ class RestDatasource {
 
   Future<Colli> getColli(int idDailyJob) async {
     Colli colli;
-    var body = json.encode(
-        {"method": "getColli", "id_daily_job": idDailyJob.toString()});
+    var body = json
+        .encode({"method": "getColli", "id_daily_job": idDailyJob.toString()});
     return _netUtil.post(loginURL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -347,8 +348,8 @@ class RestDatasource {
     });
   }
 
-  Future<bool> setEconomia(String dataInizio, String dataFine,
-      int idDailyJob, int idUser) async {
+  Future<bool> setEconomia(
+      String dataInizio, String dataFine, int idDailyJob, int idUser) async {
     var x = globals.dataLavori.split('/');
     String data2 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
     //String data3 = data2 + data.toString().substring(10, data.toString().length);
@@ -511,10 +512,8 @@ class RestDatasource {
 
   Future<String> getTotalePersone(int idDailyJob) async {
     String quantita;
-    var body = json.encode({
-      "method": "getTotalePersone",
-      "id_daily_job": idDailyJob.toString()
-    });
+    var body = json.encode(
+        {"method": "getTotalePersone", "id_daily_job": idDailyJob.toString()});
     return _netUtil.post(loginURL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
@@ -770,14 +769,15 @@ class RestDatasource {
       data3 = dataFake; //'2019-04-23';
     }
     if (globals.logger) print("DATA ->" + data3);
-    var body =
-        json.encode({"method": "setDataIn", "datain": data3, "id": listId.join(',')});
+    var body = json.encode(
+        {"method": "setDataIn", "datain": data3, "id": listId.join(',')});
     return _netUtil.post(loginURL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       return res["error"];
     });
   }
+
   Future<bool> setFineOraList(List<int> listId, String data) async {
     List<Workers> lw = await getDailyJob(listId[0]);
 
@@ -820,8 +820,24 @@ class RestDatasource {
     //String data3 = x[2] + '-' + x[0] + '-' + x[1]; //'2019-04-23';
 
     if (globals.logger) print("DATA ->" + data3);
-    var body =
-        json.encode({"method": "setDataOut", "dataout": data3, "id": listId.join(",")});
+    var body = json.encode(
+        {"method": "setDataOut", "dataout": data3, "id": listId.join(",")});
+    return _netUtil.post(loginURL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+
+  Future<bool> setPauseGroup(String lunghezza, List<int> idList) {
+    var body = json.encode({
+      "method": "setPause",
+      "id": globals.idDailyJob,
+      "descrizione": "Pausa Generica",
+      "lunghezza": lunghezza,
+      "id_user": idList.join(",")
+    });
+
     return _netUtil.post(loginURL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
