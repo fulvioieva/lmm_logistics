@@ -130,6 +130,15 @@ class _CustomDialogState extends State<CustomDialog> {
           ),
           actions: <Widget>[
             FlatButton(
+              child: Text("Chiudi"),
+              textColor: Colors.green,
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(state.context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+            ),
+            FlatButton(
               child: Text("Invia pausa"),
               textColor: Colors.green,
               onPressed: () {
