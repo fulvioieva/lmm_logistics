@@ -128,16 +128,41 @@ class _LoginPageState extends State<LoginPage> {
     });
     User user = await api.login(username, password).then((User user) {
       return user;
+    }).catchError((error) {
+      print(error);
     });
-    prefs.setString("id", user.id);
-    prefs.setString("username", user.username);
-    prefs.setString("password", user.password);
-    await db.deleteUsers();
-    await db.saveUser(user).then((dynamic value) {
-      globals.userId = int.parse(user.id);
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => InsertDate()));
-    });
+    if (user != null) {
+      prefs.setString("id", user.id);
+      prefs.setString("username", user.username);
+      prefs.setString("password", user.password);
+      await db.deleteUsers();
+      await db.saveUser(user).then((dynamic value) {
+        globals.userId = int.parse(user.id);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => InsertDate()));
+      });
+    } else {
+      setState(() {
+        isloading = false;
+      });
+      showFlash(
+          context: context,
+          duration: Duration(seconds: 1),
+          builder: (context, controller) {
+            return Flash(
+              controller: controller,
+              style: FlashStyle.floating,
+              boxShadows: kElevationToShadow[4],
+              backgroundColor: Colors.red,
+              child: FlashBar(
+                message: Text(
+                  "Campi inseriti non corretti!",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            );
+          });
+    }
   }
 
   void autoLogIn() async {

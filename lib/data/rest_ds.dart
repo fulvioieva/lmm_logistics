@@ -16,20 +16,24 @@ class RestDatasource {
   static final loginURL = globals.loginUrl;
 
   Future<User> login(String username, String password) async {
-    var body =
-        json.encode({"method": "login", "user": username, "pass": password});
-    return _netUtil.post(loginURL, body: body).then((dynamic res) {
-      if (globals.logger) print("JSON ->" + res.toString());
-      if (res["error"] == "true") throw new Exception(res["error_msg"]);
-      User us;
-      if (res["error_msg"] != 'Invalid credentitals') {
-        for (var h in res["user"]) {
-          us = new User(
-              username: h['username'], password: h['password'], id: h['id']);
+    try {
+      var body =
+          json.encode({"method": "login", "user": username, "pass": password});
+      return _netUtil.post(loginURL, body: body).then((dynamic res) {
+        if (globals.logger) print("JSON ->" + res.toString());
+        if (res["error"] == "true") throw new Exception(res["error_msg"]);
+        User us;
+        if (res["error_msg"] != 'Invalid credentitals') {
+          for (var h in res["user"]) {
+            us = new User(
+                username: h['username'], password: h['password'], id: h['id']);
+          }
         }
-      }
-      return us;
-    });
+        return us;
+      });
+    } catch (ex) {
+      return null;
+    }
   }
 
   Future<List<Workers>> fetchUsersEvol() async {
