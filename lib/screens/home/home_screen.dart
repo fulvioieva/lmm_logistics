@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/screens/home/pages/changePasswordPage.dart';
+import 'package:lmm_logistics/screens/home/pages/economyPage.dart';
 import 'package:lmm_logistics/screens/login/loginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './pages/time_screen.dart';
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     tabController = new TabController(
       vsync: this,
       initialIndex: 0,
-      length: 4,
+      length: 5,
     );
     super.initState();
   }
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     return Scaffold(
       body: DefaultTabController(
-        length: 4,
+        length: 5,
         child: Scaffold(
           drawer: Drawer(
             // Add a ListView to the drawer. This ensures the user can scroll
@@ -133,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               tabs: [
                 Tab(icon: Icon(Icons.access_time)),
                 Tab(icon: Icon(Icons.transfer_within_a_station)),
+                Tab(icon: Icon(Icons.attach_money)),
                 Tab(icon: Icon(Icons.border_color)),
                 Tab(icon: Icon(Icons.date_range)),
               ],
@@ -146,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               TimeScreen(
                   title: "${globals.siteName}"),
               AddUserScreen(tabController: tabController),
+              EconomyPage(tabController: tabController),
               BoxScreen(tabController: tabController),
               ResumeScreen(tabController: tabController),
             ],
