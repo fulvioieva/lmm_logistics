@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:lmm_logistics/data/database_helper.dart';
+import 'package:lmm_logistics/models/economiaV2.dart';
 import 'package:lmm_logistics/utils/network_util.dart';
 import 'package:lmm_logistics/models/user.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
@@ -845,6 +846,61 @@ class RestDatasource {
     return _netUtil.post(loginURL, body: body).then((dynamic res) {
       if (globals.logger) print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      return res["error"];
+    });
+  }
+
+  Future<EconomiaV2> fetchOreEconomia() {
+    EconomiaV2 economiaV2;
+    var body = json.encode(
+        {"method": "fetchOreEconomia", "id_daily_job": globals.idDailyJob});
+    return _netUtil.post(loginURL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      if (res["error_msg"] == "No ore") {
+        return economiaV2 = new EconomiaV2(
+            idDalilyJob: globals.idDailyJob,
+            normali: 0,
+            festive: 0,
+            notturne: 0);
+      }
+      for (var h in res["ore"]) {
+        economiaV2 = new EconomiaV2(
+            id: int.tryParse(h['id']),
+            idDalilyJob: int.tryParse(h['id_daily_job']),
+            normali: int.tryParse(h['normali']),
+            festive: int.tryParse(h['festive']),
+            notturne: int.tryParse(h['notturne']));
+      }
+
+      return economiaV2;
+    });
+  }
+
+  Future<bool> setOreEconomia(int normali, int festive, int notturne) {
+    var body = json.encode({
+      "method": "setOreEconomia",
+      "id_daily_job": globals.idDailyJob,
+      "normali": normali == 0 ? "*" : normali.toString(),
+      "festive": festive == 0 ? "*" : festive.toString(),
+      "notturne": notturne == 0 ? "*" : notturne.toString()
+    });
+    print(body);
+    return _netUtil.post(loginURL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      print(res);
+      return res["error"];
+    });
+  }
+
+  Future<bool> deleteEconomia() {
+    var body = json.encode(
+        {"method": "delOreEconomia", "id_daily_job": globals.idDailyJob});
+    return _netUtil.post(loginURL, body: body).then((dynamic res) {
+      if (globals.logger) print("JSON ->" + res.toString());
+      if (res["error"] == "true") throw new Exception(res["error_msg"]);
+      print(res);
       return res["error"];
     });
   }
