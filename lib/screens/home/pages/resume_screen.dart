@@ -54,7 +54,7 @@ class _ResumeScreen extends State<ResumeScreen> {
       return "0$n";
     }
 
-    return "${twoDigits(duration.inHours)}:${twoDigits(duration.inMinutes.remainder(60))}";
+    return "${twoDigits(duration.inHours)}.${twoDigits(duration.inMinutes.remainder(60))}";
   }
 
   void caricamento() async {
@@ -84,6 +84,8 @@ class _ResumeScreen extends State<ResumeScreen> {
               economiaRes.festive +
               economiaRes.notturne));
       totOreEconomia = _printHour(duration);
+      if(totOreEconomia == "00.00")
+        totOreEconomia = "0.0";
     }).whenComplete(refresh);
 
     double mediaCalcolata =
