@@ -237,7 +237,7 @@ class _DetailPage extends State<DetailPage> {
         return AlertDialog(
           title: Text('Cancella ore'),
           content: const Text(
-              'In questo modo cancellerai l\'ora di ingresso, uscita ed economia portandole al valore iniziale.'),
+              'In questo modo cancellerai l\'ora di ingresso ed uscita portandole al valore iniziale.'),
           actions: <Widget>[
             FlatButton(
               child: const Text('CANCEL'),
@@ -381,7 +381,8 @@ class _DetailPage extends State<DetailPage> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView(
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
                     padding:
@@ -415,7 +416,7 @@ class _DetailPage extends State<DetailPage> {
                       ],
                     ),
                   ),
-                  Padding(
+                  /* Padding(
                     padding:
                         const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Column(
@@ -444,7 +445,7 @@ class _DetailPage extends State<DetailPage> {
                         Text(_dataUscitaEconomia)
                       ],
                     ),
-                  ),
+                  ), */
 
                   /*
             DateTimePickerFormField(

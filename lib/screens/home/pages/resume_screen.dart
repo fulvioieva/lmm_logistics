@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lmm_logistics/data/rest_ds.dart';
+import 'package:lmm_logistics/models/economiaV2.dart';
 import 'package:lmm_logistics/utils/globals.dart' as globals;
 import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
@@ -47,6 +48,15 @@ class _ResumeScreen extends State<ResumeScreen> {
     }
   }
 
+  String _printHour(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    return "${twoDigits(duration.inHours)}:${twoDigits(duration.inMinutes.remainder(60))}";
+  }
+
   void caricamento() async {
     percentuale = await api.getPercentuale(globals.siteId);
 
@@ -68,15 +78,13 @@ class _ResumeScreen extends State<ResumeScreen> {
     totOreLavorate = int.parse(y[0]).toString() +
         '.' +
         int.parse(y[1] == '' ? '0' : y[1]).toString();
-
-    x = await api.getEconomiaTot(globals.idDailyJob).whenComplete(refresh);
-    if (x != null) {
-      y = x.split(':');
-    } else {
-      y = "0:0".split(':');
-    }
-    totOreEconomia =
-        int.parse(y[0]).toString() + '.' + int.parse(y[1]).toString();
+    await api.fetchOreEconomia().then((EconomiaV2 economiaRes) {
+      Duration duration = new Duration(
+          minutes: (economiaRes.normali +
+              economiaRes.festive +
+              economiaRes.notturne));
+      totOreEconomia = _printHour(duration);
+    }).whenComplete(refresh);
 
     double mediaCalcolata =
         double.parse(totColliLavorati) / double.parse(totOreLavorate);
@@ -279,10 +287,10 @@ class _ResumeScreen extends State<ResumeScreen> {
                       margin: EdgeInsets.all(10.0),
                       child: MaterialButton(
                         onPressed: () => setState(() {
-                              tabController.animateTo(0,
-                                  duration: Duration(seconds: 1),
-                                  curve: Curves.ease);
-                            }),
+                          tabController.animateTo(0,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.ease);
+                        }),
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Text("Lista Risorse"),
