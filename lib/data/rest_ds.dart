@@ -265,7 +265,7 @@ class RestDatasource {
     var y = data.split(':');
     if (int.parse(y[0]) < 12) {
       DateTime todayDate = DateTime.parse(dataFake);
-      data3 = todayDate.add(new Duration(days: 1)).toString();
+      data3 = todayDate.add(new Duration(hours: 24)).toString();
       if (globals.logger) print(todayDate.add(new Duration(days: 1)));
     } else {
       if (globals.logger) print(dataFake);
@@ -277,7 +277,7 @@ class RestDatasource {
     if (globals.logger) print("DIFFERENZA " + difference.toString());
 
     if (difference > 23.0) {
-      data3 = dateout.add(new Duration(days: -1)).toString();
+      data3 = dateout.add(new Duration(hours: -24)).toString();
     }
     //print ("Differenza " + difference.toString());
     /*
