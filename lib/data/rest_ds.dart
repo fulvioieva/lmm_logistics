@@ -420,7 +420,7 @@ class RestDatasource {
     var body = json.encode(
         {"method": "getUserAgenzia", "id_daily_job": idDailyJob.toString()});
     return _netUtil.post(loginURL, body: body).then((dynamic res) {
-      if (globals.logger) print("JSON ->" + res.toString());
+      print("JSON ->" + res.toString());
       if (res["error"] == "true") throw new Exception(res["error_msg"]);
       if (res["error_msg"] != "No users") {
         for (var h in res["users"]) {

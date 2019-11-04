@@ -12,10 +12,9 @@ class WorkingUsers {
         lastName: json['last_name']);
   }
 
-  String getDescription(){
-    String a =  this.lastName+ ' ' + this.firstName ;
-    if (a.length>20) a = a.substring(0,20) + '..';
+  String getDescription() {
+    String a = this.lastName + ' ' + this.firstName;
+    if (a.length > 20) a = a.substring(0, 20) + '..';
     return a;
-
   }
 }

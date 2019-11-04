@@ -228,7 +228,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
     List<String> testList = new List();
 
     _wkusers.forEach((WorkingUsers workuser) {
-      testList.add(workuser.firstName + " " + workuser.lastName);
+      testList.add(workuser.lastName + " " + workuser.firstName);
     });
 
     testList.sort();
@@ -237,7 +237,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
 
     void selectUser(String user) {
       for (WorkingUsers workuser in _wkusers) {
-        if ((workuser.firstName + " " + workuser.lastName).compareTo(user) ==
+        if ((workuser.lastName + " " + workuser.firstName).compareTo(user) ==
             0) {
           print("${(workuser.firstName + " " + workuser.lastName)} : $user");
           setState(() {
