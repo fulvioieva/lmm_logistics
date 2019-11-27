@@ -340,8 +340,8 @@ class _GetHourMinuteState extends State<GetHourMinute> {
             test == false
                 ? Slider(
                     min: 0.0,
-                    max: 480.0,
-                    divisions: 32,
+                    max: 3840.0,
+                    divisions: 256,
                     activeColor: Colors.green,
                     inactiveColor: Colors.green,
                     onChanged: (double value) {
